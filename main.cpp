@@ -1,50 +1,46 @@
 #include "header.h"
+#include "artist.h"
+#include "artwork.h"
 
-void printDate(const jep::date &d)
+void printDate(jep::date d)
 {
-	bool day_known = d.getDayOfWeek() != UNKNOWN_DAY;
+	cout << getDateString(d) << endl;
+}
 
-	if (day_known)
-		cout << d.getDayString() << ", ";
+void printArtist(const artist &a)
+{
+	cout << a.getID() << ": " << a.getName() << " (" << a.getBirthDateString(false) << " - " << a.getDeathDateString(false) << ")" << endl;
+}
 
-	if (d.getMonth() != UNKNOWN_MONTH)
-		cout << d.getMonthString() << " ";
-
-	if (day_known)
-		cout << d.getDayOfMonth() << ", ";
-
-	cout << d.getYear() << endl;
+void printArtwork(const artwork &a)
+{
+	cout << a.getTitle() << " by " << a.getArtistName() << "($" << a.getValue() << " Million)" << endl;
 }
 
 int main()
 {
-	jep::date test(9070, 6, 23);
-	printDate(test);
-	test++;
-	printDate(test);
+	jep::init();
 
-	
-	jep::date test2(2015, 12, 23);
-	printDate(test2);
+	int id_count = 0;
 
-	for (int i = 0; i < 10; i++)
-	{
-		test2++;
-		printDate(test2);
-	}
+	artist picasso(id_count++, "Pablo Picasso", jep::date(1881, 10, 25), jep::date(1973, 4, 8));
+	artist van_gogh(id_count++, "Vincent van Gogh", jep::date(1853, 3, 30), jep::date(1890, 7, 29));
+	artist dali(id_count++, "Salvador Dali", jep::date(1904, 5, 11), jep::date(1989, 1, 23));
+	artist duchamp(id_count++, "Marcel Duchamp", jep::date(1887, 7, 28), jep::date(1968, 10, 2));
 
-	test2 += 381;
-	printDate(test2);
+	vector<artist> artist_vec;
+	artist_vec.push_back(picasso);
+	artist_vec.push_back(van_gogh);
+	artist_vec.push_back(dali);
+	artist_vec.push_back(duchamp);
 
-	cout << endl;
+	vector<artwork> artwork_vec;
+	artwork_vec.push_back(artwork("Nude Descending a Staircase", duchamp, DADA, LEGENDARY, false, 1.0f, jep::date(1958, 10, 2)));
+	artwork_vec.push_back(artwork("Cafe Terrace at Night", van_gogh, EXPRESSIONIST, MASTERPIECE, false, 1.0f, jep::date(1958, 10, 2)));
 
-	jep::date test3(2015, 5, -1);
-	printDate(test3);
-	test3++;
-	printDate(test3);
+	for (auto i : artist_vec)
+		printArtist(i);
 
-	jep::date test4(2015, -1, -1);
-	printDate(test4);
-	test4++;
-	printDate(test4);
+	for (auto i : artwork_vec)
+		printArtwork(i);
 }
