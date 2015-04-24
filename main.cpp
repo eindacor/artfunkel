@@ -12,14 +12,15 @@ int main()
 	artist_db artist_database;
 
 	vector<artwork> artwork_vec;
+	vector<artist> artist_vec;
 	//artwork_vec.push_back(artwork("Nude Descending a Staircase", duchamp, DADA, LEGENDARY, false, 1.0f, jep::date(1958, 10, 2)));
 	//artwork_vec.push_back(artwork("Cafe Terrace at Night", van_gogh, EXPRESSIONIST, MASTERPIECE, false, 1.0f, jep::date(1958, 10, 2)));
 
-	jep::csv_file csv_test("C:\\Users\\admin\\Desktop\\paintings.csv");
+	jep::csv_file paintings("C:\\Users\\admin\\Desktop\\paintings.csv");
 	
-	for (int i = 1; i < csv_test.getRowCount(); i++)
+	for (int i = 1; i < paintings.getRowCount(); i++)
 	{
-		vector<string> row = csv_test.getRow(i);
+		vector<string> row = paintings.getRow(i);
 		
 		artist work_artist(artist_database.lookupArtistByName(row.at(0)));
 		string work_title(row.at(1));
@@ -35,7 +36,20 @@ int main()
 	for (auto i : artwork_vec)
 		printArtwork(i);
 	
-	string ds = "1983/06/23";
-	jep::date string_date(ds);
-	printDate(string_date);
+	jep::csv_file artists("C:\\Users\\admin\\Desktop\\artists.csv");
+
+	for (int i = 1; i < artists.getRowCount(); i++)
+	{
+		vector<string> row = artists.getRow(i);
+
+		int artist_ID(std::stoi(row.at(0)));
+		string artist_name(row.at(1));
+		jep::date birth_date(row.at(2));
+		jep::date death_date(row.at(3));
+
+		artist_vec.push_back(artist(artist_ID, artist_name, birth_date, death_date));
+	}
+
+	for (auto i : artist_vec)
+		printArtist(i);
 }
