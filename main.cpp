@@ -1,46 +1,41 @@
 #include "header.h"
 #include "artist.h"
 #include "artwork.h"
-
-void printDate(jep::date d)
-{
-	cout << getDateString(d) << endl;
-}
-
-void printArtist(const artist &a)
-{
-	cout << a.getID() << ": " << a.getName() << " (" << a.getBirthDateString(false) << " - " << a.getDeathDateString(false) << ")" << endl;
-}
-
-void printArtwork(const artwork &a)
-{
-	cout << a.getTitle() << " by " << a.getArtistName() << "($" << a.getValue() << " Million)" << endl;
-}
+#include "artist_db.h"
+#include "utility_funcs.h"
 
 int main()
 {
 	jep::init();
 
 	int id_count = 0;
-
-	artist picasso(id_count++, "Pablo Picasso", jep::date(1881, 10, 25), jep::date(1973, 4, 8));
-	artist van_gogh(id_count++, "Vincent van Gogh", jep::date(1853, 3, 30), jep::date(1890, 7, 29));
-	artist dali(id_count++, "Salvador Dali", jep::date(1904, 5, 11), jep::date(1989, 1, 23));
-	artist duchamp(id_count++, "Marcel Duchamp", jep::date(1887, 7, 28), jep::date(1968, 10, 2));
-
-	vector<artist> artist_vec;
-	artist_vec.push_back(picasso);
-	artist_vec.push_back(van_gogh);
-	artist_vec.push_back(dali);
-	artist_vec.push_back(duchamp);
+	artist_db artist_database;
 
 	vector<artwork> artwork_vec;
-	artwork_vec.push_back(artwork("Nude Descending a Staircase", duchamp, DADA, LEGENDARY, false, 1.0f, jep::date(1958, 10, 2)));
-	artwork_vec.push_back(artwork("Cafe Terrace at Night", van_gogh, EXPRESSIONIST, MASTERPIECE, false, 1.0f, jep::date(1958, 10, 2)));
+	//artwork_vec.push_back(artwork("Nude Descending a Staircase", duchamp, DADA, LEGENDARY, false, 1.0f, jep::date(1958, 10, 2)));
+	//artwork_vec.push_back(artwork("Cafe Terrace at Night", van_gogh, EXPRESSIONIST, MASTERPIECE, false, 1.0f, jep::date(1958, 10, 2)));
 
-	for (auto i : artist_vec)
-		printArtist(i);
+	jep::csv_file csv_test("C:\\Users\\admin\\Desktop\\paintings.csv");
+	
+	for (int i = 1; i < csv_test.getRowCount(); i++)
+	{
+		vector<string> row = csv_test.getRow(i);
+		
+		artist work_artist(artist_database.lookupArtistByName(row.at(0)));
+		string work_title(row.at(1));
+		jep::date work_date(std::stoi(row.at(2)), -1, -1);
+		genre work_genre(genreFromString(row.at(3)));
+		rarity work_rarity(rarityFromString(row.at(4)));
+		bool work_forgery = false;
+		float work_condition = 1.0f;
+		
+		artwork_vec.push_back(artwork(work_title, work_artist, work_genre, work_rarity, work_forgery, work_condition, work_date));
+	}
 
 	for (auto i : artwork_vec)
 		printArtwork(i);
+	
+	string ds = "1983/06/23";
+	jep::date string_date(ds);
+	printDate(string_date);
 }

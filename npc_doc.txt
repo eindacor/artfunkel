@@ -28,6 +28,7 @@ Original Buyer Displays Forged Painting
 Original Buyer Sells Forged Painting	
 	1. Player X buys forged painting from forger
 	2. X sells painting to player Y via auction
+	3. Y 
 	
 	
 	B -> buyer from A
