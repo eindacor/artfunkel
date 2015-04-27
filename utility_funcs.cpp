@@ -98,6 +98,15 @@ genre genreFromString(string s)
 	if (s == "SKETCH")
 		return SKETCH;
 
+	if (s == "POP ART")
+		return POP_ART;
+
+	if (s == "HISTORIC")
+		return HISTORIC;
+
+	if (s == "LANDSCAPE")
+		return LANDSCAPE;
+
 	return OTHER;
 }
 
