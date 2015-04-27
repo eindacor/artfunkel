@@ -5,7 +5,11 @@
 class art_db
 {
 public:
-	art_db(const char* artists_path, const char* paintings_path);
+	art_db(const char* artists_path, 
+		const char* paintings_path, 
+		const char* image_directory, 
+		shared_ptr<ogl_context> context,
+		shared_ptr<ogl_camera> camera);
 	~art_db(){};
 
 	shared_ptr<artist> lookupArtistByName(string name) const { return artists.at(name); }
@@ -15,6 +19,8 @@ public:
 
 	void printAllArtists() const { for (auto i : artists) printArtist(i.second); }
 	void printAllArtwork() const { for (auto i : artworks) printArtwork(i.second); }
+
+	shared_ptr<artwork> getArtwork(int n) { return artworks.at(n); }
 
 private:
 	map<string, shared_ptr<artist> > artists;

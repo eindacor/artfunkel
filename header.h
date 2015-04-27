@@ -1,6 +1,13 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+enum genre {
+	OTHER, DADAISM, SURREALISM, IMPRESSIONISM, POST_IMPRESSIONISM,
+	PORTRAIT, ABSTRACT, EXPRESSIONISM, CONTEMPORARY, SCENE, MODERNISM,
+	POST_MODERNISM, POINTISM, SKETCH
+};
+enum rarity { UNKNOWN_RARITY, COMMON, UNCOMMON, RARE, ULTRA, LEGENDARY, MASTERPIECE };
+
 #include <string>
 #include <vector>
 #include <iostream>
@@ -28,10 +35,7 @@ using glm::vec4;
 using glm::vec3;
 using glm::mat4;
 
-enum genre { OTHER, DADAISM, SURREALISM, IMPRESSIONISM, POST_IMPRESSIONISM, 
-			PORTRAIT, ABSTRACT, EXPRESSIONISM, CONTEMPORARY, SCENE, MODERNISM, 
-			POST_MODERNISM, POINTISM, SKETCH };
-enum rarity { UNKNOWN_RARITY, COMMON, UNCOMMON, RARE, ULTRA, LEGENDARY, MASTERPIECE};
+
 
 string getDateString(const jep::date &d, bool include_day);
 double lookupValue(rarity work_rarity);

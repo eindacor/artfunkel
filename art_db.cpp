@@ -3,7 +3,11 @@
 #include "artwork.h"
 #include "utility_funcs.h"
 
-art_db::art_db(const char* artists_path, const char* paintings_path)
+art_db::art_db(const char* artists_path, 
+			const char* paintings_path, 
+			const char* image_directory, 
+			shared_ptr<ogl_context> context, 
+			shared_ptr<ogl_camera> camera)
 {
 	jep::csv_file paintings_file(paintings_path);
 	jep::csv_file artists_file(artists_path);
@@ -39,8 +43,12 @@ art_db::art_db(const char* artists_path, const char* paintings_path)
 		bool work_forgery = false;
 		float work_condition = 1.0f;
 
+		string texture_path = image_directory + work_image_name;
+
+		shared_ptr<painting_surface> work_surface(new painting_surface(work_width, work_height, context, camera, texture_path.c_str()));
+
 		shared_ptr<artwork> new_artwork(new artwork(work_id, work_title, work_artist, work_genre, work_rarity, 
-			work_forgery, work_condition, work_height, work_width, work_image_name, work_date));
+			work_forgery, work_condition, work_height, work_width, work_image_name, work_date, work_surface));
 
 		artworks.insert(std::pair<int, shared_ptr<artwork> >(work_id, new_artwork));
 	}
