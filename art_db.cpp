@@ -2,6 +2,7 @@
 #include "artist.h"
 #include "artwork.h"
 #include "utility_funcs.h"
+#include "header.h"
 
 art_db::art_db(const char* artists_path, 
 			const char* paintings_path, 
@@ -34,6 +35,7 @@ art_db::art_db(const char* artists_path,
 	for (int i = 1; i < paintings_file.getRowCount(); i++)
 	{
 		vector<string> row = paintings_file.getRow(i);
+		cout << "loading \"" << row.at(2) << "\"...." << endl;
 
 		int work_id(std::stoi(row.at(0)));
 		shared_ptr<artist> work_artist = lookupArtistByName(row.at(1));
@@ -60,9 +62,6 @@ art_db::art_db(const char* artists_path,
 		genre_counts[work_genre] += 1;
 		rarity_counts[work_rarity] += 1;
 	}
-
-	printAllArtists();
-	printAllArtwork();
 	printCounts();
 }
 
@@ -86,4 +85,34 @@ void art_db::printCounts() const
 
 	for (auto i : rarity_counts)
 		cout << stringFromRarity(i.first) << ": " << i.second << endl;
+}
+
+list< shared_ptr<artwork> > art_db::getWorksByGenre(genre g, bool match) const
+{
+	list< shared_ptr<artwork> > found;
+	std::for_each(artworks.cbegin(), artworks.cend(),
+		[&](const std::pair<int, shared_ptr<artwork> > &art) { 
+		if ((art.second->getGenre() == g) == match) found.push_back(art.second); });
+
+	return found;
+}
+
+list < shared_ptr<artwork> > art_db::getWorksByRarity(rarity r, bool match) const
+{
+	list< shared_ptr<artwork> > found;
+	std::for_each(artworks.cbegin(), artworks.cend(),
+		[&](const std::pair<int, shared_ptr<artwork> > &art) { 
+		if ((art.second->getRarity() == r) == match) found.push_back(art.second); });
+
+	return found;
+}
+
+list < shared_ptr<artwork> > art_db::getWorksByArtist(string name, bool match) const
+{
+	list< shared_ptr<artwork> > found;
+	std::for_each(artworks.cbegin(), artworks.cend(),
+		[&](const std::pair<int, shared_ptr<artwork> > &art) { 
+		if ((art.second->getArtistName() == name) == match) found.push_back(art.second); });
+
+	return found;
 }

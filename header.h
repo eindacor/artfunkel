@@ -4,12 +4,14 @@
 enum genre {
 	OTHER, DADAISM, SURREALISM, IMPRESSIONISM, POST_IMPRESSIONISM,
 	PORTRAIT, ABSTRACT, EXPRESSIONISM, CONTEMPORARY, SCENE, MODERNISM,
-	POST_MODERNISM, POINTISM, SKETCH, POP_ART, HISTORIC, LANDSCAPE
+	POST_MODERNISM, POINTISM, SKETCH, POP_ART, HISTORIC, LANDSCAPE, FOLK_ART, FAUVISM
 };
 enum rarity { UNKNOWN_RARITY, COMMON, UNCOMMON, RARE, ULTRA, LEGENDARY, MASTERPIECE };
 
 #include <string>
 #include <vector>
+#include <algorithm>
+#include <list>
 #include <iostream>
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include "jep_util.h"
@@ -22,6 +24,7 @@ class artist;
 class artwork;
 
 using std::vector;
+using std::list;
 using std::string;
 using std::cout;
 using std::endl;

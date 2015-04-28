@@ -19,8 +19,8 @@ int main()
 	string vert_file = data_path + "vertex_shader.glsl";
 	string frag_file = data_path + "fragment_shader.glsl";
 
-	
-	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1240, 960));
+	//shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1240, 960));
+	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 700, 700));
 	shared_ptr<key_handler> keys(new key_handler(context));
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, vec3(0.0f, 0.0f, 5.0f)));
 
@@ -36,11 +36,33 @@ int main()
 	int display_count = 0;
 	vector< shared_ptr<artwork> > paintings_to_display;
 
+	list< shared_ptr<artwork> > target_list = artist_database.getWorksByRarity(UNKNOWN_RARITY, false);
+	for (auto i : target_list)
+	{
+		float buffer = (previous_width / 200.0f) + 1.0f + (i->getWidth() / 200.0f);
+		paintings_to_display.push_back(i);
+		if (display_count % 10 == 0)
+		{
+			x_offset = 0.0f;
+			z_offset -= 4.0f;
+			previous_width = 0.0f;
+			buffer = 0.0f;
+		}
+
+		else
+			x_offset += buffer;
+
+		previous_width = i->getWidth();
+		i->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, 0.0f, z_offset)));
+		display_count++;
+	}
+
+	/*
 	for (int i = 0; i < art_count; i++)
 	{
 		shared_ptr<artwork> target = artist_database.getArtwork(i);
 		//if (true)
-		if (target->getRarity() == RARE)
+		if (target->getArtist()->getName() == "Vincent van Gogh")
 		{
 			float buffer = (previous_width / 200.0f) + 1.0f + (target->getWidth() / 200.0f);
 			paintings_to_display.push_back(target);
@@ -60,6 +82,7 @@ int main()
 			display_count++;
 		}
 	}
+	*/
 
 	do
 	{
@@ -69,6 +92,7 @@ int main()
 			context->clearBuffers();
 
 			camera->updateCamera();
+			//modify draw() functions to recieve a camera and context, to allow for toggling between each
 			for (auto i : paintings_to_display)
 				i->getSurface()->draw();			
 

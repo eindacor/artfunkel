@@ -79,7 +79,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 77,Paul Klee,Der Goldfisch,1925????,MODERNISM,RARE,"Watercolor, Oil",,48,68,klee_goldfisch.bmp
 78,Frida Kahlo,Fulang-Chang and I,1937????,PORTRAIT,ULTRA,Oil,,40,28,kahlo_fulang.bmp
 79,Frida Kahlo,Self-Portrait wtih Thorn Necklace and Hummingbird,1940????,PORTRAIT,ULTRA,Oil,,63.5,49.5,kahlo_self.bmp
-80,Frida Kahlo,Me and My Parrots,1946????,PORTRAIT,ULTRA,Oil,,63.5,81.3,kahlo_me.bmp
+80,Frida Kahlo,Me and My Parrots,1946????,PORTRAIT,ULTRA,Oil,,82,62.8,kahlo_me.bmp
 81,Frida Kahlo,Frieda and Diego Rivera,1931????,PORTRAIT,ULTRA,Oil,,100,79,kahlo_frieda.bmp
 82,Frida Kahlo,Henry Ford Hospital (The Flying Bed),1932????,SURREALISM,ULTRA,Oil,,30.5,38,kahlo_henry.bmp
 83,Joan Miro,Portrait of Vincent Nubiola,1917????,FAUVISM,ULTRA,Oil,,104,113,miro_portrait.bmp
@@ -120,7 +120,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 118,Rene Magritte,The Son of Man,1964????,SURREALISM,MASTERPIECE,Oil,,116,89,magritte_son.bmp
 119,Rene Magritte,The Trechery of Images,1929????,SURREALISM,ULTRA,Oil,,63.5,94,magritte_trechery.bmp
 120,Rene Magritte,Golcanda,1953????,SURREALISM,ULTRA,Oil,,81,100,magritte_golcanda.bmp
-121,Rene Magritte,Not to be Reproduced,1937????,SURREALISM,ULTRA,Oil,,81.3,65,magritte_not.bmp
+121,Rene Magritte,Not to be Reproduced,1937????,SURREALISM,ULTRA,Oil,,65,81.3,magritte_not.bmp
 122,Rene Magritte,The Human Condition,1933????,SURREALISM,ULTRA,Oil,,100,81,magritte_human.bmp
 123,Johannes Vermeer,Girl with a Pearl Earring,1665????,PORTRAIT,LEGENDARY,Oil,,44,39,vermeer_girl.bmp
 124,Johannes Vermeer,The Kitchen Maid,1658????,PORTRAIT,ULTRA,Oil,,46,41,vermeer_kitchen.bmp
@@ -137,6 +137,32 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 135,Mark Rothko,No. 1 (Royal Red and Blue),1954????,ABSTRACT,ULTRA,Oil,,288.9,171.5,rothko_no.bmp
 136,Mark Rothko,Four Darks in Red,1958????,ABSTRACT,ULTRA,Oil,,259.1,294.6,rothko_four.bmp
 137,Mark Rothko,No. 61 (Rust and Blue),1951????,ABSTRACT,ULTRA,Oil,,115,92,rothko_rust.bmp
-118,Grant Wood,American Gothic,1930????,MODERNISM,MASTERPIECE,Oil,,74,62,p
-119,Edward Hopper,Nighthawks,1942????,MODERNISM,MASTERPIECE,Oil,,84.1,152.4,p
-120,James McNeill Whistler,Whistler's Mother,1871????,PORTRAIT,MASTERPIECE,Oil,,144,162,p
+138,Edward Hopper,Nighthawks,1942????,MODERNISM,MASTERPIECE,Oil,,84.1,152.4,hopper_nighthawks.bmp
+139,Edward Hopper,Automat,1927????,MODERNISM,LEGENDARY,Oil,,71,91,hopper_automat.bmp
+140,Edward Hopper,Chop Suey,1929????,MODERNISM,LEGENDARY,Oil,,81,96,hopper_chop.bmp
+141,Edward Hopper,Early Sunday Morning,1930????,MODERNISM,ULTRA,Oil,,89.4,153,hopper_early.bmp
+142,Edward Hopper,New York Movie,1939????,MODERNISM,ULTRA,Oil,,82,102,hopper_new.bmp
+143,Keith Haring,"Untitled, 1982",1982????,POP ART,ULTRA,Oil,,271.8,406.4,haring_untitled1982.bmp
+144,Keith Haring,"Untitled, 1985",1985????,POP ART,ULTRA,Oil,,325.4,335.3,haring_untitled1985.bmp
+145,Keith Haring,"Untitled, 1984",1984????,POP ART,ULTRA,Oil,,304.8,304.8,haring_untitled1984.bmp
+146,Jasper Johns,Flag,1955????,DADAISM,ULTRA,Oil,,107,154,johns_flag.bmp
+147,Jasper Johns,White Flage,1955????,DADAISM,ULTRA,Oil,,199,310,johns_white.bmp
+148,Jasper Johns,Three Flags,1958????,DADAISM,ULTRA,Oil,,78.3,115.6,johns_three.bmp
+149,Jasper Johns,False Start,1959????,ABSTRACT,ULTRA,Oil,,171,137,johns_false.bmp
+150,Jasper Johns,Numbers in Colors,1959????,ABSTRACT,ULTRA,Oil,,169,126,johns_numbers.bmp
+151,Edouard Manet,Olympia,1863????,PORTRAIT,ULTRA,Oil,,130.5,190,manet_olympia.bmp
+152,Edouard Manet,Le Dejeuner sur l’herbe,1863????,PORTRAIT,LEGENDARY,Oil,,208,264,manet_dejeuner.bmp
+153,Edouard Manet,A Bar at the Foiles-Bergere,1882????,PORTRAIT,ULTRA,Oil,,96,130,manet_bar.bmp
+154,Edouard Manet,The Railway,1873????,PORTRAIT,ULTRA,Oil,,93,112,manet_railway.bmp
+155,Edouard Manet,The Spanish Singer,1860????,PORTRAIT,ULTRA,Oil,,147.3,114.3,manet_spanish.bmp
+156,Caravaggio,The Calling of St. Matthew,1600????,SCENE,LEGENDARY,Oil,,322,340,caravaggio_calling.bmp
+157,Caravaggio,Bacchus,1595????,PORTRAIT,LEGENDARY,Oil,,95,85,caravaggio_bacchus.bmp
+158,Caravaggio,Cardsharps,1594????,SCENE,ULTRA,Oil,,94,131,caravaggio_cardsharps.bmp
+159,Caravaggio,David with the Head of Goliath,1610????,PORTRAIT,LEGENDARY,Oil,,125,101,caravaggio_david.bmp
+160,Caravaggio,The Martyrdom of Saint Matthew,1600????,SCENE,LEGENDARY,Oil,,127,135,caravaggio_martyrdom.bmp
+161,Grant Wood,American Gothic,1930????,FOLK ART,MASTERPIECE,Oil,,74.3,62.4,wood_american.bmp
+162,Francisco Goya,The Third of May 1808,1814????,SCENE,ULTRA,Oil,,266,380,goya_third.bmp
+163,Francisco Goya,Saturn Devouring his Son,1823????,SCENE,LEGENDARY,Oil,,143,81,goya_saturn.bmp
+164,Francisco Goya,La Maja Desnuda,1800????,PORTRAIT,ULTRA,Oil,,97,190,goya_maja.bmp
+165,Francisco Goya,La Maja Vestida,1805????,PORTRAIT,ULTRA,Oil,,97,190,goya_majav.bmp
+166,Francisco Goya,Witches Sabbath (The Great He-Goat),1823????,SCENE,ULTRA,Oil,,140,438,goya_witches.bmp

@@ -27,14 +27,14 @@ ID,Artist Name,Birth Date,Death Date
 25,Johannes Vermeer,,00000000
 26,Georges Seurat,,00000000
 27,Mark Rothko,,00000000
-28,Edward Hopper,,00000000
-29,Keith Haring,,00000000
-30,Jasper Johns,,00000000
-31,Edouard Manet,,00000000
-32,Caravaggio,,00000000
-33,Alexander Calder,,00000000
-34,Francisco Goya,,00000000
-35,Titian,,00000000
+28,Edward Hopper,1882/07/22,1967/05/15
+29,Keith Haring,1958/05/04,1990/02/16
+30,Jasper Johns,1930/05/15,1930/05/15
+31,Edouard Manet,1832/01/23,1883/04/30
+32,Caravaggio,1571/09/29,1610/07/18
+33,Grant Wood,1891/02/13,1942/02/12
+34,Francisco Goya,1746/03/30,1828/04/16
+35,Titian,,1576/08/27
 36,Norman Rockwell,,00000000
 37,Peter Paul Rubens,,00000000
 38,Willem de Kooning,,00000000
@@ -134,4 +134,3 @@ ID,Artist Name,Birth Date,Death Date
 132,Marsden Hartley,,00000000
 133,Kasimir Malevich,,00000000
 134,Louis Marcoussis,,00000000
-135,Grant Wood,,00000000

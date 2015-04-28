@@ -107,6 +107,12 @@ genre genreFromString(string s)
 	if (s == "LANDSCAPE")
 		return LANDSCAPE;
 
+	if (s == "FAUVISM")
+		return FAUVISM;
+
+	if (s == "FOLK ART")
+		return FOLK_ART;
+
 	return OTHER;
 }
 
@@ -153,6 +159,12 @@ string stringFromGenre(genre g)
 
 	if (g == LANDSCAPE)
 		return "LANDSCAPE";
+
+	if (g == FAUVISM)
+		return "FAUVISM";
+
+	if (g == FOLK_ART)
+		return "FOLK ART";
 
 	return "Other";
 }
