@@ -1,0 +1,5 @@
+Objectives:
+	add gallery geometry, with identifiers for painting locations
+	allow toggling between inventory and gallery cameras
+	create a "crate" system for revealing and selecting paintings from a random array
+	learn selecting in opengl

@@ -39,8 +39,8 @@ int main()
 	for (int i = 0; i < art_count; i++)
 	{
 		shared_ptr<artwork> target = artist_database.getArtwork(i);
-		if (true)
-		//if (target->getRarity() == LEGENDARY)
+		//if (true)
+		if (target->getRarity() == RARE)
 		{
 			float buffer = (previous_width / 200.0f) + 1.0f + (target->getWidth() / 200.0f);
 			paintings_to_display.push_back(target);
