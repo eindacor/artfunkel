@@ -1,34 +1,34 @@
 ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Image Name
-0,Pablo Picasso,Guernica,1937????,ABSTRACT,MASTERPIECE,Oil,,350,780,p
-1,Pablo Picasso,Les Demoiselles d'Avignon,1907????,ABSTRACT,LEGENDARY,Oil,,243,234,p
-2,Pablo Picasso,The Old Guitarist,1904????,ABSTRACT,MASTERPIECE,Oil,,123,83,p
-3,Pablo Picasso,Le Reve,1932????,ABSTRACT,LEGENDARY,Oil,,130,97,p
-4,Pablo Picasso,Girl before a Mirror,1932????,ABSTRACT,LEGENDARY,Oil,,162,130,p
-5,Vincent van Gogh,The Starry Night,1889????,POST-IMPRESSIONISM,MASTERPIECE,Oil,,74,92,p
-6,Vincent van Gogh,The Potato Eaters,1885????,POST-IMPRESSIONISM,LEGENDARY,Oil,,82,114,p
-7,Vincent van Gogh,Cafe Terrace at Night,1888????,POST-IMPRESSIONISM,LEGENDARY,Oil,,81,65,p
-8,Vincent van Gogh,Irises,1889????,POST-IMPRESSIONISM,LEGENDARY,Oil,,71,93,p
-9,Vincent van Gogh,Wheatfield with Crows,1890????,IMPRESSIONISM,LEGENDARY,Oil,,50,103,p
-10,Salvador Dali,The Persistence of Memory,1931????,SURREALISM,MASTERPIECE,Oil,,24,33,p
-11,Salvador Dali,Dream Caused by the Flight of a Bee Around a Pomegranate a Second Before Awakening,1944????,SURREALISM,LEGENDARY,Oil,,51,41,p
-12,Salvador Dali,Swans Reflecting Elephants,1937????,SURREALISM,LEGENDARY,Oil,,51,77,p
-13,Salvador Dali,Soft Construction with Boiled Beans (Premonition of Civil War),1936????,SURREALISM,LEGENDARY,Oil,,100,99,p
-14,Salvador Dali,The Disintegration of the Persistence of Memory,1954????,SURREALISM,LEGENDARY,Oil,,25,33,p
-15,Andy Warhol,Ccampbell's Soup Ccans,1962????,MODERNISM,MASTERPIECE,Synthetic Polymer,,51,41,p
-16,Andy Warhol,Marilyn Diptych,1962????,MODERNISM,LEGENDARY,Silkscreen,,205.44,289.56,p
-17,Andy Warhol,Eight Elvises,1963????,MODERNISM,LEGENDARY,Silkscreen,,200,370,p
-18,Andy Warhol,Gold Marilyn Monroe,1962????,MODERNISM,LEGENDARY,Silkscreen,,211,145,p
-19,Andy Warhol,Race Riot,1964????,MODERNISM,LEGENDARY,Acrylic,,150,170,p
-20,Leonardo da Vinci,Mona Lisa,1517????,PORTRAIT,MASTERPIECE,Oil,,77,53,p
-21,Leonardo da Vinci,The Last Supper,1498????,SCENE,MASTERPIECE,Oil,,460,880,p
-22,Leonardo da Vinci,Virgin of the Rocks,1486????,SCENE,LEGENDARY,Oil,,199,122,p
-23,Leonardo da Vinci,Lady with an Ermine,1490????,PORTRAIT,LEGENDARY,Oil,,54,39,p
-24,Leonardo da Vinci,Vitruvian Man,1490????,SKETCH,LEGENDARY,Ink,,34,26,p
-25,Claude Monet,"Impression, Sunrise",1872????,IMPRESSIONISM,MASTERPIECE,Oil,,48,63,p
-26,Claude Monet,Le Bassin Aux Nympheas,1919????,IMPRESSIONISM,LEGENDARY,Oil,,100.4,201,p
-27,Claude Monet,Water Lily Pond,1900????,IMPRESSIONISM,LEGENDARY,Oil,,93,74,p
-28,Claude Monet,Bain a la Grenouillere,1869????,IMPRESSIONISM,LEGENDARY,Oil,,75,100,p
-29,Claude Monet,Garden at Sainte-Adresse,1867????,SCENE,LEGENDARY,Oil,,98,130,p
+0,Pablo Picasso,Guernica,1937????,ABSTRACT,MASTERPIECE,Oil,,350,780,picasso_guernica.bmp
+1,Pablo Picasso,Les Demoiselles d'Avignon,1907????,ABSTRACT,LEGENDARY,Oil,,243,234,picasso_demoiselles.bmp
+2,Pablo Picasso,The Old Guitarist,1904????,ABSTRACT,MASTERPIECE,Oil,,123,83,picasso_old.bmp
+3,Pablo Picasso,Le Reve,1932????,ABSTRACT,LEGENDARY,Oil,,130,97,picasso_reve.bmp
+4,Pablo Picasso,Girl before a Mirror,1932????,ABSTRACT,LEGENDARY,Oil,,162,130,picasso_girl.bmp
+5,Vincent van Gogh,The Starry Night,1889????,POST-IMPRESSIONISM,MASTERPIECE,Oil,,74,92,gogh_starry.bmp
+6,Vincent van Gogh,The Potato Eaters,1885????,POST-IMPRESSIONISM,LEGENDARY,Oil,,82,114,gogh_potato.bmp
+7,Vincent van Gogh,Cafe Terrace at Night,1888????,POST-IMPRESSIONISM,LEGENDARY,Oil,,81,65,gogh_cafe.bmp
+8,Vincent van Gogh,Irises,1889????,POST-IMPRESSIONISM,LEGENDARY,Oil,,71,93,gogh_irises.bmp
+9,Vincent van Gogh,Wheatfield with Crows,1890????,IMPRESSIONISM,LEGENDARY,Oil,,50,103,gogh_wheatfield.bmp
+10,Salvador Dali,The Persistence of Memory,1931????,SURREALISM,MASTERPIECE,Oil,,24,33,dali_persistence.bmp
+11,Salvador Dali,Dream Caused by the Flight of a Bee Around a Pomegranate a Second Before Awakening,1944????,SURREALISM,LEGENDARY,Oil,,51,41,dali_dream.bmp
+12,Salvador Dali,Swans Reflecting Elephants,1937????,SURREALISM,LEGENDARY,Oil,,51,77,dali_swans.bmp
+13,Salvador Dali,Soft Construction with Boiled Beans (Premonition of Civil War),1936????,SURREALISM,LEGENDARY,Oil,,100,99,dali_self.bmp
+14,Salvador Dali,The Disintegration of the Persistence of Memory,1954????,SURREALISM,LEGENDARY,Oil,,25,33,dali_disintegration.bmp
+15,Andy Warhol,Campbell's Soup Can,1962????,MODERNISM,MASTERPIECE,Synthetic Polymer,,51,41,warhol_campbell.bmp
+16,Andy Warhol,Marilyn Diptych,1962????,MODERNISM,LEGENDARY,Silkscreen,,205.44,289.56,warhol_marilyn.bmp
+17,Andy Warhol,Eight Elvises,1963????,MODERNISM,LEGENDARY,Silkscreen,,200,370,warhol_eight.bmp
+18,Andy Warhol,Gold Marilyn Monroe,1962????,MODERNISM,LEGENDARY,Silkscreen,,211,145,warhol_gold.bmp
+19,Andy Warhol,Race Riot,1964????,MODERNISM,LEGENDARY,Acrylic,,150,170,warhol_race.bmp
+20,Leonardo da Vinci,Mona Lisa,1517????,PORTRAIT,MASTERPIECE,Oil,,77,53,vinci_mona.bmp
+21,Leonardo da Vinci,The Last Supper,1498????,SCENE,MASTERPIECE,Oil,,460,880,vinci_last.bmp
+22,Leonardo da Vinci,Virgin of the Rocks,1486????,SCENE,LEGENDARY,Oil,,199,122,vinci_virgin.bmp
+23,Leonardo da Vinci,Lady with an Ermine,1490????,PORTRAIT,LEGENDARY,Oil,,54,39,vinci_lady.bmp
+24,Leonardo da Vinci,Vitruvian Man,1490????,SKETCH,LEGENDARY,Ink,,34,26,vinci_vitruvian.bmp
+25,Claude Monet,"Impression, Sunrise",1872????,IMPRESSIONISM,MASTERPIECE,Oil,,48,63,monet_impression.bmp
+26,Claude Monet,Le Bassin Aux Nympheas,1919????,IMPRESSIONISM,LEGENDARY,Oil,,100.4,201,monet_bassin.bmp
+27,Claude Monet,San Giorgio Maggiore at Dusk,1912????,IMPRESSIONISM,LEGENDARY,Oil,,65.2,92.4,monet_san.bmp
+28,Claude Monet,Bain a la Grenouillere,1869????,IMPRESSIONISM,LEGENDARY,Oil,,75,100,monet_bain.bmp
+29,Claude Monet,Garden at Sainte-Adresse,1867????,SCENE,LEGENDARY,Oil,,98,130,monet_garden.bmp
 30,Henri Matisse,Dance,1910????,MODERNISM,LEGENDARY,Oil,,260,390,matisse_dance.bmp
 31,Henri Matisse,Blue Nude II,1952????,MODERNISM,LEGENDARY,Oil,,116,89,matisse_blue.bmp
 32,Henri Matisse,Woman with a Hat,1905????,FAUVISM,LEGENDARY,Oil,,31,24,matisse_woman.bmp
@@ -56,10 +56,10 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 54,Jackson Pollock,"Number 11, 1952",1954????,ABSTRACT,LEGENDARY,Oil,,210,490,pollock_number11.bmp
 55,Jackson Pollock,"One: Number 31, 1950",1950????,ABSTRACT,LEGENDARY,Oil,,270,530,pollock_one.bmp
 56,Jackson Pollock,Convergence,1952????,ABSTRACT,ULTRA,Oil,,393.7,237.5,pollock_convergence.bmp
-57,Jackson Pollock,The Deep,1953????,ABSTRACT,ULTRA,"Oil, Enamel",,150.7,220.4,pollock_deep.bmp
+57,Jackson Pollock,The Deep,1953????,ABSTRACT,ULTRA,"Oil, Enamel",,220.4,150.2,pollock_deep.bmp
 58,Gustav Klimt,The Kiss,1908????,ABSTRACT,MASTERPIECE,"Gold, Oil",,180,180,klimt_kiss.bmp
 59,Gustav Klimt,Portrait of Adele Bloch-Bauer I,1907????,ABSTRACT,LEGENDARY,"Gold, Oil",,138,138,klimt_portrait.bmp
-60,Gustav Klimt,Beethoven Frieze,1902????,ABSTRACT,ULTRA,"Casein paint, Glod, Graphite",,215,3410,klimt_beethoven.bmp
+60,Gustav Klimt,The Maiden,1913????,ABSTRACT,ULTRA,Oil,,190,200,klimt_maiden.bmp
 61,Gustav Klimt,The Three Ages of Woman,1905????,ABSTRACT,ULTRA,Oil,,180,180,klimt_three.bmp
 62,Gustav Klimt,Death and Life,1916????,ABSTRACT,ULTRA,Oil,,178,198,klimt_death.bmp
 63,Paul Cezanne,The Large Bathers,1905????,POST-IMPRESSIONISM,LEGENDARY,Oil,,210,251,cezanne_large.bmp
@@ -97,9 +97,28 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 95,Edvard Munch,Anxiety,1894????,ABSTRACT,ULTRA,Oil,,94,74,munch_anxiety.bmp
 96,Edvard Munch,Melancholy,1891????,ABSTRACT,ULTRA,Oil,,72,98,munch_melancholy.bmp
 97,Edvard Munch,Dance in the Sickroom,1893????,EXPRESSIONISM,ULTRA,Oil,,134.5,160,munch_dance.bmp
-98,Pierre-Auguste Renoir,Bal du moulin de la Galette,1876????,IMPRESSIONISM,MASTERPIECE,Oil,,131,175,p
-99,Grant Wood,American Gothic,1930????,MODERNISM,MASTERPIECE,Oil,,74,62,p
-100,Georges Seurat,A Sunday Afternoon on the Island of La Grande Jatte,1886????,POINTISM,MASTERPIECE,Oil,,208,310,p
-101,Rene Magritte,The Son of Man,1964????,SURREALISM,MASTERPIECE,Oil,,116,89,p
-102,Edward Hopper,Nighthawks,1942????,MODERNISM,MASTERPIECE,Oil,,84.1,152.4,p
-103,James McNeill Whistler,Whistler's Mother,1871????,PORTRAIT,MASTERPIECE,Oil,,144,162,p
+98,Pierre-Auguste Renoir,Bal du moulin de la Galette,1876????,IMPRESSIONISM,MASTERPIECE,Oil,,131,175,renoir_dance.bmp
+99,Pierre-Auguste Renoir,Luncheon of the Boating Party,1881????,IMPRESSIONISM,LEGENDARY,Oil,,130,173,renoir_luncheon.bmp
+100,Pierre-Auguste Renoir,Two Sisters (On the Terrace),1881????,IMPRESSIONISM,LEGENDARY,Oil,,100.5,81,renoir_two.bmp
+101,Pierre-Auguste Renoir,The Umbrellas,1881????,IMPRESSIONISM,ULTRA,Oil,,180.3,114.9,renoir_umbrellas.bmp
+102,Pierre-Auguste Renoir,Girl With a Watering Can,1876????,IMPRESSIONISM,ULTRA,Oil,,100,73,renoir_girl.bmp
+103,Roy Lichtenstein,Whaam!,1963????,POP ART,ULTRA,Oil,,170,400,lichtenstein_whaam.bmp
+104,Roy Lichtenstein,Drowning Girl,1963????,POP ART,ULTRA,Oil,,172,170,lichtenstein_drowning.bmp
+105,Roy Lichtenstein,Look Mickey,1961????,POP ART,ULTRA,Oil,,121.9,174.3,lichtenstein_look.bmp
+106,Roy Lichtenstein,Hopeless,1963????,POP ART,ULTRA,Oil,,111.8,111.8,lichtenstein_hopeless.bmp
+107,Roy Lichtenstein,Masterpiece,1962????,POP ART,ULTRA,Oil,,137,137,lichtenstein_masterpiece.bmp
+108,Raphael,Sistine Madonna,1512????,PORTRAIT,LEGENDARY,Oil,,104,77,raphael_sistine.bmp
+109,Raphael,The Transfiguration,1520????,HISTORIC,LEGENDARY,Oil,,405,278,raphael_transfiguration.bmp
+110,Raphael,Saint George and the Dragon,1506????,HISTORIC,ULTRA,Oil,,28,22,raphael_saint.bmp
+111,Raphael,Portrait of Pope Julius II,1511????,PORTRAIT,ULTRA,Oil,,108,81,raphael_portrait.bmp
+112,Raphael,Madonna and Child with the Book,1503????,PORTRAIT,ULTRA,Oil,,55,45,raphael_madonna.bmp
+113,Marc Chagall,I and the Village,1911????,SURREALISM,ULTRA,Oil,,192,151,chagall_village.bmp
+114,Marc Chagall,Self Portrait with Seven Fingers,1913????,SURREALISM,ULTRA,Oil,,128,107,chagall_self.bmp
+115,Marc Chagall,Over Vitebsk,1915????,SURREALISM,ULTRA,Oil,,67,93,chagall_over.bmp
+116,Marc Chagall,The Poet Reclining,1915????,SURREALISM,ULTRA,Oil,,77,77.5,chagall_poet.bmp
+117,Marc Chagall,White Crucifixion,1938????,SURREALISM,ULTRA,Oil,,155,140,chagall_white.bmp
+118,Grant Wood,American Gothic,1930????,MODERNISM,MASTERPIECE,Oil,,74,62,p
+119,Georges Seurat,A Sunday Afternoon on the Island of La Grande Jatte,1886????,POINTISM,MASTERPIECE,Oil,,208,310,p
+120,Rene Magritte,The Son of Man,1964????,SURREALISM,MASTERPIECE,Oil,,116,89,p
+121,Edward Hopper,Nighthawks,1942????,MODERNISM,MASTERPIECE,Oil,,84.1,152.4,p
+122,James McNeill Whistler,Whistler's Mother,1871????,PORTRAIT,MASTERPIECE,Oil,,144,162,p

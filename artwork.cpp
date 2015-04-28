@@ -17,8 +17,8 @@ artwork::artwork(int work_id,
 	ID = work_id;
 	_genre = work_genre;
 	title = work_title;
-	shared_ptr<artist> _artist = work_artist;
-	_rarity = work_rarity;
+	artist_ptr = work_artist;
+	Rarity = work_rarity;
 	forgery = work_forgery;
 	condition = work_condition;
 	height = work_height;

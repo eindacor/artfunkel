@@ -30,7 +30,7 @@ art_db::art_db(const char* artists_path,
 		vector<string> row = paintings_file.getRow(i);
 
 		int work_id(std::stoi(row.at(0)));
-		shared_ptr<artist> work_artist(lookupArtistByName(row.at(1)));
+		shared_ptr<artist> work_artist = lookupArtistByName(row.at(1));
 		string work_title(row.at(2));
 		jep::date work_date(row.at(3));
 		genre work_genre(genreFromString(row.at(4)));
@@ -63,8 +63,9 @@ void art_db::printArtist(shared_ptr<artist> target) const
 		<< " - " << target->getDeathDateString(false) << ")" << endl;
 }
 
-void art_db::printArtwork(shared_ptr<artwork> target) const
+void art_db::printArtwork(const artwork &target) const
 {
-	cout << target->getID() << ": " << target->getTitle() << " by " << target->getArtistName() << endl;
-	cout << "\t" << target->getHeight() << "x" << target->getWidth() << ", " << getDateString(target->getDate(), false) << ", $" << target->getValue() << "k" << endl;
+	cout << target.getID() << ": " << target.getTitle() << " by " << target.getArtistName() << endl;
+	cout << "\t" << target.getHeight() << "x" << target.getWidth() << ", " << getDateString(target.getDate(), false) << ", $" << target.getValue() << "k" << endl;
+	cout << "Rarity: " << target.getRarity() << endl;
 }

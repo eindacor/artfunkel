@@ -14,13 +14,14 @@ public:
 
 	shared_ptr<artist> lookupArtistByName(string name) const { return artists.at(name); }
 	//replace below functions to take string and look up artist
-	void printArtist(shared_ptr<artist>) const;
-	void printArtwork(shared_ptr<artwork>) const;
+	void printArtist(shared_ptr<artist> artist_ptr) const;
+	void printArtwork(const artwork &artwork_ptr) const;
 
 	void printAllArtists() const { for (auto i : artists) printArtist(i.second); }
-	void printAllArtwork() const { for (auto i : artworks) printArtwork(i.second); }
+	void printAllArtwork() const { for (auto i : artworks) printArtwork(*(i.second)); }
 
 	shared_ptr<artwork> getArtwork(int n) { return artworks.at(n); }
+	int getArtworkCount() const { return artworks.size(); }
 
 private:
 	map<string, shared_ptr<artist> > artists;

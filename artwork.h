@@ -25,15 +25,16 @@ public:
 	genre getGenre() const { return _genre; }
 	double getValue() const { return value; }
 	string getTitle() const { return title; }
-	const shared_ptr<artist> getArtist() const { return _artist; }
-	string getArtistName() const { return _artist->getName(); }
+	const shared_ptr<artist> getArtist() const { return artist_ptr; }
+	string getArtistName() const { return artist_ptr->getName(); }
+	rarity getRarity() const { return Rarity; }
 	bool isForgery() const { return forgery; }
 	float getHeight() const { return height; }
 	float getWidth() const { return width; }
 	jep::date getDate() const { return date; }
 	shared_ptr<painting_surface> getSurface() { return surface; }
 
-	void setValue() { value = lookupValue(_rarity); }
+	void setValue() { value = lookupValue(Rarity); }
 
 	void test(genre work_genre);
 
@@ -42,8 +43,8 @@ private:
 	double value;
 	genre _genre;
 	string title;
-	shared_ptr<artist> _artist;
-	rarity _rarity;
+	shared_ptr<artist> artist_ptr;
+	rarity Rarity;
 	bool forgery;
 	float condition;
 	float height;

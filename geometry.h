@@ -10,6 +10,8 @@ public:
 	~painting_surface(){};
 
 	void draw() const;
+	void moveRelative(mat4 translation_matrix) { model_matrix = model_matrix * translation_matrix; }
+	void moveAbsolute(mat4 position_matrix) { model_matrix = position_matrix; }
 
 private:
 	shared_ptr<ogl_context> context;
