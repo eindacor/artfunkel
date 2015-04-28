@@ -25,6 +25,12 @@ art_db::art_db(const char* artists_path,
 		artists.insert(std::pair<string, shared_ptr<artist> >(artist_name, new_artist));
 	}
 
+	for (int i = 0; i < 17; i++)
+		genre_counts[(genre)i] = 0;
+
+	for (int i = 0; i < 7; i++)
+		rarity_counts[(rarity)i] = 0;
+
 	for (int i = 1; i < paintings_file.getRowCount(); i++)
 	{
 		vector<string> row = paintings_file.getRow(i);
@@ -51,10 +57,13 @@ art_db::art_db(const char* artists_path,
 			work_forgery, work_condition, work_height, work_width, work_image_name, work_date, work_surface));
 
 		artworks.insert(std::pair<int, shared_ptr<artwork> >(work_id, new_artwork));
+		genre_counts[work_genre] += 1;
+		rarity_counts[work_rarity] += 1;
 	}
 
 	printAllArtists();
 	printAllArtwork();
+	printCounts();
 }
 
 void art_db::printArtist(shared_ptr<artist> target) const
@@ -68,4 +77,13 @@ void art_db::printArtwork(const artwork &target) const
 	cout << target.getID() << ": " << target.getTitle() << " by " << target.getArtistName() << endl;
 	cout << "\t" << target.getHeight() << "x" << target.getWidth() << ", " << getDateString(target.getDate(), false) << ", $" << target.getValue() << "k" << endl;
 	cout << "Rarity: " << target.getRarity() << endl;
+}
+
+void art_db::printCounts() const
+{
+	for (auto i : genre_counts)
+		cout << stringFromGenre(i.first) << ": " << i.second << endl;
+
+	for (auto i : rarity_counts)
+		cout << stringFromRarity(i.first) << ": " << i.second << endl;
 }

@@ -10,7 +10,8 @@ int main()
 
 	int id_count = 0;
 
-	string data_path("J:\\GitHub\\artfunkel\\");
+	string data_path("C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\");
+	//string data_path("J:\\GitHub\\artfunkel\\");
 	string paintings_path = data_path + "paintings.csv";
 	string artists_path = data_path + "artists.csv";
 	string images_path = data_path + "images\\paintings\\";
@@ -38,10 +39,10 @@ int main()
 	for (int i = 0; i < art_count; i++)
 	{
 		shared_ptr<artwork> target = artist_database.getArtwork(i);
-		if (target->getRarity() == LEGENDARY)
+		if (true)
+		//if (target->getRarity() == LEGENDARY)
 		{
 			float buffer = (previous_width / 200.0f) + 1.0f + (target->getWidth() / 200.0f);
-			artist_database.printArtwork(*target);
 			paintings_to_display.push_back(target);
 			if (display_count % 10 == 0)
 			{
@@ -57,7 +58,6 @@ int main()
 			previous_width = target->getWidth();
 			target->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, 0.0f, z_offset)));
 			display_count++;
-			cout << "buffer: " << buffer << endl;
 		}
 	}
 

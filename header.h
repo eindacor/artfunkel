@@ -35,9 +35,9 @@ using glm::vec4;
 using glm::vec3;
 using glm::mat4;
 
-
-
 string getDateString(const jep::date &d, bool include_day);
 double lookupValue(rarity work_rarity);
+string stringFromRarity(rarity r);
+string stringFromGenre(genre g);
 
 #endif

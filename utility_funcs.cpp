@@ -110,6 +110,53 @@ genre genreFromString(string s)
 	return OTHER;
 }
 
+string stringFromGenre(genre g)
+{
+	if (g == ABSTRACT)
+		return "ABSTRACT";
+
+	if (g == POST_IMPRESSIONISM)
+		return "POST_IMPRESSIONISM";
+
+	if (g == OTHER)
+		return "OTHER";
+
+	if (g == IMPRESSIONISM)
+		return "IMPRESSIONISM";
+
+	if (g == SURREALISM)
+		return "SURREALISM";
+
+	if (g == DADAISM)
+		return "DADAISM";
+
+	if (g == PORTRAIT)
+		return "PORTRAIT";
+
+	if (g == SCENE)
+		return "SCENE";
+
+	if (g == MODERNISM)
+		return "MODERNISM";
+
+	if (g == POINTISM)
+		return "POINTISM";
+
+	if (g == SKETCH)
+		return "SKETCH";
+
+	if (g == POP_ART)
+		return "POP ART";
+
+	if (g == HISTORIC)
+		return "HISTORIC";
+
+	if (g == LANDSCAPE)
+		return "LANDSCAPE";
+
+	return "Other";
+}
+
 rarity rarityFromString(string s)
 {
 	if (s == "COMMON")
@@ -131,6 +178,29 @@ rarity rarityFromString(string s)
 		return MASTERPIECE;
 
 	return UNKNOWN_RARITY;
+}
+
+string stringFromRarity(rarity r)
+{
+	if (r == COMMON)
+		return "Common";
+
+	if (r == UNCOMMON)
+		return "Uncommon";
+
+	if (r == RARE)
+		return "Rare";
+
+	if (r == ULTRA)
+		return "Ultra";
+
+	if (r == LEGENDARY)
+		return "Legendary";
+
+	if (r == MASTERPIECE)
+		return "Masterpiece";
+
+	return "Unknown";
 }
 
 #endif

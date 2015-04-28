@@ -19,6 +19,7 @@ public:
 
 	void printAllArtists() const { for (auto i : artists) printArtist(i.second); }
 	void printAllArtwork() const { for (auto i : artworks) printArtwork(*(i.second)); }
+	void printCounts() const;
 
 	shared_ptr<artwork> getArtwork(int n) { return artworks.at(n); }
 	int getArtworkCount() const { return artworks.size(); }
@@ -26,6 +27,9 @@ public:
 private:
 	map<string, shared_ptr<artist> > artists;
 	map<int, shared_ptr<artwork> > artworks;
+
+	map<rarity, int> rarity_counts;
+	map<genre, int> genre_counts;
 };
 
 #endif

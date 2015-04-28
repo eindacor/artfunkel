@@ -117,8 +117,26 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 115,Marc Chagall,Over Vitebsk,1915????,SURREALISM,ULTRA,Oil,,67,93,chagall_over.bmp
 116,Marc Chagall,The Poet Reclining,1915????,SURREALISM,ULTRA,Oil,,77,77.5,chagall_poet.bmp
 117,Marc Chagall,White Crucifixion,1938????,SURREALISM,ULTRA,Oil,,155,140,chagall_white.bmp
+118,Rene Magritte,The Son of Man,1964????,SURREALISM,MASTERPIECE,Oil,,116,89,magritte_son.bmp
+119,Rene Magritte,The Trechery of Images,1929????,SURREALISM,ULTRA,Oil,,63.5,94,magritte_trechery.bmp
+120,Rene Magritte,Golcanda,1953????,SURREALISM,ULTRA,Oil,,81,100,magritte_golcanda.bmp
+121,Rene Magritte,Not to be Reproduced,1937????,SURREALISM,ULTRA,Oil,,81.3,65,magritte_not.bmp
+122,Rene Magritte,The Human Condition,1933????,SURREALISM,ULTRA,Oil,,100,81,magritte_human.bmp
+123,Johannes Vermeer,Girl with a Pearl Earring,1665????,PORTRAIT,LEGENDARY,Oil,,44,39,vermeer_girl.bmp
+124,Johannes Vermeer,The Kitchen Maid,1658????,PORTRAIT,ULTRA,Oil,,46,41,vermeer_kitchen.bmp
+125,Johannes Vermeer,The Art of Painting,1666????,HISTORIC,ULTRA,Oil,,130,110,vermeer_art.bmp
+126,Johannes Vermeer,The Concert,1664????,SCENE,ULTRA,Oil,,69,63,vermeer_concert.bmp
+127,Johannes Vermeer,The Astronomer,1668????,PORTRAIT,ULTRA,Oil,,51,45,vermeer_astronomer.bmp
+128,Georges Seurat,A Sunday Afternoon on the Island of La Grande Jatte,1886????,POINTISM,MASTERPIECE,Oil,,208,310,seurat_sunday.bmp
+129,Georges Seurat,Bathers at Asnieres,1884????,POINTISM,ULTRA,Oil,,201,300,seurat_bathers.bmp
+130,Georges Seurat,The Circus,1891????,IMPRESSIONISM,ULTRA,Oil,,185,142,seurat_circus.bmp
+131,Georges Seurat,Can-Can,1890????,POINTISM,ULTRA,Oil,,172,140,seurat_can.bmp
+132,Georges Seurat,The Lighthouse at Honfleur,1886????,POINTISM,RARE,Oil,,67,82,seurat_lighthouse.bmp
+133,Mark Rothko,Untitled (Black on Gray),1970????,ABSTRACT,ULTRA,Oil,,203.3,175.5,rothko_untitled.bmp
+134,Mark Rothko,"Orange, Red, Yellow",1961????,ABSTRACT,ULTRA,Oil,,236.2,206.4,rothko_orange.bmp
+135,Mark Rothko,No. 1 (Royal Red and Blue),1954????,ABSTRACT,ULTRA,Oil,,288.9,171.5,rothko_no.bmp
+136,Mark Rothko,Four Darks in Red,1958????,ABSTRACT,ULTRA,Oil,,259.1,294.6,rothko_four.bmp
+137,Mark Rothko,No. 61 (Rust and Blue),1951????,ABSTRACT,ULTRA,Oil,,115,92,rothko_rust.bmp
 118,Grant Wood,American Gothic,1930????,MODERNISM,MASTERPIECE,Oil,,74,62,p
-119,Georges Seurat,A Sunday Afternoon on the Island of La Grande Jatte,1886????,POINTISM,MASTERPIECE,Oil,,208,310,p
-120,Rene Magritte,The Son of Man,1964????,SURREALISM,MASTERPIECE,Oil,,116,89,p
-121,Edward Hopper,Nighthawks,1942????,MODERNISM,MASTERPIECE,Oil,,84.1,152.4,p
-122,James McNeill Whistler,Whistler's Mother,1871????,PORTRAIT,MASTERPIECE,Oil,,144,162,p
+119,Edward Hopper,Nighthawks,1942????,MODERNISM,MASTERPIECE,Oil,,84.1,152.4,p
+120,James McNeill Whistler,Whistler's Mother,1871????,PORTRAIT,MASTERPIECE,Oil,,144,162,p
