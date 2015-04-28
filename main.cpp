@@ -17,15 +17,16 @@ int main()
 	string images_path = data_path + "images\\paintings\\";
 
 	string vert_file = data_path + "vertex_shader.glsl";
-	string frag_file = data_path + "fragment_shader.glsl";
+	string frag_file = data_path + "fragment_shader.glsl"; 
 
+	float eye_level = 1.65f;
 	//shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1240, 960));
-	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 700, 700));
+	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1020, 700));
 	shared_ptr<key_handler> keys(new key_handler(context));
-	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, vec3(0.0f, 0.0f, 5.0f)));
+	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, vec3(0.0f, eye_level, 5.0f)));
 
-	art_db artist_database(artists_path.c_str(), paintings_path.c_str(), images_path.c_str(), context, camera);
-	int art_count = artist_database.getArtworkCount();
+	shared_ptr<art_db> artist_database(new art_db(artists_path.c_str(), paintings_path.c_str(), images_path.c_str(), context, camera));
+	int art_count = artist_database->getArtworkCount();
 
 	glfwSetTime(0);
 	float render_fps = 60.0f;
@@ -36,10 +37,19 @@ int main()
 	int display_count = 0;
 	vector< shared_ptr<artwork> > paintings_to_display;
 
-	list< shared_ptr<artwork> > target_list = artist_database.getWorksByRarity(UNKNOWN_RARITY, false);
+	list< shared_ptr<artwork> > target_list = artist_database->getWorksByRarity(ULTRA, false);
 	for (auto i : target_list)
 	{
-		float buffer = (previous_width / 200.0f) + 1.0f + (i->getWidth() / 200.0f);
+		//center on eye level, unless painting is within .5 of floor
+		float y_offset = 0.0f;
+		float min_distance_from_floor = .5f;
+		if ((i->getHeight() * .0067f) + min_distance_from_floor > eye_level)
+			y_offset = (i->getHeight() / 200.0f) + min_distance_from_floor;
+
+		else y_offset = eye_level - (i->getHeight() / 600.0f);
+
+		float space_between = 2.0f;
+		float buffer = (previous_width / 200.0f) + space_between + (i->getWidth() / 200.0f);
 		paintings_to_display.push_back(i);
 		if (display_count % 10 == 0)
 		{
@@ -53,36 +63,9 @@ int main()
 			x_offset += buffer;
 
 		previous_width = i->getWidth();
-		i->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, 0.0f, z_offset)));
+		i->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, z_offset)));
 		display_count++;
 	}
-
-	/*
-	for (int i = 0; i < art_count; i++)
-	{
-		shared_ptr<artwork> target = artist_database.getArtwork(i);
-		//if (true)
-		if (target->getArtist()->getName() == "Vincent van Gogh")
-		{
-			float buffer = (previous_width / 200.0f) + 1.0f + (target->getWidth() / 200.0f);
-			paintings_to_display.push_back(target);
-			if (display_count % 10 == 0)
-			{
-				x_offset = 0.0f;
-				z_offset -= 4.0f;
-				previous_width = 0.0f;
-				buffer = 0.0f;
-			}
-
-			else
-				x_offset += buffer;
-
-			previous_width = target->getWidth();
-			target->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, 0.0f, z_offset)));
-			display_count++;
-		}
-	}
-	*/
 
 	do
 	{

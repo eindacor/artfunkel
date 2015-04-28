@@ -166,3 +166,13 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 164,Francisco Goya,La Maja Desnuda,1800????,PORTRAIT,ULTRA,Oil,,97,190,goya_maja.bmp
 165,Francisco Goya,La Maja Vestida,1805????,PORTRAIT,ULTRA,Oil,,97,190,goya_majav.bmp
 166,Francisco Goya,Witches Sabbath (The Great He-Goat),1823????,SCENE,ULTRA,Oil,,140,438,goya_witches.bmp
+167,Titian,Bacchus and Ariadne,1523????,HISTORIC,ULTRA,Oil,,175,190,p
+168,Titian,Assumption of the Virgin,1518????,SCENE,LEGENDARY,Oil,,690,360,p
+169,Titian,Diana and Actaeon,1559????,SCENE,RARE,Oil,,185,202,p
+170,Titian,Venus of Urbino,1538????,PORTRAIT,ULTRA,Oil,,119,165,p
+171,Titian,Sacred and Profane Love,1514????,SCENE,RARE,Oil,,118,279,p
+172,Norman Rockwell,Freedom of Speech,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_freedom.bmp
+173,Norman Rockwell,Freedom of Religion,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_religion.bmp
+174,Norman Rockwell,Freedom from Want,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_want.bmp
+175,Norman Rockwell,Freedom from Fear,1943????,FOLK ART,ULTRA,OIl,,116.2,90,rockwell_fear.bmp
+176,Norman Rockwell,Saying Grace,1951????,FOLK ART,ULTRA,Oil,,110,100,rockwell_saying.bmp

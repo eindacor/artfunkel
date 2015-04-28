@@ -21,9 +21,13 @@ public:
 	void printAllArtwork() const { for (auto i : artworks) printArtwork(*(i.second)); }
 	void printCounts() const;
 
-	list< shared_ptr<artwork> > getWorksByGenre(genre g, bool match=true) const;
+	list < shared_ptr<artwork> > getWorksByGenre(genre g, bool match=true) const;
 	list < shared_ptr<artwork> > getWorksByRarity(rarity r, bool match = true) const;
 	list < shared_ptr<artwork> > getWorksByArtist(string name, bool match = true) const;
+
+	list<int> getWorkIndicesByGenre(genre g, bool match = true) const;
+	list<int> getWorkIndicesByRarity(rarity r, bool match = true) const;
+	list<int> getWorkIndicesByArtist(string name, bool match = true) const;
 
 	shared_ptr<artwork> getArtwork(int n) { return artworks.at(n); }
 	int getArtworkCount() const { return artworks.size(); }
