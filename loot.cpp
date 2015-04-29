@@ -1,16 +1,24 @@
 #include "loot.h"
+#include "header.h"
+#include "artwork.h"
 
 vector< shared_ptr<artwork> > loot_generator::generateArtworks(int count,
-	map<rarity, int> rarity_proportions,
-	map<genre, int> genre_proportions //,
-	//map<string, int> artist_proportions
+	const map<rarity, unsigned int> &rarity_proportions
 	) const
 {
 	vector< shared_ptr<artwork> > loot_vec;
 
 	for (int i = 0; i < count; i++)
 	{
-		genre random_genre = jep::catRoll<genre>(genre_proportions);
+		rarity random_rarity= jep::catRoll<rarity>(rarity_proportions);
+		list< shared_ptr<artwork> > rarity_selection = artist_database->getWorksByRarity(random_rarity);
+
+		list< shared_ptr<artwork> >::const_iterator it = rarity_selection.begin();
+		for (int i = 0; i < jep::intRoll(0, rarity_selection.size()); i++)
+			it++;
+
+		loot_vec.push_back(*it);
 	}
-	
+
+	return loot_vec;
 }
