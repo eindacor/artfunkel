@@ -10,7 +10,7 @@ public:
 	loot_generator(shared_ptr<art_db> database){ artist_database = database; }
 	~loot_generator(){};
 
-	vector< shared_ptr<artwork> > generateArtworks(int count,
+	vector< shared_ptr<artwork_instance> > generateArtworks(int count,
 		const map<rarity, unsigned int> &rarity_proportions) const;
 
 private:

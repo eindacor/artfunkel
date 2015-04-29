@@ -5,8 +5,8 @@
 #include "utility_funcs.h"
 #include "loot.h"
 
-//modify function to make copies of each painting for display, so the offset distances do not effect all future occurances of the painting;
-void offsetArtworks(vector< shared_ptr<artwork> > &art_vec, float eye_level)
+//this function takes a vector of instances and modifies their model matrices for proper display
+void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_level)
 {
 	float x_offset = 0.0f;
 	float z_offset = 0.0f;
@@ -37,7 +37,7 @@ void offsetArtworks(vector< shared_ptr<artwork> > &art_vec, float eye_level)
 			x_offset += buffer;
 
 		previous_width = i->getWidth();
-		i->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, z_offset)));
+		i->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, z_offset)));
 		//i->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, -1.0f * float(display_count))));
 		display_count++;
 	}
@@ -49,8 +49,8 @@ int main()
 
 	int id_count = 0;
 
-	//string data_path("C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\");	//LAPTOP
-	string data_path("J:\\GitHub\\artfunkel\\");								//DESKTOP
+	string data_path("C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\");		//LAPTOP
+	//string data_path("J:\\GitHub\\artfunkel\\");								//DESKTOP
 	string paintings_path = data_path + "paintings.csv";
 	string artists_path = data_path + "artists.csv";
 	string images_path = data_path + "images\\paintings\\";
@@ -59,8 +59,8 @@ int main()
 	string frag_file = data_path + "fragment_shader.glsl"; 
 
 	float eye_level = 1.65f;
-	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1240, 960));		//DESKTOP
-	//shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1020, 700));	//LAPTOP
+	//shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1240, 960));		//DESKTOP
+	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1020, 700));	//LAPTOP
 	shared_ptr<key_handler> keys(new key_handler(context));
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, vec3(0.0f, eye_level, 5.0f)));
 
@@ -75,10 +75,10 @@ int main()
 	map<rarity, unsigned> rarity_map = {
 		std::pair<rarity, int>(MASTERPIECE, 1),
 		std::pair<rarity, int>(LEGENDARY, 9),
-		std::pair<rarity, int>(ULTRA, 90)
+		std::pair<rarity, int>(ULTRA, 900)
 	};
 
-	vector< shared_ptr<artwork> > paintings_to_display = loot.generateArtworks(20, rarity_map);
+	vector< shared_ptr<artwork_instance> > paintings_to_display = loot.generateArtworks(100, rarity_map);
 
 	for (auto i : paintings_to_display)
 		cout << i->getTitle() << endl;
@@ -140,7 +140,7 @@ int main()
 			camera->updateCamera();
 			//modify draw() functions to recieve a camera and context, to allow for toggling between each
 			for (auto i : paintings_to_display)
-				i->getSurface()->draw();			
+				i->draw();			
 
 			context->swapBuffers();
 			glfwSetTime(0.0f);

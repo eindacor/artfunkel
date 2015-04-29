@@ -55,10 +55,10 @@ art_db::art_db(const char* artists_path,
 
 		shared_ptr<painting_surface> work_surface(new painting_surface(work_width, work_height, context, camera, texture_path.c_str()));
 
-		shared_ptr<artwork> new_artwork(new artwork(work_id, work_title, work_artist, work_genre, work_rarity, 
-			work_forgery, work_condition, work_height, work_width, work_image_name, work_date, work_surface));
+		shared_ptr<artwork_data> new_data(new artwork_data(work_id, work_title, work_artist, work_genre, work_rarity,
+			work_height, work_width, work_image_name, work_date, work_surface));
 
-		artworks.insert(std::pair<int, shared_ptr<artwork> >(work_id, new_artwork));
+		artworks.insert(std::pair<int, shared_ptr<artwork_data> >(work_id, new_data));
 		genre_counts[work_genre] += 1;
 		rarity_counts[work_rarity] += 1;
 	}
@@ -71,7 +71,7 @@ void art_db::printArtist(shared_ptr<artist> target) const
 		<< " - " << target->getDeathDateString(false) << ")" << endl;
 }
 
-void art_db::printArtwork(const artwork &target) const
+void art_db::printArtwork(const artwork_data &target) const
 {
 	cout << target.getID() << ": " << target.getTitle() << " by " << target.getArtistName() << endl;
 	cout << "\t" << target.getHeight() << "x" << target.getWidth() << ", " << getDateString(target.getDate(), false) << ", $" << target.getValue() << "k" << endl;
@@ -87,31 +87,31 @@ void art_db::printCounts() const
 		cout << stringFromRarity(i.first) << ": " << i.second << endl;
 }
 
-list< shared_ptr<artwork> > art_db::getWorksByGenre(genre g, bool match) const
+list< shared_ptr<artwork_data> > art_db::getWorksByGenre(genre g, bool match) const
 {
-	list< shared_ptr<artwork> > found;
+	list< shared_ptr<artwork_data> > found;
 	std::for_each(artworks.cbegin(), artworks.cend(),
-		[&](const std::pair<int, shared_ptr<artwork> > &art) { 
+		[&](const std::pair<int, shared_ptr<artwork_data> > &art) {
 		if ((art.second->getGenre() == g) == match) found.push_back(art.second); });
 
 	return found;
 }
 
-list < shared_ptr<artwork> > art_db::getWorksByRarity(rarity r, bool match) const
+list < shared_ptr<artwork_data> > art_db::getWorksByRarity(rarity r, bool match) const
 {
-	list< shared_ptr<artwork> > found;
+	list< shared_ptr<artwork_data> > found;
 	std::for_each(artworks.cbegin(), artworks.cend(),
-		[&](const std::pair<int, shared_ptr<artwork> > &art) { 
+		[&](const std::pair<int, shared_ptr<artwork_data> > &art) {
 		if ((art.second->getRarity() == r) == match) found.push_back(art.second); });
 
 	return found;
 }
 
-list < shared_ptr<artwork> > art_db::getWorksByArtist(string name, bool match) const
+list < shared_ptr<artwork_data> > art_db::getWorksByArtist(string name, bool match) const
 {
-	list< shared_ptr<artwork> > found;
+	list< shared_ptr<artwork_data> > found;
 	std::for_each(artworks.cbegin(), artworks.cend(),
-		[&](const std::pair<int, shared_ptr<artwork> > &art) { 
+		[&](const std::pair<int, shared_ptr<artwork_data> > &art) {
 		if ((art.second->getArtistName() == name) == match) found.push_back(art.second); });
 
 	return found;

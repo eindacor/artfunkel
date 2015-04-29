@@ -21,7 +21,8 @@ enum rarity { COMMON, UNCOMMON, RARE, ULTRA, LEGENDARY, MASTERPIECE, UNKNOWN_RAR
 #include <gtc/matrix_transform.hpp>
 
 class artist;
-class artwork;
+class artwork_data;
+class artwork_instance;
 
 using std::vector;
 using std::list;

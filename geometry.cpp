@@ -7,9 +7,6 @@ painting_surface::painting_surface(
 	context = ogl_con;
 	camera = ogl_cam;
 
-	model_matrix = mat4(1.0f);
-
-	centroid = vec3(0.0f, 0.0f, 0.0f);
 	float total_height = height / 100.0f;
 	float total_width = width / 100.0f;
 	
@@ -39,7 +36,7 @@ painting_surface::painting_surface(
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(ogl_con, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 }
 
-void painting_surface::draw() const
+void painting_surface::draw(const mat4 &model_matrix) const
 {
 	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
 	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
