@@ -6,9 +6,7 @@
 
 art_db::art_db(const char* artists_path, 
 			const char* paintings_path, 
-			const char* image_directory, 
-			shared_ptr<ogl_context> context, 
-			shared_ptr<ogl_camera> camera)
+			const char* image_directory)
 {
 	jep::csv_file paintings_file(paintings_path);
 	jep::csv_file artists_file(artists_path);
@@ -51,12 +49,10 @@ art_db::art_db(const char* artists_path,
 		bool work_forgery = false;
 		float work_condition = 1.0f;
 
-		string texture_path = image_directory + work_image_name;
-
-		shared_ptr<painting_surface> work_surface(new painting_surface(work_width, work_height, context, camera, texture_path.c_str()));
+		string image_path = image_directory + work_image_name;
 
 		shared_ptr<artwork_data> new_data(new artwork_data(work_id, work_title, work_artist, work_genre, work_rarity,
-			work_height, work_width, work_image_name, work_date, work_surface));
+			work_height, work_width, image_path, work_date));
 
 		artworks.insert(std::pair<int, shared_ptr<artwork_data> >(work_id, new_data));
 		genre_counts[work_genre] += 1;
@@ -80,11 +76,13 @@ void art_db::printArtwork(const artwork_data &target) const
 
 void art_db::printCounts() const
 {
+	cout << "Genre summary: " << endl;
 	for (auto i : genre_counts)
-		cout << stringFromGenre(i.first) << ": " << i.second << endl;
+		cout << "\t" << stringFromGenre(i.first) << ": " << i.second << endl;
 
+	cout << "Rarity summary: " << endl;
 	for (auto i : rarity_counts)
-		cout << stringFromRarity(i.first) << ": " << i.second << endl;
+		cout << "\t" << stringFromRarity(i.first) << ": " << i.second << endl;
 }
 
 list< shared_ptr<artwork_data> > art_db::getWorksByGenre(genre g, bool match) const

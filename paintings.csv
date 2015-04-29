@@ -146,7 +146,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 144,Keith Haring,"Untitled, 1985",1985????,POP ART,ULTRA,Oil,,325.4,335.3,haring_untitled1985.bmp
 145,Keith Haring,"Untitled, 1984",1984????,POP ART,ULTRA,Oil,,304.8,304.8,haring_untitled1984.bmp
 146,Jasper Johns,Flag,1955????,DADAISM,ULTRA,Oil,,107,154,johns_flag.bmp
-147,Jasper Johns,White Flage,1955????,DADAISM,ULTRA,Oil,,199,310,johns_white.bmp
+147,Jasper Johns,White Flag,1955????,DADAISM,ULTRA,Oil,,199,310,johns_white.bmp
 148,Jasper Johns,Three Flags,1958????,DADAISM,ULTRA,Oil,,78.3,115.6,johns_three.bmp
 149,Jasper Johns,False Start,1959????,ABSTRACT,ULTRA,Oil,,171,137,johns_false.bmp
 150,Jasper Johns,Numbers in Colors,1959????,ABSTRACT,ULTRA,Oil,,169,126,johns_numbers.bmp
@@ -176,3 +176,46 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 174,Norman Rockwell,Freedom from Want,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_want.bmp
 175,Norman Rockwell,Freedom from Fear,1943????,FOLK ART,ULTRA,OIl,,116.2,90,rockwell_fear.bmp
 176,Norman Rockwell,Saying Grace,1951????,FOLK ART,ULTRA,Oil,,110,100,rockwell_saying.bmp
+177,Peter Paul Rubens,Massacre of the Innocents,1612????,SCENE,ULTRA,Oil,,142,182,p
+178,Peter Paul Rubens,The Descent from the Cross,1614????,SCENE,RARE,Oil,,420.5,320,p
+179,Peter Paul Rubens,common test,1983????,DADAISM,COMMON,Oil,,100,100,p
+180,Peter Paul Rubens,uncommon test,1983????,DADAISM,UNCOMMON,Oil,,100,100,p
+181,Peter Paul Rubens,The Elevation of the Cross,1611????,SCENE,RARE,Oil,,460,340,p
+182,Willem de Kooning,Untitled V,1982????,MODERNISM,ULTRA,Oil,,203,178,p
+183,Willem de Kooning,A Tree in Naples,1960????,MODERNISM,RARE,Oil,,204,178,p
+184,Willem de Kooning,Two Women in the Country,1954????,MODERNISM,RARE,Oil,,117,104,p
+185,Willem de Kooning,Excavation,1950????,MODERNISM,RARE,Oil,,206,257,p
+186,Willem de Kooning,Woman III,1953????,MODERNISM,RARE,Oil,,170,120,p
+187,Sandro Botticelli,The Birth of Venus,1486????,HISTORIC,MASTERPIECE,Oil,,172,278,botticelli_birth.bmp
+188,Sandro Botticelli,Primavera,1482????,SCENE,LEGENDARY,Oil,,203,310,botticelli_primavera.bmp
+189,Sandro Botticelli,Mars and Venus,1483????,SCENE,ULTRA,Oil,,69,173,botticelli_mars.bmp
+190,Sandro Botticelli,Adoration of the Magi of 1475,1476????,SCENE,ULTRA,Oil,,111,134,botticelli_adoration.bmp
+191,Sandro Botticelli,Madonna and Child and Two Angels,1469????,PORTRAIT,LEGENDARY,Oil,,100,71,botticelli_madonna.bmp
+192,El Greco,View of Toledo,1600????,LANDSCAPE,ULTRA,Oil,,48,43,greco_view.bmp
+193,El Greco,The Disrobing of Christ,1579????,SCENE,ULTRA,Oil,,285,173,greco_disrobing.bmp
+194,El Greco,Opening the Fifth Seal,1614????,SCENE,RARE,Oil,,225,199,greco_opening.bmp
+195,El Greco,Laocoon,1614????,SCENE,RARE,Oil,,84,113,greco_laocoon.bmp
+196,El Greco,The Purification of the Temple,1600????,SCENE,RARE,Oil,,106,128,greco_purification.bmp
+197,Mary Cassatt,The Child's Bath,1893????,SCENE,UNCOMMON,Oil,,100,66,p
+198,Mary Cassatt,The Boating Party,1894????,IMPRESSIONISM,RARE,Oil,,90,118,p
+199,Mary Cassatt,Child In A Straw Hat,1886????,IMPRESSIONISM,UNCOMMON,Oil,,49.53,64.135,p
+200,Mary Cassatt,Little Girl in a Blue Armchair,1878????,IMPRESSIONISM,RARE,Oil,,89,129.5,p
+201,Mary Cassatt,Lilacs in a Window,1880????,IMPRESSIONISM,UNCOMMON,Oil,,50.8,61.595,p
+202,Albrecht Durer,Durer's Rhinoceros,1515????,SKETCH,ULTRA,Woodcut,,23.5,29.8,durer_rhinoceros.bmp
+203,Albrecht Durer,Melancholia I,1514????,SKETCH,RARE,Woodcut,,31,26,durer_melancholia.bmp
+204,Albrecht Durer,Self-Portrait,1500????,PORTRAIT,RARE,"Acrylic, Oil",,66,49,durer_self.bmp
+205,Albrecht Durer,Young Hare,1502????,PORTRAIT,RARE,"Watercolor, Gouache",,25,23,durer_young.bmp
+206,Albrecht Durer,Praying Hands,1508????,SKETCH,RARE,Ink,,29,19,durer_praying.bmp
+207,Jean-Michel Basquiat,Irony of Negro Policeman,1981????,EXPRESSIONISM,RARE,"Acrylic, Crayon",,183,122,basquiat_irony.bmp
+208,Jean-Michel Basquiat,Hollywood Africans,1983????,EXPRESSIONISM,RARE,"Acrylic, Crayon",,213.4,213.4,basquiat_holllywood.bmp
+209,Jean-Michel Basquiat,Bird on Money,1981????,EXPRESSIONISM,RARE,"Acrylic, Crayon",,167.5,228.5,basquiat_bird.bmp
+210,Jean-Michel Basquiat,Fishing,1981????,EXPRESSIONISM,RARE,"Acrylic, Crayon",,198.1,172.7,basquiat_fishing.bmp
+211,Jean-Michel Basquiat,Scull,1981????,EXPRESSIONISM,RARE,"Acrylic, Crayon",,207,175.9,basquiat_scull.bmp
+212,Camille Pissarro,The Hermitage at Pontoise,1867????,IMPRESSIONISM,RARE,Oil,,151,201,pissarro_hermitage.bmp
+213,Camille Pissarro,"Pont Boieldieu in Rouen, Rainy Weather",1896????,IMPRESSIONISM,RARE,Oil,,74,91,pissarro_pont.bmp
+214,Camille Pissarro,The Little Country Maid,1882????,IMPRESSIONISM,RARE,Oil,,64,53,pissarro_little.bmp
+215,Camille Pissarro,"Place du Theatre Francais, Spring",1898????,IMPRESSIONISM,RARE,Oil,,66,82,pissarro_place.bmp
+216,Camille Pissarro,"Rabbit Warren at Pontoise, Snow",1879????,IMPRESSIONISM,RARE,Oil,,9,72,pissarro_rabbit.bmp
+217,Pieter Bruegel the Elder,Hunters in the Snow,1565????,OTHER,RARE,Oil,,117,162,p
+218,Pieter Bruegel the Elder,The Triumph of Death,1562????,OTHER,RARE,Oil,,117,162,p
+219,Pieter Bruegel the Elder,"The ""Little"" Tower of Babel",1563????,OTHER,RARE,Oil,,60,74.5,p

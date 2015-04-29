@@ -118,55 +118,31 @@ genre genreFromString(string s)
 
 string stringFromGenre(genre g)
 {
-	if (g == ABSTRACT)
-		return "ABSTRACT";
-
-	if (g == POST_IMPRESSIONISM)
-		return "POST_IMPRESSIONISM";
-
-	if (g == OTHER)
-		return "OTHER";
-
-	if (g == IMPRESSIONISM)
-		return "IMPRESSIONISM";
-
-	if (g == SURREALISM)
-		return "SURREALISM";
-
-	if (g == DADAISM)
-		return "DADAISM";
-
-	if (g == PORTRAIT)
-		return "PORTRAIT";
-
-	if (g == SCENE)
-		return "SCENE";
-
-	if (g == MODERNISM)
-		return "MODERNISM";
-
-	if (g == POINTISM)
-		return "POINTISM";
-
-	if (g == SKETCH)
-		return "SKETCH";
-
-	if (g == POP_ART)
-		return "POP ART";
-
-	if (g == HISTORIC)
-		return "HISTORIC";
-
-	if (g == LANDSCAPE)
-		return "LANDSCAPE";
-
-	if (g == FAUVISM)
-		return "FAUVISM";
-
-	if (g == FOLK_ART)
-		return "FOLK ART";
-
-	return "Other";
+	switch (g)
+	{
+	case ABSTRACT: return "Abstract";
+	case EXPRESSIONISM: return "Expressionism";
+	case CONTEMPORARY: return "Contemporary";
+	case POST_IMPRESSIONISM: return "Post-Impressionism";
+	case OTHER: return "Other";
+	case IMPRESSIONISM: return "Impressionism";
+	case SURREALISM: return "Surrealism";
+	case DADAISM: return "Dadaism";
+	case PORTRAIT: return "Portrait";
+	case SCENE: return "Scene";
+	case MODERNISM: return "Modernism";
+	case POST_MODERNISM: return "Post-Modernism";
+	case POINTISM: return "Pointism";
+	case SKETCH: return "Sketch";
+	case POP_ART: return "Pop Art";
+	case HISTORIC: return "Historic";
+	case LANDSCAPE: return "Landscape";
+	case FAUVISM: return "Fauvism";
+	case FOLK_ART: return "Folk Art";
+	default: cout << "genre not found: " << g << endl;
+		return "Unknown Genre";
+	}
+	
 }
 
 rarity rarityFromString(string s)
@@ -194,25 +170,16 @@ rarity rarityFromString(string s)
 
 string stringFromRarity(rarity r)
 {
-	if (r == COMMON)
-		return "Common";
-
-	if (r == UNCOMMON)
-		return "Uncommon";
-
-	if (r == RARE)
-		return "Rare";
-
-	if (r == ULTRA)
-		return "Ultra";
-
-	if (r == LEGENDARY)
-		return "Legendary";
-
-	if (r == MASTERPIECE)
-		return "Masterpiece";
-
-	return "Unknown";
+	switch (r)
+	{
+	case COMMON: return "Common";
+	case UNCOMMON: return "Uncommon";
+	case RARE: return "Rare";
+	case ULTRA: return "Ultra";
+	case LEGENDARY: return "Legendary";
+	case MASTERPIECE: return "Masterpiece";
+	default: return "Unknown Rarity";
+	}
 }
 
 #endif

@@ -7,9 +7,7 @@ class art_db
 public:
 	art_db(const char* artists_path, 
 		const char* paintings_path, 
-		const char* image_directory, 
-		shared_ptr<ogl_context> context,
-		shared_ptr<ogl_camera> camera);
+		const char* image_directory);
 	~art_db(){};
 
 	shared_ptr<artist> lookupArtistByName(string name) const { return artists.at(name); }
@@ -28,6 +26,9 @@ public:
 	list<int> getWorkIndicesByGenre(genre g, bool match = true) const;
 	list<int> getWorkIndicesByRarity(rarity r, bool match = true) const;
 	list<int> getWorkIndicesByArtist(string name, bool match = true) const;
+
+	//devise system for keeping track of paintings already being rendered, 
+	//so duplicates are taking data from existing GPU memory
 
 	shared_ptr<artwork_data> getArtwork(int n) { return artworks.at(n); }
 	int getArtworkCount() const { return artworks.size(); }

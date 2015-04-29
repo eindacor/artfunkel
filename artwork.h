@@ -14,9 +14,8 @@ public:
 		rarity work_rarity,
 		float work_height,
 		float work_width,
-		string work_image_name,
-		jep::date work_date,
-		shared_ptr<painting_surface> work_surface);
+		string work_image_path,
+		jep::date work_date);
 	~artwork_data(){};
 
 	int getID() const { return ID; }
@@ -28,11 +27,14 @@ public:
 	rarity getRarity() const { return Rarity; }
 	float getHeight() const { return height; }
 	float getWidth() const { return width; }
-	string getImageName() const { return image_name; }
+	string getImagePath() const { return image_path; }
 	jep::date getDate() const { return date; }
 	const shared_ptr<painting_surface> getSurface() const { return surface; }
 
 	void setValue() { value = lookupValue(Rarity); }
+	void loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam);
+	void unloadData() { surface = shared_ptr<painting_surface>(nullptr); }
+	void setSurface(shared_ptr<painting_surface> surf) { surface = surf; }
 
 private:
 	int ID;
@@ -43,7 +45,7 @@ private:
 	rarity Rarity;
 	float height;
 	float width;
-	string image_name;
+	string image_path;
 	jep::date date;
 
 	shared_ptr<painting_surface> surface;
@@ -63,10 +65,9 @@ public:
 		float work_height,
 		float work_width,
 		string work_image_name,
-		jep::date work_date,
-		shared_ptr<painting_surface> work_surface) :
+		jep::date work_date) :
 		artwork_data(work_id, work_title, work_artist, work_genre, 
-		work_rarity, work_height, work_width, work_image_name, work_date, work_surface)
+		work_rarity, work_height, work_width, work_image_name, work_date)
 	{
 		forgery = work_forgery;
 		condition = work_condition;
@@ -74,9 +75,10 @@ public:
 	};	//end of primary constructor
 
 	//copy constructor
+	//TODO modify copy constructor to use existing surface data if it is available in memory
 	artwork_instance(const artwork_instance &original) :
 		artwork_data(getID(), getTitle(), getArtist(), getGenre(), 
-		getRarity(), getHeight(), getWidth(), getImageName(), getDate(), getSurface())
+		getRarity(), getHeight(), getWidth(), getImagePath(), getDate())
 	{
 		forgery = original.isForgery();
 		condition = original.getCondition();
@@ -93,8 +95,12 @@ public:
 	mat4 getModelMatrix() const { return model_matrix; }
 
 	void setValue() { value = lookupValue(getRarity()); }
-
-	void draw() const { getSurface()->draw(model_matrix); }
+	void draw(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam)
+	{
+		if (getSurface() == nullptr)
+			loadData(ogl_con, ogl_cam);
+		getSurface()->draw(model_matrix);
+	}
 
 private:
 	double value;
