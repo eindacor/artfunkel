@@ -79,8 +79,8 @@ int main(int argc, char* argv[])
 	shared_ptr<art_db> artist_database(new art_db(artists_path.c_str(), paintings_path.c_str(), images_path.c_str()));
 	loot_generator loot(artist_database);
 
+	//MOVE CODE BELOW TO LOOT CLASS
 	//create a map of rarities, with proportions, to pass to jep::catRoll
-	//move these to a separate function in loot class
 	map<rarity, unsigned> rarity_map = {
 		std::pair<rarity, int>(COMMON, 720),
 		std::pair<rarity, int>(UNCOMMON, 360),
@@ -122,6 +122,7 @@ int main(int argc, char* argv[])
 		cout << "\t" << stringFromRarity(i.first) << ": " << i.second << endl;
 
 	offsetArtworks(paintings_to_display, eye_level);
+	// MOVE CODE ABOVE TO LOOT CLASS
 
 	//code below filters and displays
 	/*
@@ -163,7 +164,7 @@ int main(int argc, char* argv[])
 	cout << "data path: " << data_path << endl;
 
 	//code below is for adding more paintings on the fly
-	int add_wait = 60;
+	int add_wait = 30;
 	int frame_count = 0;
 	bool add_painting = false;
 
@@ -199,23 +200,25 @@ int main(int argc, char* argv[])
 
 
 			add_painting = keys->checkPress(GLFW_KEY_J);
-			if (frame_count == add_wait)
+			if (add_painting)
 			{
-				if (add_painting)
+				if (frame_count == add_wait)
 				{
 					int add_count = 10;
 					vector< shared_ptr<artwork_instance> > paintings_to_add = loot.generateArtworks(add_count, rarity_map);
 
 					int painting_count = paintings_to_display.size();
-					float new_z = (painting_count % 10 == 0 ? (painting_count / 10) * -4.0f : (painting_count / 10) + 1 * -4.0f);
+					float new_z = (painting_count % 10 == 0 ?
+						(painting_count / 10) * -4.0f : (painting_count / 10) + 1 * -4.0f);
 					offsetArtworks(paintings_to_add, eye_level, new_z);
 					paintings_to_display.insert(paintings_to_display.end(), paintings_to_add.begin(), paintings_to_add.end());
+					frame_count = 0;
 				}
 
-				frame_count = 0;
+				else frame_count++;
 			}
 
-			else frame_count++;
+			else frame_count = 0;
 		}
 
 	} while (glfwGetKey(context->getWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
