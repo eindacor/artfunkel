@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 	//create a map of rarities, with proportions, to pass to jep::catRoll
 	//move these to a separate function in loot class
 	map<rarity, unsigned> rarity_map = {
-		std::pair<rarity, int>(COMMON, 720),
+		//std::pair<rarity, int>(COMMON, 720),
 		std::pair<rarity, int>(UNCOMMON, 360),
 		std::pair<rarity, int>(RARE, 120),
 		std::pair<rarity, int>(ULTRA, 30),
@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 	for (auto i : rarity_map)
 		cout << "\t" << stringFromRarity(i.first) << ": " << 100.0f * ((float)i.second / (float)rarity_sumtotal) << "%" << endl;
 
-	int drop_count = 10;
+	int drop_count = 100;
 	vector< shared_ptr<artwork_instance> > paintings_to_display = loot.generateArtworks(drop_count, rarity_map);
 
 	cout << "Crate Contents: " << endl;
