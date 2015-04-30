@@ -178,8 +178,8 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 176,Norman Rockwell,Saying Grace,1951????,FOLK ART,ULTRA,Oil,,110,100,rockwell_saying.bmp
 177,Peter Paul Rubens,Massacre of the Innocents,1612????,SCENE,ULTRA,Oil,,142,182,p
 178,Peter Paul Rubens,The Descent from the Cross,1614????,SCENE,RARE,Oil,,420.5,320,p
-179,Peter Paul Rubens,common test,1983????,DADAISM,COMMON,Oil,,100,100,p
-180,Peter Paul Rubens,uncommon test,1983????,DADAISM,UNCOMMON,Oil,,100,100,p
+179,Peter Paul Rubens,common test,1983????,DADAISM,RARE,Oil,,100,100,p
+180,Peter Paul Rubens,uncommon test,1983????,DADAISM,RARE,Oil,,100,100,p
 181,Peter Paul Rubens,The Elevation of the Cross,1611????,SCENE,RARE,Oil,,460,340,p
 182,Willem de Kooning,Untitled V,1982????,MODERNISM,ULTRA,Oil,,203,178,p
 183,Willem de Kooning,A Tree in Naples,1960????,MODERNISM,RARE,Oil,,204,178,p
@@ -196,11 +196,11 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 194,El Greco,Opening the Fifth Seal,1614????,SCENE,RARE,Oil,,225,199,greco_opening.bmp
 195,El Greco,Laocoon,1614????,SCENE,RARE,Oil,,84,113,greco_laocoon.bmp
 196,El Greco,The Purification of the Temple,1600????,SCENE,RARE,Oil,,106,128,greco_purification.bmp
-197,Mary Cassatt,The Child's Bath,1893????,SCENE,UNCOMMON,Oil,,100,66,p
+197,Mary Cassatt,The Child's Bath,1893????,SCENE,RARE,Oil,,100,66,p
 198,Mary Cassatt,The Boating Party,1894????,IMPRESSIONISM,RARE,Oil,,90,118,p
-199,Mary Cassatt,Child In A Straw Hat,1886????,IMPRESSIONISM,UNCOMMON,Oil,,49.53,64.135,p
+199,Mary Cassatt,Child In A Straw Hat,1886????,IMPRESSIONISM,RARE,Oil,,49.53,64.135,p
 200,Mary Cassatt,Little Girl in a Blue Armchair,1878????,IMPRESSIONISM,RARE,Oil,,89,129.5,p
-201,Mary Cassatt,Lilacs in a Window,1880????,IMPRESSIONISM,UNCOMMON,Oil,,50.8,61.595,p
+201,Mary Cassatt,Lilacs in a Window,1880????,IMPRESSIONISM,RARE,Oil,,50.8,61.595,p
 202,Albrecht Durer,Durer's Rhinoceros,1515????,SKETCH,ULTRA,Woodcut,,23.5,29.8,durer_rhinoceros.bmp
 203,Albrecht Durer,Melancholia I,1514????,SKETCH,RARE,Woodcut,,31,26,durer_melancholia.bmp
 204,Albrecht Durer,Self-Portrait,1500????,PORTRAIT,RARE,"Acrylic, Oil",,66,49,durer_self.bmp
@@ -219,3 +219,15 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 217,Pieter Bruegel the Elder,Hunters in the Snow,1565????,OTHER,RARE,Oil,,117,162,p
 218,Pieter Bruegel the Elder,The Triumph of Death,1562????,OTHER,RARE,Oil,,117,162,p
 219,Pieter Bruegel the Elder,"The ""Little"" Tower of Babel",1563????,OTHER,RARE,Oil,,60,74.5,p
+220,Pieter Bruegel the Elder,The Fight between Carnival and Lent,1559????,SCENE,RARE,Oil,,118,164.5,p
+221,Pieter Bruegel the Elder,The Gloomy Day,1559????,LANDSCAPE,RARE,Oil,,118,163,p
+222,Georges Braque,Violin and Candlestick,1910????,CUBISM,RARE,Oil,,61,50,braque_violin.bmp
+223,Georges Braque,Landscape at la Ciotat,1907????,CUBISM,RARE,Oil,,72,59,braque_landscape.bmp
+224,Georges Braque,Woman with a Guitar,1913????,CUBISM,ULTRA,Oil,,130,73,braque_woman.bmp
+225,Georges Braque,The Round Table,1929????,CUBISM,RARE,Oil,,144.8,114,braque_round.bmp
+226,Georges Braque,"La Guitare (Mandora, La Mandore)",1910????,CUBISM,RARE,Oil,,71.1,55.9,braque_mandola.bmp
+227,Damien Hirst,Mickey,2012????,ABSTRACT,UNCOMMON,Oil,,182.9,105.5,hirst_mickey.bmp
+228,Damien Hirst,Briareus,2012????,ABSTRACT,UNCOMMON,"Entomological Specimens, Hammerite",,365.8,243.8,hirst_briareus.bmp
+229,Damien Hirst,Grace,2012????,ABSTRACT,UNCOMMON,"Butterflies, Household Gloss",,140,140,hirst_grace.bmp
+230,Damien Hirst,Hydrochloric Acid,2010????,ABSTRACT,COMMON,"UV Ink, Charcoal",,183,146,hirst_hydrochloric.bmp
+231,Damien Hirst,Capric Acid Amide,2003????,ABSTRACT,COMMON,Household Gloss,,53.3,68.6,hirst_capric.bmp

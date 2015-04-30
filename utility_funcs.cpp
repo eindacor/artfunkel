@@ -65,70 +65,43 @@ void printDate(jep::date d, bool include_day)
 
 genre genreFromString(string s)
 {
-	if (s == "ABSTRACT")
-		return ABSTRACT;
+	if (s == "OTHER") return OTHER;
+	if (s == "DADAISM") return DADAISM;
+	if (s == "SURREALISM") return SURREALISM;
+	if (s == "IMPRESSIONISM") return IMPRESSIONISM;
+	if (s == "POST-IMPRESSIONISM") return POST_IMPRESSIONISM;
+	if (s == "PORTRAIT") return PORTRAIT;
+	if (s == "ABSTRACT") return ABSTRACT;
+	if (s == "EXPRESSIONISM") return EXPRESSIONISM;
+	if (s == "CONTEMPORARY") return CONTEMPORARY;
+	if (s == "SCENE") return SCENE;
+	if (s == "MODERNISM") return MODERNISM;
+	if (s == "POST-MODERNISM") return POST_MODERNISM;
+	if (s == "POINTISM") return POINTISM;
+	if (s == "SKETCH") return SKETCH;
+	if (s == "POP ART") return POP_ART;
+	if (s == "HISTORIC") return HISTORIC;
+	if (s == "LANDSCAPE") return LANDSCAPE;
+	if (s == "FOLK ART") return FOLK_ART;
+	if (s == "FAUVISM") return FAUVISM;
+	if (s == "CUBISM") return CUBISM;
 
-	if (s == "POST-IMPRESSIONISM")
-		return POST_IMPRESSIONISM;
-
-	if (s == "OTHER")
-		return OTHER;
-
-	if (s == "IMPRESSIONISM")
-		return IMPRESSIONISM;
-
-	if (s == "SURREALISM")
-		return SURREALISM;
-
-	if (s == "DADAISM")
-		return DADAISM;
-
-	if (s == "PORTRAIT")
-		return PORTRAIT;
-
-	if (s == "SCENE")
-		return SCENE;
-
-	if (s == "MODERNISM")
-		return MODERNISM;
-
-	if (s == "POINTISM")
-		return POINTISM;
-
-	if (s == "SKETCH")
-		return SKETCH;
-
-	if (s == "POP ART")
-		return POP_ART;
-
-	if (s == "HISTORIC")
-		return HISTORIC;
-
-	if (s == "LANDSCAPE")
-		return LANDSCAPE;
-
-	if (s == "FAUVISM")
-		return FAUVISM;
-
-	if (s == "FOLK ART")
-		return FOLK_ART;
-
-	return OTHER;
+	return UNKNOWN_GENRE;
 }
 
 string stringFromGenre(genre g)
 {
 	switch (g)
 	{
-	case ABSTRACT: return "Abstract";
-	case EXPRESSIONISM: return "Expressionism";
-	case CONTEMPORARY: return "Contemporary";
-	case POST_IMPRESSIONISM: return "Post-Impressionism";
 	case OTHER: return "Other";
-	case IMPRESSIONISM: return "Impressionism";
-	case SURREALISM: return "Surrealism";
 	case DADAISM: return "Dadaism";
+	case SURREALISM: return "Surrealism";
+	case IMPRESSIONISM: return "Impressionism";
+	case POST_IMPRESSIONISM: return "Post-Impressionism";
 	case PORTRAIT: return "Portrait";
+	case ABSTRACT: return "Abstract";
+	case EXPRESSIONISM: return "Expressionsim";
+	case CONTEMPORARY: return "Contemporary";
 	case SCENE: return "Scene";
 	case MODERNISM: return "Modernism";
 	case POST_MODERNISM: return "Post-Modernism";
@@ -137,8 +110,9 @@ string stringFromGenre(genre g)
 	case POP_ART: return "Pop Art";
 	case HISTORIC: return "Historic";
 	case LANDSCAPE: return "Landscape";
-	case FAUVISM: return "Fauvism";
 	case FOLK_ART: return "Folk Art";
+	case FAUVISM: return "Fauvism";
+	case CUBISM: return "Cubism";
 	default: cout << "genre not found: " << g << endl;
 		return "Unknown Genre";
 	}
