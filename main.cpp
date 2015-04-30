@@ -99,7 +99,7 @@ int main(int argc, char* argv[])
 	for (auto i : rarity_map)
 		cout << "\t" << stringFromRarity(i.first) << ": " << 100.0f * ((float)i.second / (float)rarity_sumtotal) << "%" << endl;
 
-	int drop_count = 100;
+	int drop_count = 10;
 	vector< shared_ptr<artwork_instance> > paintings_to_display = loot.generateArtworks(drop_count, rarity_map);
 
 	cout << "Crate Contents: " << endl;
