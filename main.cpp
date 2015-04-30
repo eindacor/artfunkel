@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 	//create a map of rarities, with proportions, to pass to jep::catRoll
 	//move these to a separate function in loot class
 	map<rarity, unsigned> rarity_map = {
-		//std::pair<rarity, int>(COMMON, 720),
+		std::pair<rarity, int>(COMMON, 720),
 		std::pair<rarity, int>(UNCOMMON, 360),
 		std::pair<rarity, int>(RARE, 120),
 		std::pair<rarity, int>(ULTRA, 30),
