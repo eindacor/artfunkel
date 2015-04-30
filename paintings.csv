@@ -166,26 +166,26 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 164,Francisco Goya,La Maja Desnuda,1800????,PORTRAIT,ULTRA,Oil,,97,190,goya_maja.bmp
 165,Francisco Goya,La Maja Vestida,1805????,PORTRAIT,ULTRA,Oil,,97,190,goya_majav.bmp
 166,Francisco Goya,Witches Sabbath (The Great He-Goat),1823????,SCENE,ULTRA,Oil,,140,438,goya_witches.bmp
-167,Titian,Bacchus and Ariadne,1523????,HISTORIC,ULTRA,Oil,,175,190,p
-168,Titian,Assumption of the Virgin,1518????,SCENE,LEGENDARY,Oil,,690,360,p
-169,Titian,Diana and Actaeon,1559????,SCENE,RARE,Oil,,185,202,p
-170,Titian,Venus of Urbino,1538????,PORTRAIT,ULTRA,Oil,,119,165,p
-171,Titian,Sacred and Profane Love,1514????,SCENE,RARE,Oil,,118,279,p
+167,Titian,Bacchus and Ariadne,1523????,HISTORIC,ULTRA,Oil,,175,190,titian_bacchus.bmp
+168,Titian,Assumption of the Virgin,1518????,SCENE,LEGENDARY,Oil,,690,360,titian_assumption.bmp
+169,Titian,Diana and Actaeon,1559????,SCENE,RARE,Oil,,185,202,titian_diana.bmp
+170,Titian,Venus of Urbino,1538????,PORTRAIT,ULTRA,Oil,,119,165,titian_venus.bmp
+171,Titian,Sacred and Profane Love,1514????,SCENE,RARE,Oil,,118,279,titian_sacred.bmp
 172,Norman Rockwell,Freedom of Speech,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_freedom.bmp
 173,Norman Rockwell,Freedom of Religion,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_religion.bmp
 174,Norman Rockwell,Freedom from Want,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_want.bmp
 175,Norman Rockwell,Freedom from Fear,1943????,FOLK ART,ULTRA,OIl,,116.2,90,rockwell_fear.bmp
 176,Norman Rockwell,Saying Grace,1951????,FOLK ART,ULTRA,Oil,,110,100,rockwell_saying.bmp
-177,Peter Paul Rubens,Massacre of the Innocents,1612????,SCENE,ULTRA,Oil,,142,182,p
-178,Peter Paul Rubens,The Descent from the Cross,1614????,SCENE,RARE,Oil,,420.5,320,p
-179,Peter Paul Rubens,common test,1983????,DADAISM,RARE,Oil,,100,100,p
-180,Peter Paul Rubens,uncommon test,1983????,DADAISM,RARE,Oil,,100,100,p
-181,Peter Paul Rubens,The Elevation of the Cross,1611????,SCENE,RARE,Oil,,460,340,p
-182,Willem de Kooning,Untitled V,1982????,MODERNISM,ULTRA,Oil,,203,178,p
-183,Willem de Kooning,A Tree in Naples,1960????,MODERNISM,RARE,Oil,,204,178,p
-184,Willem de Kooning,Two Women in the Country,1954????,MODERNISM,RARE,Oil,,117,104,p
-185,Willem de Kooning,Excavation,1950????,MODERNISM,RARE,Oil,,206,257,p
-186,Willem de Kooning,Woman III,1953????,MODERNISM,RARE,Oil,,170,120,p
+177,Peter Paul Rubens,Massacre of the Innocents,1612????,SCENE,ULTRA,Oil,,142,182,rubens_massacre.bmp
+178,Peter Paul Rubens,The Descent from the Cross,1614????,SCENE,RARE,Oil,,420.5,320,rubens_descent.bmp
+179,Peter Paul Rubens,The Rape of the Daughters of Leucippus,1618????,SCENE,RARE,Oil,,224,211,rubens_rape.bmp
+180,Peter Paul Rubens,The Three Graces,1635????,SCENE,RARE,Oil,,100,100,rubens_three.bmp
+181,Peter Paul Rubens,The Elevation of the Cross,1611????,SCENE,RARE,Oil,,460,340,rubens_elevation.bmp
+182,Willem de Kooning,Untitled V,1982????,MODERNISM,ULTRA,Oil,,203,178,kooning_untitled.bmp
+183,Willem de Kooning,A Tree in Naples,1960????,MODERNISM,RARE,Oil,,204,178,kooning_tree.bmp
+184,Willem de Kooning,Two Women in the Country,1954????,MODERNISM,RARE,Oil,,117,104,kooning_two.bmp
+185,Willem de Kooning,Excavation,1950????,MODERNISM,RARE,Oil,,206,257,kooning_excavation.bmp
+186,Willem de Kooning,Woman III,1953????,MODERNISM,RARE,Oil,,170,120,kooning_woman.bmp
 187,Sandro Botticelli,The Birth of Venus,1486????,HISTORIC,MASTERPIECE,Oil,,172,278,botticelli_birth.bmp
 188,Sandro Botticelli,Primavera,1482????,SCENE,LEGENDARY,Oil,,203,310,botticelli_primavera.bmp
 189,Sandro Botticelli,Mars and Venus,1483????,SCENE,ULTRA,Oil,,69,173,botticelli_mars.bmp
@@ -196,11 +196,11 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 194,El Greco,Opening the Fifth Seal,1614????,SCENE,RARE,Oil,,225,199,greco_opening.bmp
 195,El Greco,Laocoon,1614????,SCENE,RARE,Oil,,84,113,greco_laocoon.bmp
 196,El Greco,The Purification of the Temple,1600????,SCENE,RARE,Oil,,106,128,greco_purification.bmp
-197,Mary Cassatt,The Child's Bath,1893????,SCENE,RARE,Oil,,100,66,p
-198,Mary Cassatt,The Boating Party,1894????,IMPRESSIONISM,RARE,Oil,,90,118,p
-199,Mary Cassatt,Child In A Straw Hat,1886????,IMPRESSIONISM,RARE,Oil,,49.53,64.135,p
-200,Mary Cassatt,Little Girl in a Blue Armchair,1878????,IMPRESSIONISM,RARE,Oil,,89,129.5,p
-201,Mary Cassatt,Lilacs in a Window,1880????,IMPRESSIONISM,RARE,Oil,,50.8,61.595,p
+197,Mary Cassatt,The Child's Bath,1893????,SCENE,LEGENDARY,Oil,,100,66,cassatt_child.bmp
+198,Mary Cassatt,The Boating Party,1894????,IMPRESSIONISM,RARE,Oil,,90,118,cassatt_boating.bmp
+199,Mary Cassatt,Child In A Straw Hat,1886????,IMPRESSIONISM,RARE,Oil,,49.53,64.135,cassatt_hat.bmp
+200,Mary Cassatt,Little Girl in a Blue Armchair,1878????,IMPRESSIONISM,RARE,Oil,,89,129.5,cassatt_little.bmp
+201,Mary Cassatt,Lilacs in a Window,1880????,IMPRESSIONISM,RARE,Oil,,50.8,61.595,cassatt_lilacs.bmp
 202,Albrecht Durer,Durer's Rhinoceros,1515????,SKETCH,ULTRA,Woodcut,,23.5,29.8,durer_rhinoceros.bmp
 203,Albrecht Durer,Melancholia I,1514????,SKETCH,RARE,Woodcut,,31,26,durer_melancholia.bmp
 204,Albrecht Durer,Self-Portrait,1500????,PORTRAIT,RARE,"Acrylic, Oil",,66,49,durer_self.bmp
@@ -216,11 +216,11 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 214,Camille Pissarro,The Little Country Maid,1882????,IMPRESSIONISM,RARE,Oil,,64,53,pissarro_little.bmp
 215,Camille Pissarro,"Place du Theatre Francais, Spring",1898????,IMPRESSIONISM,RARE,Oil,,66,82,pissarro_place.bmp
 216,Camille Pissarro,"Rabbit Warren at Pontoise, Snow",1879????,IMPRESSIONISM,RARE,Oil,,9,72,pissarro_rabbit.bmp
-217,Pieter Bruegel the Elder,Hunters in the Snow,1565????,OTHER,RARE,Oil,,117,162,p
-218,Pieter Bruegel the Elder,The Triumph of Death,1562????,OTHER,RARE,Oil,,117,162,p
-219,Pieter Bruegel the Elder,"The ""Little"" Tower of Babel",1563????,OTHER,RARE,Oil,,60,74.5,p
-220,Pieter Bruegel the Elder,The Fight between Carnival and Lent,1559????,SCENE,RARE,Oil,,118,164.5,p
-221,Pieter Bruegel the Elder,The Gloomy Day,1559????,LANDSCAPE,RARE,Oil,,118,163,p
+217,Pieter Bruegel the Elder,Hunters in the Snow,1565????,OTHER,RARE,Oil,,117,162,bruegel_hunters.bmp
+218,Pieter Bruegel the Elder,The Triumph of Death,1562????,OTHER,RARE,Oil,,117,162,bruegel_triumph.bmp
+219,Pieter Bruegel the Elder,"The ""Little"" Tower of Babel",1563????,OTHER,ULTRA,Oil,,60,74.5,bruegel_tower.bmp
+220,Pieter Bruegel the Elder,The Fight between Carnival and Lent,1559????,SCENE,RARE,Oil,,118,164.5,bruegel_fight.bmp
+221,Pieter Bruegel the Elder,The Gloomy Day,1559????,LANDSCAPE,RARE,Oil,,118,163,bruegel_gloomy.bmp
 222,Georges Braque,Violin and Candlestick,1910????,CUBISM,RARE,Oil,,61,50,braque_violin.bmp
 223,Georges Braque,Landscape at la Ciotat,1907????,CUBISM,RARE,Oil,,72,59,braque_landscape.bmp
 224,Georges Braque,Woman with a Guitar,1913????,CUBISM,ULTRA,Oil,,130,73,braque_woman.bmp
@@ -250,3 +250,23 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 248,Takashi Murakami,"(Aqua Blue). And then, and then, and then",1999????,POP ART,UNCOMMON,"Lithograph, Print",,68.5,68.5,murakami_and.bmp
 249,Takashi Murakami,Melting DOB D,2000????,POP ART,UNCOMMON,"Lithograph, Print",,69.8,69.8,murakami_melting.bmp
 250,Shepard Fairey,Rise Above Cop,2006????,OTHER,UNCOMMON,Prints,,119.4,83.8,fairey_rise.bmp
+251,Chantal Joffe,Snowy Car,1969????,CONTEMPORARY,UNCOMMON,Oil,,305,122,joffe_snowy.bmp
+252,Chantal Joffe,Black Camisole,2004????,CONTEMPORARY,UNCOMMON,Oil,,336,290,joffe_black.bmp
+253,Chantal Joffe,Moll Reclining,2014????,CONTEMPORARY,UNCOMMON,Oil,,30,60,joffe_moll.bmp
+254,Njideka Akuny Crosby,"5 Umezebi Street, New Haven, Enugu",2012????,ABSTRACT,UNCOMMON,"Acrylic, Charcoal, Pastel, Color Pencil",,213.3,266.7,crosby_5.bmp
+255,Njideka Akuny Crosby,Wedding Portrait,2012????,ABSTRACT,UNCOMMON,"Acrylic, Charcoal, Pastel, Color Pencil",,160,137.1,crosby_wedding.bmp
+256,Njideka Akuny Crosby,The Beutyful Ones #1,2012????,ABSTRACT,UNCOMMON,"Acrylic, Charcoal, Pastel, Color Pencil",,152.4,106.7,crosby_beautyful1.bmp
+257,Njideka Akuny Crosby,The Beutyful Ones #2,2013????,ABSTRACT,UNCOMMON,"Acrylic, Charcoal, Pastel, Color Pencil",,152.4,106.7,crosby_beautyful2.bmp
+258,Njideka Akuny Crosby,Nwantini,2012????,ABSTRACT,UNCOMMON,"Acrylic, Charcoal, Pastel, Color Pencil",,169.8,243.8,crosby_nwantini.bmp
+259,Varda Caivano,Untitled,2014????,ABSTRACT,UNCOMMON,Oil,,104,127,caivano_untitled.bmp
+260,Varda Caivano,Untitled,2009????,ABSTRACT,UNCOMMON,Oil,,46,61,caivano_untitled2009.bmp
+261,Peter Doig,100 Years Ago (Carrera),2001????,CONTEMPORARY,UNCOMMON,Oil,,229,358.5,doig_100.bmp
+262,Peter Doig,Grande Riviere,2002????,CONTEMPORARY,UNCOMMON,Oil,,230,260,doig_grande.bmp
+263,Peter Doig,Red Boat,2004????,CONTEMPORARY,UNCOMMON,Oil,,200,186,doig_red.bmp
+264,Peter Doig,Pelican,2003????,CONTEMPORARY,UNCOMMON,Oil,,276,200.5,doig_pelican.bmp
+265,Peter Doig,Spearfishing,2013????,CONTEMPORARY,UNCOMMON,Oil,,288,200,doig_spearfishing.bmp
+266,Stan Douglas,Hair,2010????,PHOTOGRAPH,COMMON,Digital Print,,45.7,45.1,douglas_hair.bmp
+267,Stan Douglas,Actress,2010????,PHOTOGRAPH,COMMON,Digital Print,,111.8,83.8,douglas_actress.bmp
+268,Stan Douglas,Grips,2010????,PHOTOGRAPH,COMMON,Digital Print,,30.5,101.6,douglas_grips.bmp
+269,Stan Douglas,Juggler,2010????,PHOTOGRAPH,COMMON,Digital Print,,188,152.1,douglas_juggler.bmp
+270,Stan Douglas,Suspect,2010????,PHOTOGRAPH,COMMON,Digital Print,,45.1,61,douglas_suspect.bmp

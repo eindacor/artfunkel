@@ -33,8 +33,6 @@ art_db::art_db(const char* artists_path,
 	for (int i = 1; i < paintings_file.getRowCount(); i++)
 	{
 		vector<string> row = paintings_file.getRow(i);
-		cout << "loading \"" << row.at(2) << "\"...." << endl;
-
 		int work_id(std::stoi(row.at(0)));
 		shared_ptr<artist> work_artist = lookupArtistByName(row.at(1));
 		string work_title(row.at(2));
