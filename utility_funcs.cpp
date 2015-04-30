@@ -85,6 +85,7 @@ genre genreFromString(string s)
 	if (s == "FOLK ART") return FOLK_ART;
 	if (s == "FAUVISM") return FAUVISM;
 	if (s == "CUBISM") return CUBISM;
+	if (s == "PHOTOGRAPH") return PHOTOGRAPH;
 
 	return UNKNOWN_GENRE;
 }
@@ -113,6 +114,7 @@ string stringFromGenre(genre g)
 	case FOLK_ART: return "Folk Art";
 	case FAUVISM: return "Fauvism";
 	case CUBISM: return "Cubism";
+	case PHOTOGRAPH: return "Photograph";
 	default: cout << "genre not found: " << g << endl;
 		return "Unknown Genre";
 	}

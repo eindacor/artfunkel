@@ -231,3 +231,22 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 229,Damien Hirst,Grace,2012????,ABSTRACT,UNCOMMON,"Butterflies, Household Gloss",,140,140,hirst_grace.bmp
 230,Damien Hirst,Hydrochloric Acid,2010????,ABSTRACT,COMMON,"UV Ink, Charcoal",,183,146,hirst_hydrochloric.bmp
 231,Damien Hirst,Capric Acid Amide,2003????,ABSTRACT,COMMON,Household Gloss,,53.3,68.6,hirst_capric.bmp
+232,Gerhard Richter,Mouth (Brigitte Bardot's Lips),1963????,POP ART,UNCOMMON,Oil,,67,74,richter_mouth.bmp
+233,Gerhard Richter,1024 Colours,1973????,ABSTRACT,UNCOMMON,Oil,,299,299,richter_1024.bmp
+234,Gerhard Richter,Man Shot Down,1988????,ABSTRACT,UNCOMMON,Oil,,100,140,richter_man.bmp
+235,Gerhard Richter,Abstract Picture,1994????,ABSTRACT,UNCOMMON,Oil,,225,220,richter_abstract.bmp
+236,Gerhard Richter,Prag 1983,1983????,ABSTRACT,RARE,Oil,,250,250,richter_prag.bmp
+237,Albert Oehlen,Peon,1996????,ABSTRACT,UNCOMMON,Oil,,191.5,191.5,oehlen_peon.bmp
+238,Richard Prince,Unaware of Being Despair,1994????,ABSTRACT,UNCOMMON,Oil,,345.4,243.8,prince_unaware.bmp
+239,Richard Prince,Eden Rock,2006????,ABSTRACT,UNCOMMON,Oil,,61,76.2,prince_eden.bmp
+240,Richard Prince,Even Lower Manhattan,2007????,ABSTRACT,UNCOMMON,"Ink Jet, Acrylic",,166.4,203.3,prince_even.bmp
+241,Vito Acconci,City of Words,2010????,PHOTOGRAPH,COMMON,Photography,,29.7,42,acconci_city.bmp
+242,Anish Kapoor,Untitled,1987????,ABSTRACT,UNCOMMON,Gouache,,38.5,30.2,kapoor_untitled.bmp
+243,Anish Kapoor,Untitled,1990????,ABSTRACT,UNCOMMON,"Earth, Polyvinyl Acetate",,56.2,76.1,kapoor_untitled2.bmp
+244,Louise Bourgeois,Untitled,2005????,ABSTRACT,UNCOMMON,Fabric,,30.4,42.5,bourgeois_untitled.bmp
+245,Takashi Murakami,727,1996????,ABSTRACT,UNCOMMON,Synthetic Polymer,,299.7,449.6,murakami_727.bmp
+246,Takashi Murakami,Such Cute FLowers,2010????,POP ART,UNCOMMON,"Lithograph, Print",,50.8,50.8,murakami_such.bmp
+247,Takashi Murakami,Jellyfish Eyes,2011????,POP ART,UNCOMMON,"Lithograph, Print",,50.2,50.2,murakami_jellyfish.bmp
+248,Takashi Murakami,"(Aqua Blue). And then, and then, and then",1999????,POP ART,UNCOMMON,"Lithograph, Print",,68.5,68.5,murakami_and.bmp
+249,Takashi Murakami,Melting DOB D,2000????,POP ART,UNCOMMON,"Lithograph, Print",,69.8,69.8,murakami_melting.bmp
+250,Shepard Fairey,Rise Above Cop,2006????,OTHER,UNCOMMON,Prints,,119.4,83.8,fairey_rise.bmp
