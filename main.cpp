@@ -6,10 +6,9 @@
 #include "loot.h"
 
 //this function takes a vector of instances and modifies their model matrices for proper display
-void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_level)
+void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_level, float starting_z = 0.0f)
 {
 	float x_offset = 0.0f;
-	float z_offset = 0.0f;
 	float previous_width = 0.0f;
 	int display_count = 0;
 
@@ -28,7 +27,7 @@ void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_l
 		if (display_count % 10 == 0)
 		{
 			x_offset = 0.0f;
-			z_offset -= 4.0f;
+			starting_z -= 4.0f;
 			previous_width = 0.0f;
 			buffer = 0.0f;
 		}
@@ -37,7 +36,7 @@ void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_l
 			x_offset += buffer;
 
 		previous_width = i->getWidth();
-		i->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, z_offset)));
+		i->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, starting_z)));
 		//i->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, -1.0f * float(display_count))));
 		display_count++;
 	}
@@ -163,6 +162,11 @@ int main(int argc, char* argv[])
 
 	cout << "data path: " << data_path << endl;
 
+	//code below is for adding more paintings on the fly
+	int add_wait = 60;
+	int frame_count = 0;
+	bool add_painting = false;
+
 	do
 	{
 		if (glfwGetTime() > 1.0f / render_fps)
@@ -192,6 +196,26 @@ int main(int argc, char* argv[])
 			
 			context->swapBuffers();
 			glfwSetTime(0.0f);
+
+
+			add_painting = keys->checkPress(GLFW_KEY_J);
+			if (frame_count == add_wait)
+			{
+				if (add_painting)
+				{
+					int add_count = 10;
+					vector< shared_ptr<artwork_instance> > paintings_to_add = loot.generateArtworks(add_count, rarity_map);
+
+					int painting_count = paintings_to_display.size();
+					float new_z = (painting_count % 10 == 0 ? (painting_count / 10) * -4.0f : (painting_count / 10) + 1 * -4.0f);
+					offsetArtworks(paintings_to_add, eye_level, new_z);
+					paintings_to_display.insert(paintings_to_display.end(), paintings_to_add.begin(), paintings_to_add.end());
+				}
+
+				frame_count = 0;
+			}
+
+			else frame_count++;
 		}
 
 	} while (glfwGetKey(context->getWindow(), GLFW_KEY_ESCAPE) != GLFW_PRESS &&
