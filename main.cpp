@@ -37,7 +37,6 @@ void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_l
 
 		previous_width = i->getWidth();
 		i->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, starting_z)));
-		//i->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, -1.0f * float(display_count))));
 		display_count++;
 	}
 }

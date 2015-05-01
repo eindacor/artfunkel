@@ -267,6 +267,20 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 265,Peter Doig,Spearfishing,2013????,CONTEMPORARY,UNCOMMON,Oil,,288,200,doig_spearfishing.bmp
 266,Stan Douglas,Hair,2010????,PHOTOGRAPH,COMMON,Digital Print,,45.7,45.1,douglas_hair.bmp
 267,Stan Douglas,Actress,2010????,PHOTOGRAPH,COMMON,Digital Print,,111.8,83.8,douglas_actress.bmp
-268,Stan Douglas,Grips,2010????,PHOTOGRAPH,COMMON,Digital Print,,30.5,101.6,douglas_grips.bmp
+268,Stan Douglas,Grips,2010????,PHOTOGRAPH,COMMON,Digital Print,,40,101.6,douglas_grips.bmp
 269,Stan Douglas,Juggler,2010????,PHOTOGRAPH,COMMON,Digital Print,,188,152.1,douglas_juggler.bmp
 270,Stan Douglas,Suspect,2010????,PHOTOGRAPH,COMMON,Digital Print,,45.1,61,douglas_suspect.bmp
+271,Inka Essenhigh,Green Goddess,2009????,CONTEMPORARY,UNCOMMON,Oil,,182.9,152.4,essenhigh_green.bmp
+272,Inka Essenhigh,Stubborn Tree Spirit,2012????,CONTEMPORARY,UNCOMMON,Oil,,91.4,76.2,essenhigh_stubborn.bmp
+273,Inka Essenhigh,Snowflake,2009????,CONTEMPORARY,UNCOMMON,Oil,,162.6,182.9,essenhigh_snowflake.bmp
+274,Inka Essenhigh,Blue Wave,2002????,CONTEMPORARY,UNCOMMON,Oil,,177.8,188,essenhigh_blue.bmp
+275,Idris Khan,Homage to Bernd Becher,2007????,CONTEMPORARY,COMMON,Digital Bromide Print,,76.2,86.4,khan_homage.bmp
+276,Idris Khan,Sigmund Freud's 'The Uncanny',2006????,CONTEMPORARY,COMMON,Lambda Digital C-Print,,183.5,208.5,khan_sigmund.bmp
+277,Idris Khan,"St. Paul's, London",2012????,CONTEMPORARY,COMMON,Digital Bromide Print,,76.5,101.5,khan_st.bmp
+278,Idris Khan,Caravaggio,2006????,CONTEMPORARY,COMMON,Lambda Digital C-Print,,257,173,khan_caravaggio.bmp
+279,John Korner,12 O'clock at the Beach,2012????,CONTEMPORARY,COMMON,Acrylic,,180,240,korner_12.bmp
+280,Wangechi Mutu,My Strength Lies,2007????,CONTEMPORARY,UNCOMMON,"Ink, Acrylic",,228.6,137.2,mutu_my.bmp
+281,Alice Neel,Ginny in Striped Shirt,1969????,PORTRAIT,UNCOMMON,Oil,,152.4,101.6,neel_ginny.bmp
+282,Alice Neel,Nancy and the Twins,1971????,PORTRAIT,UNCOMMON,Oil,,101.6,152.4,neel_nancy.bmp
+283,Alice Neel,"The Family (John Gruen, Jane Wilson and Julia)",1970????,PORTRAIT,COMMON,Oil,,153,147.3,neel_family.bmp
+284,Alice Neel,Kenneth Doolittle,1931????,PORTRAIT,COMMON,Oil,,66,60,neel_kenneth.bmp
