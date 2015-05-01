@@ -93,9 +93,6 @@ int main(int argc, char* argv[])
 	int frame_count = 0;
 	bool add_painting = false;
 
-	for (int i = 0; i< 10; i++)
-		cout << jep::intRoll(0, 10) << endl;
-
 	do
 	{
 		if (glfwGetTime() > 1.0f / render_fps)

@@ -251,7 +251,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 249,Takashi Murakami,Melting DOB D,2000????,POP ART,UNCOMMON,"Lithograph, Print",,69.8,69.8,murakami_melting.bmp
 250,Shepard Fairey,Rise Above Cop,2006????,OTHER,UNCOMMON,Prints,,119.4,83.8,fairey_rise.bmp
 251,Chantal Joffe,Snowy Car,1969????,CONTEMPORARY,UNCOMMON,Oil,,305,122,joffe_snowy.bmp
-252,Chantal Joffe,Black Camisole,2004????,CONTEMPORARY,UNCOMMON,Oil,,336,290,joffe_black.bmp
+252,Chantal Joffe,Black Camisole,2004????,CONTEMPORARY,UNCOMMON,Oil,,336,124,joffe_black.bmp
 253,Chantal Joffe,Moll Reclining,2014????,CONTEMPORARY,UNCOMMON,Oil,,30,60,joffe_moll.bmp
 254,Njideka Akuny Crosby,"5 Umezebi Street, New Haven, Enugu",2012????,ABSTRACT,UNCOMMON,"Acrylic, Charcoal, Pastel, Color Pencil",,213.3,266.7,crosby_5.bmp
 255,Njideka Akuny Crosby,Wedding Portrait,2012????,ABSTRACT,UNCOMMON,"Acrylic, Charcoal, Pastel, Color Pencil",,160,137.1,crosby_wedding.bmp
@@ -295,7 +295,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 293,Suling Wang,Night Soul,2004????,CONTEMPORARY,COMMON,"Oil, Acrylic",,222.9,292.7,wang_night.bmp
 294,Suling Wang,Lost Above Lanyu,2006????,CONTEMPORARY,COMMON,"Oil, Acrylic",,201.9,186.7,wang_lost.bmp
 295,Francesca Woodman,Polka Dot,1976????,PHOTOGRAPH,COMMON,Gelatin silver estate print,,25.4,20.3,woodman_polka.bmp
-296,Francesca Woodman,Untitled,1980????,PHOTOGRAPH,COMMON,Gelatin silver estate print,,20.3,25.4,woodman_untitled.bmp
+296,Francesca Woodman,Untitled,1980????,PHOTOGRAPH,COMMON,Gelatin silver estate print,,25.4,25.4,woodman_untitled.bmp
 297,Francesca Woodman,Untitled,1978????,PHOTOGRAPH,COMMON,Gelatin silver estate print,,25.4,20.3,woodman_untitled2.bmp
 298,Francesca Woodman,Space2,1978????,PHOTOGRAPH,COMMON,Gelatin silver estate print,,25.4,20.3,woodman_space.bmp
 299,Francesca Woodman,Angel,1978????,PHOTOGRAPH,COMMON,Gelatin silver estate print,,20.3,25.4,woodman_angel.bmp
