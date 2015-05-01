@@ -24,10 +24,10 @@ art_db::art_db(const char* artists_path,
 		artists.insert(std::pair<string, shared_ptr<artist> >(artist_name, new_artist));
 	}
 
-	for (int i = 0; i < 17; i++)
+	for (int i = 0; i < (int)UNKNOWN_GENRE; i++)
 		genre_counts[(genre)i] = 0;
 
-	for (int i = 0; i < 7; i++)
+	for (int i = 0; i < (int)UNKNOWN_RARITY; i++)
 		rarity_counts[(rarity)i] = 0;
 
 	for (int i = 1; i < paintings_file.getRowCount(); i++)
