@@ -123,6 +123,7 @@ int main(int argc, char* argv[])
 	offsetArtworks(paintings_to_display, eye_level);
 	// MOVE CODE ABOVE TO LOOT CLASS
 
+
 	//code below filters and displays
 	/*
 	list< shared_ptr<artwork> > target_list = artist_database->getWorksByRarity(ULTRA, false);
