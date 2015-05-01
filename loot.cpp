@@ -26,7 +26,7 @@ vector< shared_ptr<artwork_instance> > loot_generator::generateArtworks(int coun
 		list< shared_ptr<artwork_data> > rarity_selection = artist_database->getWorksByRarity(random_rarity);
 
 		list< shared_ptr<artwork_data> >::const_iterator it = rarity_selection.begin();
-		for (int i = 0; i < jep::intRoll(0, rarity_selection.size() - 1); i++)
+		for (int i = 0; i < jep::intRoll(0, (rarity_selection.size() - 1)); i++)
 			it++;
 
 		shared_ptr<artwork_instance> toAdd(new artwork_instance((*it)->getID(), (*it)->getTitle(), (*it)->getArtist(), (*it)->getGenre(), (*it)->getRarity(),
@@ -48,8 +48,9 @@ vector< shared_ptr<artwork_instance> > loot_generator::generateArtworks(int coun
 		rarity random_rarity = jep::catRoll<rarity>(default_rarity_map);
 		list< shared_ptr<artwork_data> > rarity_selection = artist_database->getWorksByRarity(random_rarity);
 
+		int random_roll = jep::intRoll(0, (rarity_selection.size() - 1));
 		list< shared_ptr<artwork_data> >::const_iterator it = rarity_selection.begin();
-		for (int i = 0; i < jep::intRoll(0, rarity_selection.size() - 1); i++)
+		for (int i = 0; i < random_roll; i++)
 			it++;
 
 		shared_ptr<artwork_instance> toAdd(new artwork_instance((*it)->getID(), (*it)->getTitle(), (*it)->getArtist(), (*it)->getGenre(), (*it)->getRarity(),

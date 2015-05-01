@@ -51,7 +51,7 @@ double lookupValue(rarity work_rarity)
 		break;
 	}
 
-	return jep::floatRoll(min, max, 0);
+	return jep::floatRoll(min, max, 1);
 }
 
 void printDate(jep::date d, bool include_day)

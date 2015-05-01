@@ -82,39 +82,6 @@ int main(int argc, char* argv[])
 	vector< shared_ptr<artwork_instance> > paintings_to_display = loot.generateArtworks(drop_count, 1.0f);
 	offsetArtworks(paintings_to_display, eye_level);
 
-	//code below filters and displays
-	/*
-	list< shared_ptr<artwork> > target_list = artist_database->getWorksByRarity(ULTRA, false);
-	for (auto i : target_list)
-	{
-		//center on eye level, unless painting is within .5 of floor
-		float y_offset = 0.0f;
-		float min_distance_from_floor = .5f;
-		if ((i->getHeight() * .0067f) + min_distance_from_floor > eye_level)
-			y_offset = (i->getHeight() / 200.0f) + min_distance_from_floor;
-
-		else y_offset = eye_level - (i->getHeight() / 600.0f);
-
-		float space_between = 2.0f;
-		float buffer = (previous_width / 200.0f) + space_between + (i->getWidth() / 200.0f);
-		paintings_to_display.push_back(i);
-		if (display_count % 10 == 0)
-		{
-			x_offset = 0.0f;
-			z_offset -= 4.0f;
-			previous_width = 0.0f;
-			buffer = 0.0f;
-		}
-
-		else
-			x_offset += buffer;
-
-		previous_width = i->getWidth();
-		i->getSurface()->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, z_offset)));
-		display_count++;
-	}
-	*/
-
 	glfwSetTime(0);
 	float render_fps = 60.0f;
 	bool toggle_cam = false;
@@ -125,6 +92,9 @@ int main(int argc, char* argv[])
 	int add_wait = 30;
 	int frame_count = 0;
 	bool add_painting = false;
+
+	for (int i = 0; i< 10; i++)
+		cout << jep::intRoll(0, 10) << endl;
 
 	do
 	{
