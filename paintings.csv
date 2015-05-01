@@ -50,23 +50,23 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 48,Edgar Degas,Ballet Rehearsal,1873????,SCENE,LEGENDARY,Oil,,46,61,degas_ballet.bmp
 49,Edgar Degas,L'Absinthe,1876????,SCENE,LEGENDARY,Oil,,92,68,degas_labsinthe.bmp
 50,Marcel Duchamp,Nude Descending a Staircase,1912????,DADAISM,LEGENDARY,Oil,,147,90,duchamp_nude.bmp
-51,Marcel Duchamp,L.H.O.O.Q.,1919????,DADAISM,ULTRA,Oil,,19.7,12.4,duchamp_lhooq.bmp
+51,Marcel Duchamp,L.H.O.O.Q.,1919????,DADAISM,RARE,Oil,,19.7,12.4,duchamp_lhooq.bmp
 52,Marcel Duchamp,Chocolate Grinder (No. 1),1913????,DADAISM,RARE,Oil,,61.9,64.5,duchamp_chocolate.bmp
 53,Jackson Pollock,"No. 5, 1984",1984????,ABSTRACT,MASTERPIECE,Oil,,244,122,pollock_no5.bmp
 54,Jackson Pollock,"Number 11, 1952",1954????,ABSTRACT,LEGENDARY,Oil,,210,490,pollock_number11.bmp
 55,Jackson Pollock,"One: Number 31, 1950",1950????,ABSTRACT,LEGENDARY,Oil,,270,530,pollock_one.bmp
-56,Jackson Pollock,Convergence,1952????,ABSTRACT,ULTRA,Oil,,393.7,237.5,pollock_convergence.bmp
-57,Jackson Pollock,The Deep,1953????,ABSTRACT,ULTRA,"Oil, Enamel",,220.4,150.2,pollock_deep.bmp
+56,Jackson Pollock,Convergence,1952????,ABSTRACT,RARE,Oil,,393.7,237.5,pollock_convergence.bmp
+57,Jackson Pollock,The Deep,1953????,ABSTRACT,RARE,"Oil, Enamel",,220.4,150.2,pollock_deep.bmp
 58,Gustav Klimt,The Kiss,1908????,ABSTRACT,MASTERPIECE,"Gold, Oil",,180,180,klimt_kiss.bmp
 59,Gustav Klimt,Portrait of Adele Bloch-Bauer I,1907????,ABSTRACT,LEGENDARY,"Gold, Oil",,138,138,klimt_portrait.bmp
-60,Gustav Klimt,The Maiden,1913????,ABSTRACT,ULTRA,Oil,,190,200,klimt_maiden.bmp
-61,Gustav Klimt,The Three Ages of Woman,1905????,ABSTRACT,ULTRA,Oil,,180,180,klimt_three.bmp
-62,Gustav Klimt,Death and Life,1916????,ABSTRACT,ULTRA,Oil,,178,198,klimt_death.bmp
+60,Gustav Klimt,The Maiden,1913????,ABSTRACT,RARE,Oil,,190,200,klimt_maiden.bmp
+61,Gustav Klimt,The Three Ages of Woman,1905????,ABSTRACT,RARE,Oil,,180,180,klimt_three.bmp
+62,Gustav Klimt,Death and Life,1916????,ABSTRACT,RARE,Oil,,178,198,klimt_death.bmp
 63,Paul Cezanne,The Large Bathers,1905????,POST-IMPRESSIONISM,LEGENDARY,Oil,,210,251,cezanne_large.bmp
 64,Paul Cezanne,Still Life with Apples,1898????,POST-IMPRESSIONISM,LEGENDARY,Oil,,69,93,cezanne_still.bmp
 65,Paul Cezanne,Chateau Noir,1904????,POST-IMPRESSIONISM,LEGENDARY,Oil,,74,93,cezanne_chateau.bmp
 66,Paul Cezanne,The Basket of Apples,1893????,POST-IMPRESSIONISM,LEGENDARY,Oil,,65,80,cezanne_basket.bmp
-67,Paul Cezanne,The Boy in the Red Vest,1890????,POST-IMPRESSIONISM,ULTRA,Oil,,81,64,cezanne_boy.bmp
+67,Paul Cezanne,The Boy in the Red Vest,1890????,POST-IMPRESSIONISM,RARE,Oil,,81,64,cezanne_boy.bmp
 68,Rembrandt,The Night Watch,1642????,PORTRAIT,LEGENDARY,Oil,,363,437,rembrandt_night.bmp
 69,Rembrandt,The Anatomy Lesson of Dr. Nicolaes Tulp,1632????,SCENE,LEGENDARY,Oil,,170,216,rembrandt_anatomy.bmp
 70,Rembrandt,The Jewish Bride,1669????,SCENE,LEGENDARY,Oil,,122,166,rembrandt_jewish.bmp
@@ -75,124 +75,124 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 73,Paul Klee,Twittering Machine,1922????,MODERNISM,LEGENDARY,"Watercolor, Gouache",,63.8,48.1,klee_twittering.bmp
 74,Paul Klee,Senecio,1922????,MODERNISM,LEGENDARY,"Gauze, Oil",,40,38,klee_senecio.bmp
 75,Paul Klee,Red Balloon,1922????,MODERNISM,LEGENDARY,"Muslin, Chalk, Oil",,32,31,klee_red.bmp
-76,Paul Klee,A Young Lady's Adventure,1922????,MODERNISM,ULTRA,Watercolor,,44,31,klee_young.bmp
+76,Paul Klee,A Young Lady's Adventure,1922????,MODERNISM,RARE,Watercolor,,44,31,klee_young.bmp
 77,Paul Klee,Der Goldfisch,1925????,MODERNISM,RARE,"Watercolor, Oil",,48,68,klee_goldfisch.bmp
-78,Frida Kahlo,Fulang-Chang and I,1937????,PORTRAIT,ULTRA,Oil,,40,28,kahlo_fulang.bmp
-79,Frida Kahlo,Self-Portrait wtih Thorn Necklace and Hummingbird,1940????,PORTRAIT,ULTRA,Oil,,63.5,49.5,kahlo_self.bmp
-80,Frida Kahlo,Me and My Parrots,1946????,PORTRAIT,ULTRA,Oil,,82,62.8,kahlo_me.bmp
-81,Frida Kahlo,Frieda and Diego Rivera,1931????,PORTRAIT,ULTRA,Oil,,100,79,kahlo_frieda.bmp
-82,Frida Kahlo,Henry Ford Hospital (The Flying Bed),1932????,SURREALISM,ULTRA,Oil,,30.5,38,kahlo_henry.bmp
-83,Joan Miro,Portrait of Vincent Nubiola,1917????,FAUVISM,ULTRA,Oil,,104,113,miro_portrait.bmp
-84,Joan Miro,The Farm,1921????,FAUVISM,ULTRA,Oil,,132,147,miro_farm.bmp
-85,Joan Miro,The Ear of Grain,1923????,FAUVISM,ULTRA,Oil,,37.8,46,miro_ear.bmp
-86,Joan Miro,The Tilled Field,1923????,FAUVISM,ULTRA,Oil,,66,92.7,miro_tilled.bmp
-87,Joan Miro,Maternity,1924????,FAUVISM,ULTRA,Oil,,92,73,miro_maternity.bmp
+78,Frida Kahlo,Fulang-Chang and I,1937????,PORTRAIT,RARE,Oil,,40,28,kahlo_fulang.bmp
+79,Frida Kahlo,Self-Portrait wtih Thorn Necklace and Hummingbird,1940????,PORTRAIT,RARE,Oil,,63.5,49.5,kahlo_self.bmp
+80,Frida Kahlo,Me and My Parrots,1946????,PORTRAIT,RARE,Oil,,82,62.8,kahlo_me.bmp
+81,Frida Kahlo,Frieda and Diego Rivera,1931????,PORTRAIT,RARE,Oil,,100,79,kahlo_frieda.bmp
+82,Frida Kahlo,Henry Ford Hospital (The Flying Bed),1932????,SURREALISM,RARE,Oil,,30.5,38,kahlo_henry.bmp
+83,Joan Miro,Portrait of Vincent Nubiola,1917????,FAUVISM,RARE,Oil,,104,113,miro_portrait.bmp
+84,Joan Miro,The Farm,1921????,FAUVISM,RARE,Oil,,132,147,miro_farm.bmp
+85,Joan Miro,The Ear of Grain,1923????,FAUVISM,RARE,Oil,,37.8,46,miro_ear.bmp
+86,Joan Miro,The Tilled Field,1923????,FAUVISM,RARE,Oil,,66,92.7,miro_tilled.bmp
+87,Joan Miro,Maternity,1924????,FAUVISM,RARE,Oil,,92,73,miro_maternity.bmp
 88,Paul Gauguin,When will you marry?,1892????,POST-IMPRESSIONISM,LEGENDARY,Oil,,101,77,gauguin_when.bmp
-89,Paul Gauguin,Where Do We Come From? What Are We? Where Are We Going?,1897????,POST-IMPRESSIONISM,ULTRA,Oil,,139,375,gauguin_where.bmp
-90,Paul Gauguin,Two Tahitian Women,1899????,POST-IMPRESSIONISM,ULTRA,Oil,,94,72,gauguin_two.bmp
+89,Paul Gauguin,Where Do We Come From? What Are We? Where Are We Going?,1897????,POST-IMPRESSIONISM,RARE,Oil,,139,375,gauguin_where.bmp
+90,Paul Gauguin,Two Tahitian Women,1899????,POST-IMPRESSIONISM,RARE,Oil,,94,72,gauguin_two.bmp
 91,Paul Gauguin,The Yellow Christ,1889????,POST-IMPRESSIONISM,RARE,Oil,,91,73,gauguin_yellow.bmp
 92,Paul Gauguin,Vision After the Sermon,1888????,POST-IMPRESSIONISM,RARE,oil,,73,92,gauguin_vision.bmp
 93,Edvard Munch,The Scream,1893????,ABSTRACT,MASTERPIECE,Oil,,91,74,munch_scream.bmp
-94,Edvard Munch,Madonna,1895????,ABSTRACT,ULTRA,Oil,,91,70.5,munch_madonna.bmp
-95,Edvard Munch,Anxiety,1894????,ABSTRACT,ULTRA,Oil,,94,74,munch_anxiety.bmp
-96,Edvard Munch,Melancholy,1891????,ABSTRACT,ULTRA,Oil,,72,98,munch_melancholy.bmp
-97,Edvard Munch,Dance in the Sickroom,1893????,EXPRESSIONISM,ULTRA,Oil,,134.5,160,munch_dance.bmp
+94,Edvard Munch,Madonna,1895????,ABSTRACT,RARE,Oil,,91,70.5,munch_madonna.bmp
+95,Edvard Munch,Anxiety,1894????,ABSTRACT,RARE,Oil,,94,74,munch_anxiety.bmp
+96,Edvard Munch,Melancholy,1891????,ABSTRACT,RARE,Oil,,72,98,munch_melancholy.bmp
+97,Edvard Munch,Dance in the Sickroom,1893????,EXPRESSIONISM,RARE,Oil,,134.5,160,munch_dance.bmp
 98,Pierre-Auguste Renoir,Bal du moulin de la Galette,1876????,IMPRESSIONISM,MASTERPIECE,Oil,,131,175,renoir_dance.bmp
 99,Pierre-Auguste Renoir,Luncheon of the Boating Party,1881????,IMPRESSIONISM,LEGENDARY,Oil,,130,173,renoir_luncheon.bmp
 100,Pierre-Auguste Renoir,Two Sisters (On the Terrace),1881????,IMPRESSIONISM,LEGENDARY,Oil,,100.5,81,renoir_two.bmp
-101,Pierre-Auguste Renoir,The Umbrellas,1881????,IMPRESSIONISM,ULTRA,Oil,,180.3,114.9,renoir_umbrellas.bmp
-102,Pierre-Auguste Renoir,Girl With a Watering Can,1876????,IMPRESSIONISM,ULTRA,Oil,,100,73,renoir_girl.bmp
-103,Roy Lichtenstein,Whaam!,1963????,POP ART,ULTRA,Oil,,170,400,lichtenstein_whaam.bmp
-104,Roy Lichtenstein,Drowning Girl,1963????,POP ART,ULTRA,Oil,,172,170,lichtenstein_drowning.bmp
-105,Roy Lichtenstein,Look Mickey,1961????,POP ART,ULTRA,Oil,,121.9,174.3,lichtenstein_look.bmp
-106,Roy Lichtenstein,Hopeless,1963????,POP ART,ULTRA,Oil,,111.8,111.8,lichtenstein_hopeless.bmp
-107,Roy Lichtenstein,Masterpiece,1962????,POP ART,ULTRA,Oil,,137,137,lichtenstein_masterpiece.bmp
+101,Pierre-Auguste Renoir,The Umbrellas,1881????,IMPRESSIONISM,RARE,Oil,,180.3,114.9,renoir_umbrellas.bmp
+102,Pierre-Auguste Renoir,Girl With a Watering Can,1876????,IMPRESSIONISM,RARE,Oil,,100,73,renoir_girl.bmp
+103,Roy Lichtenstein,Whaam!,1963????,POP ART,RARE,Oil,,170,400,lichtenstein_whaam.bmp
+104,Roy Lichtenstein,Drowning Girl,1963????,POP ART,RARE,Oil,,172,170,lichtenstein_drowning.bmp
+105,Roy Lichtenstein,Look Mickey,1961????,POP ART,RARE,Oil,,121.9,174.3,lichtenstein_look.bmp
+106,Roy Lichtenstein,Hopeless,1963????,POP ART,RARE,Oil,,111.8,111.8,lichtenstein_hopeless.bmp
+107,Roy Lichtenstein,Masterpiece,1962????,POP ART,RARE,Oil,,137,137,lichtenstein_masterpiece.bmp
 108,Raphael,Sistine Madonna,1512????,PORTRAIT,LEGENDARY,Oil,,104,77,raphael_sistine.bmp
 109,Raphael,The Transfiguration,1520????,HISTORIC,LEGENDARY,Oil,,405,278,raphael_transfiguration.bmp
-110,Raphael,Saint George and the Dragon,1506????,HISTORIC,ULTRA,Oil,,28,22,raphael_saint.bmp
-111,Raphael,Portrait of Pope Julius II,1511????,PORTRAIT,ULTRA,Oil,,108,81,raphael_portrait.bmp
-112,Raphael,Madonna and Child with the Book,1503????,PORTRAIT,ULTRA,Oil,,55,45,raphael_madonna.bmp
-113,Marc Chagall,I and the Village,1911????,SURREALISM,ULTRA,Oil,,192,151,chagall_village.bmp
-114,Marc Chagall,Self Portrait with Seven Fingers,1913????,SURREALISM,ULTRA,Oil,,128,107,chagall_self.bmp
-115,Marc Chagall,Over Vitebsk,1915????,SURREALISM,ULTRA,Oil,,67,93,chagall_over.bmp
-116,Marc Chagall,The Poet Reclining,1915????,SURREALISM,ULTRA,Oil,,77,77.5,chagall_poet.bmp
-117,Marc Chagall,White Crucifixion,1938????,SURREALISM,ULTRA,Oil,,155,140,chagall_white.bmp
+110,Raphael,Saint George and the Dragon,1506????,HISTORIC,RARE,Oil,,28,22,raphael_saint.bmp
+111,Raphael,Portrait of Pope Julius II,1511????,PORTRAIT,RARE,Oil,,108,81,raphael_portrait.bmp
+112,Raphael,Madonna and Child with the Book,1503????,PORTRAIT,RARE,Oil,,55,45,raphael_madonna.bmp
+113,Marc Chagall,I and the Village,1911????,SURREALISM,RARE,Oil,,192,151,chagall_village.bmp
+114,Marc Chagall,Self Portrait with Seven Fingers,1913????,SURREALISM,RARE,Oil,,128,107,chagall_self.bmp
+115,Marc Chagall,Over Vitebsk,1915????,SURREALISM,RARE,Oil,,67,93,chagall_over.bmp
+116,Marc Chagall,The Poet Reclining,1915????,SURREALISM,RARE,Oil,,77,77.5,chagall_poet.bmp
+117,Marc Chagall,White Crucifixion,1938????,SURREALISM,RARE,Oil,,155,140,chagall_white.bmp
 118,Rene Magritte,The Son of Man,1964????,SURREALISM,MASTERPIECE,Oil,,116,89,magritte_son.bmp
-119,Rene Magritte,The Trechery of Images,1929????,SURREALISM,ULTRA,Oil,,63.5,94,magritte_trechery.bmp
-120,Rene Magritte,Golcanda,1953????,SURREALISM,ULTRA,Oil,,81,100,magritte_golcanda.bmp
-121,Rene Magritte,Not to be Reproduced,1937????,SURREALISM,ULTRA,Oil,,65,81.3,magritte_not.bmp
-122,Rene Magritte,The Human Condition,1933????,SURREALISM,ULTRA,Oil,,100,81,magritte_human.bmp
+119,Rene Magritte,The Trechery of Images,1929????,SURREALISM,RARE,Oil,,63.5,94,magritte_trechery.bmp
+120,Rene Magritte,Golcanda,1953????,SURREALISM,RARE,Oil,,81,100,magritte_golcanda.bmp
+121,Rene Magritte,Not to be Reproduced,1937????,SURREALISM,RARE,Oil,,65,81.3,magritte_not.bmp
+122,Rene Magritte,The Human Condition,1933????,SURREALISM,RARE,Oil,,100,81,magritte_human.bmp
 123,Johannes Vermeer,Girl with a Pearl Earring,1665????,PORTRAIT,LEGENDARY,Oil,,44,39,vermeer_girl.bmp
-124,Johannes Vermeer,The Kitchen Maid,1658????,PORTRAIT,ULTRA,Oil,,46,41,vermeer_kitchen.bmp
-125,Johannes Vermeer,The Art of Painting,1666????,HISTORIC,ULTRA,Oil,,130,110,vermeer_art.bmp
-126,Johannes Vermeer,The Concert,1664????,SCENE,ULTRA,Oil,,69,63,vermeer_concert.bmp
-127,Johannes Vermeer,The Astronomer,1668????,PORTRAIT,ULTRA,Oil,,51,45,vermeer_astronomer.bmp
+124,Johannes Vermeer,The Kitchen Maid,1658????,PORTRAIT,RARE,Oil,,46,41,vermeer_kitchen.bmp
+125,Johannes Vermeer,The Art of Painting,1666????,HISTORIC,RARE,Oil,,130,110,vermeer_art.bmp
+126,Johannes Vermeer,The Concert,1664????,SCENE,RARE,Oil,,69,63,vermeer_concert.bmp
+127,Johannes Vermeer,The Astronomer,1668????,PORTRAIT,RARE,Oil,,51,45,vermeer_astronomer.bmp
 128,Georges Seurat,A Sunday Afternoon on the Island of La Grande Jatte,1886????,POINTISM,MASTERPIECE,Oil,,208,310,seurat_sunday.bmp
-129,Georges Seurat,Bathers at Asnieres,1884????,POINTISM,ULTRA,Oil,,201,300,seurat_bathers.bmp
-130,Georges Seurat,The Circus,1891????,IMPRESSIONISM,ULTRA,Oil,,185,142,seurat_circus.bmp
-131,Georges Seurat,Can-Can,1890????,POINTISM,ULTRA,Oil,,172,140,seurat_can.bmp
+129,Georges Seurat,Bathers at Asnieres,1884????,POINTISM,RARE,Oil,,201,300,seurat_bathers.bmp
+130,Georges Seurat,The Circus,1891????,IMPRESSIONISM,RARE,Oil,,185,142,seurat_circus.bmp
+131,Georges Seurat,Can-Can,1890????,POINTISM,RARE,Oil,,172,140,seurat_can.bmp
 132,Georges Seurat,The Lighthouse at Honfleur,1886????,POINTISM,RARE,Oil,,67,82,seurat_lighthouse.bmp
-133,Mark Rothko,Untitled (Black on Gray),1970????,ABSTRACT,ULTRA,Oil,,203.3,175.5,rothko_untitled.bmp
-134,Mark Rothko,"Orange, Red, Yellow",1961????,ABSTRACT,ULTRA,Oil,,236.2,206.4,rothko_orange.bmp
-135,Mark Rothko,No. 1 (Royal Red and Blue),1954????,ABSTRACT,ULTRA,Oil,,288.9,171.5,rothko_no.bmp
-136,Mark Rothko,Four Darks in Red,1958????,ABSTRACT,ULTRA,Oil,,259.1,294.6,rothko_four.bmp
-137,Mark Rothko,No. 61 (Rust and Blue),1951????,ABSTRACT,ULTRA,Oil,,115,92,rothko_rust.bmp
+133,Mark Rothko,Untitled (Black on Gray),1970????,ABSTRACT,RARE,Oil,,203.3,175.5,rothko_untitled.bmp
+134,Mark Rothko,"Orange, Red, Yellow",1961????,ABSTRACT,RARE,Oil,,236.2,206.4,rothko_orange.bmp
+135,Mark Rothko,No. 1 (Royal Red and Blue),1954????,ABSTRACT,RARE,Oil,,288.9,171.5,rothko_no.bmp
+136,Mark Rothko,Four Darks in Red,1958????,ABSTRACT,RARE,Oil,,259.1,294.6,rothko_four.bmp
+137,Mark Rothko,No. 61 (Rust and Blue),1951????,ABSTRACT,RARE,Oil,,115,92,rothko_rust.bmp
 138,Edward Hopper,Nighthawks,1942????,MODERNISM,MASTERPIECE,Oil,,84.1,152.4,hopper_nighthawks.bmp
 139,Edward Hopper,Automat,1927????,MODERNISM,LEGENDARY,Oil,,71,91,hopper_automat.bmp
 140,Edward Hopper,Chop Suey,1929????,MODERNISM,LEGENDARY,Oil,,81,96,hopper_chop.bmp
-141,Edward Hopper,Early Sunday Morning,1930????,MODERNISM,ULTRA,Oil,,89.4,153,hopper_early.bmp
-142,Edward Hopper,New York Movie,1939????,MODERNISM,ULTRA,Oil,,82,102,hopper_new.bmp
-143,Keith Haring,"Untitled, 1982",1982????,POP ART,ULTRA,Oil,,271.8,406.4,haring_untitled1982.bmp
-144,Keith Haring,"Untitled, 1985",1985????,POP ART,ULTRA,Oil,,325.4,335.3,haring_untitled1985.bmp
-145,Keith Haring,"Untitled, 1984",1984????,POP ART,ULTRA,Oil,,304.8,304.8,haring_untitled1984.bmp
-146,Jasper Johns,Flag,1955????,DADAISM,ULTRA,Oil,,107,154,johns_flag.bmp
-147,Jasper Johns,White Flag,1955????,DADAISM,ULTRA,Oil,,199,310,johns_white.bmp
-148,Jasper Johns,Three Flags,1958????,DADAISM,ULTRA,Oil,,78.3,115.6,johns_three.bmp
-149,Jasper Johns,False Start,1959????,ABSTRACT,ULTRA,Oil,,171,137,johns_false.bmp
-150,Jasper Johns,Numbers in Colors,1959????,ABSTRACT,ULTRA,Oil,,169,126,johns_numbers.bmp
-151,Edouard Manet,Olympia,1863????,PORTRAIT,ULTRA,Oil,,130.5,190,manet_olympia.bmp
+141,Edward Hopper,Early Sunday Morning,1930????,MODERNISM,RARE,Oil,,89.4,153,hopper_early.bmp
+142,Edward Hopper,New York Movie,1939????,MODERNISM,RARE,Oil,,82,102,hopper_new.bmp
+143,Keith Haring,"Untitled, 1982",1982????,POP ART,RARE,Oil,,271.8,406.4,haring_untitled1982.bmp
+144,Keith Haring,"Untitled, 1985",1985????,POP ART,RARE,Oil,,325.4,335.3,haring_untitled1985.bmp
+145,Keith Haring,"Untitled, 1984",1984????,POP ART,RARE,Oil,,304.8,304.8,haring_untitled1984.bmp
+146,Jasper Johns,Flag,1955????,DADAISM,RARE,Oil,,107,154,johns_flag.bmp
+147,Jasper Johns,White Flag,1955????,DADAISM,RARE,Oil,,199,310,johns_white.bmp
+148,Jasper Johns,Three Flags,1958????,DADAISM,RARE,Oil,,78.3,115.6,johns_three.bmp
+149,Jasper Johns,False Start,1959????,ABSTRACT,RARE,Oil,,171,137,johns_false.bmp
+150,Jasper Johns,Numbers in Colors,1959????,ABSTRACT,RARE,Oil,,169,126,johns_numbers.bmp
+151,Edouard Manet,Olympia,1863????,PORTRAIT,RARE,Oil,,130.5,190,manet_olympia.bmp
 152,Edouard Manet,Le Dejeuner sur l’herbe,1863????,PORTRAIT,LEGENDARY,Oil,,208,264,manet_dejeuner.bmp
-153,Edouard Manet,A Bar at the Foiles-Bergere,1882????,PORTRAIT,ULTRA,Oil,,96,130,manet_bar.bmp
-154,Edouard Manet,The Railway,1873????,PORTRAIT,ULTRA,Oil,,93,112,manet_railway.bmp
-155,Edouard Manet,The Spanish Singer,1860????,PORTRAIT,ULTRA,Oil,,147.3,114.3,manet_spanish.bmp
+153,Edouard Manet,A Bar at the Foiles-Bergere,1882????,PORTRAIT,RARE,Oil,,96,130,manet_bar.bmp
+154,Edouard Manet,The Railway,1873????,PORTRAIT,RARE,Oil,,93,112,manet_railway.bmp
+155,Edouard Manet,The Spanish Singer,1860????,PORTRAIT,RARE,Oil,,147.3,114.3,manet_spanish.bmp
 156,Caravaggio,The Calling of St. Matthew,1600????,SCENE,LEGENDARY,Oil,,322,340,caravaggio_calling.bmp
 157,Caravaggio,Bacchus,1595????,PORTRAIT,LEGENDARY,Oil,,95,85,caravaggio_bacchus.bmp
-158,Caravaggio,Cardsharps,1594????,SCENE,ULTRA,Oil,,94,131,caravaggio_cardsharps.bmp
+158,Caravaggio,Cardsharps,1594????,SCENE,RARE,Oil,,94,131,caravaggio_cardsharps.bmp
 159,Caravaggio,David with the Head of Goliath,1610????,PORTRAIT,LEGENDARY,Oil,,125,101,caravaggio_david.bmp
 160,Caravaggio,The Martyrdom of Saint Matthew,1600????,SCENE,LEGENDARY,Oil,,127,135,caravaggio_martyrdom.bmp
 161,Grant Wood,American Gothic,1930????,FOLK ART,MASTERPIECE,Oil,,74.3,62.4,wood_american.bmp
-162,Francisco Goya,The Third of May 1808,1814????,SCENE,ULTRA,Oil,,266,380,goya_third.bmp
+162,Francisco Goya,The Third of May 1808,1814????,SCENE,RARE,Oil,,266,380,goya_third.bmp
 163,Francisco Goya,Saturn Devouring his Son,1823????,SCENE,LEGENDARY,Oil,,143,81,goya_saturn.bmp
-164,Francisco Goya,La Maja Desnuda,1800????,PORTRAIT,ULTRA,Oil,,97,190,goya_maja.bmp
-165,Francisco Goya,La Maja Vestida,1805????,PORTRAIT,ULTRA,Oil,,97,190,goya_majav.bmp
-166,Francisco Goya,Witches Sabbath (The Great He-Goat),1823????,SCENE,ULTRA,Oil,,140,438,goya_witches.bmp
-167,Titian,Bacchus and Ariadne,1523????,HISTORIC,ULTRA,Oil,,175,190,titian_bacchus.bmp
+164,Francisco Goya,La Maja Desnuda,1800????,PORTRAIT,RARE,Oil,,97,190,goya_maja.bmp
+165,Francisco Goya,La Maja Vestida,1805????,PORTRAIT,RARE,Oil,,97,190,goya_majav.bmp
+166,Francisco Goya,Witches Sabbath (The Great He-Goat),1823????,SCENE,RARE,Oil,,140,438,goya_witches.bmp
+167,Titian,Bacchus and Ariadne,1523????,HISTORIC,RARE,Oil,,175,190,titian_bacchus.bmp
 168,Titian,Assumption of the Virgin,1518????,SCENE,LEGENDARY,Oil,,690,360,titian_assumption.bmp
 169,Titian,Diana and Actaeon,1559????,SCENE,RARE,Oil,,185,202,titian_diana.bmp
-170,Titian,Venus of Urbino,1538????,PORTRAIT,ULTRA,Oil,,119,165,titian_venus.bmp
+170,Titian,Venus of Urbino,1538????,PORTRAIT,RARE,Oil,,119,165,titian_venus.bmp
 171,Titian,Sacred and Profane Love,1514????,SCENE,RARE,Oil,,118,279,titian_sacred.bmp
-172,Norman Rockwell,Freedom of Speech,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_freedom.bmp
-173,Norman Rockwell,Freedom of Religion,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_religion.bmp
-174,Norman Rockwell,Freedom from Want,1943????,FOLK ART,ULTRA,Oil,,116.2,90,rockwell_want.bmp
-175,Norman Rockwell,Freedom from Fear,1943????,FOLK ART,ULTRA,OIl,,116.2,90,rockwell_fear.bmp
-176,Norman Rockwell,Saying Grace,1951????,FOLK ART,ULTRA,Oil,,110,100,rockwell_saying.bmp
-177,Peter Paul Rubens,Massacre of the Innocents,1612????,SCENE,ULTRA,Oil,,142,182,rubens_massacre.bmp
+172,Norman Rockwell,Freedom of Speech,1943????,FOLK ART,RARE,Oil,,116.2,90,rockwell_freedom.bmp
+173,Norman Rockwell,Freedom of Religion,1943????,FOLK ART,RARE,Oil,,116.2,90,rockwell_religion.bmp
+174,Norman Rockwell,Freedom from Want,1943????,FOLK ART,RARE,Oil,,116.2,90,rockwell_want.bmp
+175,Norman Rockwell,Freedom from Fear,1943????,FOLK ART,RARE,OIl,,116.2,90,rockwell_fear.bmp
+176,Norman Rockwell,Saying Grace,1951????,FOLK ART,RARE,Oil,,110,100,rockwell_saying.bmp
+177,Peter Paul Rubens,Massacre of the Innocents,1612????,SCENE,RARE,Oil,,142,182,rubens_massacre.bmp
 178,Peter Paul Rubens,The Descent from the Cross,1614????,SCENE,RARE,Oil,,420.5,320,rubens_descent.bmp
 179,Peter Paul Rubens,The Rape of the Daughters of Leucippus,1618????,SCENE,RARE,Oil,,224,211,rubens_rape.bmp
 180,Peter Paul Rubens,The Three Graces,1635????,SCENE,RARE,Oil,,100,100,rubens_three.bmp
 181,Peter Paul Rubens,The Elevation of the Cross,1611????,SCENE,RARE,Oil,,460,340,rubens_elevation.bmp
-182,Willem de Kooning,Untitled V,1982????,MODERNISM,ULTRA,Oil,,203,178,kooning_untitled.bmp
+182,Willem de Kooning,Untitled V,1982????,MODERNISM,RARE,Oil,,203,178,kooning_untitled.bmp
 183,Willem de Kooning,A Tree in Naples,1960????,MODERNISM,RARE,Oil,,204,178,kooning_tree.bmp
 184,Willem de Kooning,Two Women in the Country,1954????,MODERNISM,RARE,Oil,,117,104,kooning_two.bmp
 185,Willem de Kooning,Excavation,1950????,MODERNISM,RARE,Oil,,206,257,kooning_excavation.bmp
 186,Willem de Kooning,Woman III,1953????,MODERNISM,RARE,Oil,,170,120,kooning_woman.bmp
 187,Sandro Botticelli,The Birth of Venus,1486????,HISTORIC,MASTERPIECE,Oil,,172,278,botticelli_birth.bmp
 188,Sandro Botticelli,Primavera,1482????,SCENE,LEGENDARY,Oil,,203,310,botticelli_primavera.bmp
-189,Sandro Botticelli,Mars and Venus,1483????,SCENE,ULTRA,Oil,,69,173,botticelli_mars.bmp
-190,Sandro Botticelli,Adoration of the Magi of 1475,1476????,SCENE,ULTRA,Oil,,111,134,botticelli_adoration.bmp
+189,Sandro Botticelli,Mars and Venus,1483????,SCENE,RARE,Oil,,69,173,botticelli_mars.bmp
+190,Sandro Botticelli,Adoration of the Magi of 1475,1476????,SCENE,RARE,Oil,,111,134,botticelli_adoration.bmp
 191,Sandro Botticelli,Madonna and Child and Two Angels,1469????,PORTRAIT,LEGENDARY,Oil,,100,71,botticelli_madonna.bmp
-192,El Greco,View of Toledo,1600????,LANDSCAPE,ULTRA,Oil,,48,43,greco_view.bmp
-193,El Greco,The Disrobing of Christ,1579????,SCENE,ULTRA,Oil,,285,173,greco_disrobing.bmp
+192,El Greco,View of Toledo,1600????,LANDSCAPE,RARE,Oil,,48,43,greco_view.bmp
+193,El Greco,The Disrobing of Christ,1579????,SCENE,RARE,Oil,,285,173,greco_disrobing.bmp
 194,El Greco,Opening the Fifth Seal,1614????,SCENE,RARE,Oil,,225,199,greco_opening.bmp
 195,El Greco,Laocoon,1614????,SCENE,RARE,Oil,,84,113,greco_laocoon.bmp
 196,El Greco,The Purification of the Temple,1600????,SCENE,RARE,Oil,,106,128,greco_purification.bmp
@@ -201,7 +201,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 199,Mary Cassatt,Child In A Straw Hat,1886????,IMPRESSIONISM,RARE,Oil,,49.53,64.135,cassatt_hat.bmp
 200,Mary Cassatt,Little Girl in a Blue Armchair,1878????,IMPRESSIONISM,RARE,Oil,,89,129.5,cassatt_little.bmp
 201,Mary Cassatt,Lilacs in a Window,1880????,IMPRESSIONISM,RARE,Oil,,50.8,61.595,cassatt_lilacs.bmp
-202,Albrecht Durer,Durer's Rhinoceros,1515????,SKETCH,ULTRA,Woodcut,,23.5,29.8,durer_rhinoceros.bmp
+202,Albrecht Durer,Durer's Rhinoceros,1515????,SKETCH,RARE,Woodcut,,23.5,29.8,durer_rhinoceros.bmp
 203,Albrecht Durer,Melancholia I,1514????,SKETCH,RARE,Woodcut,,31,26,durer_melancholia.bmp
 204,Albrecht Durer,Self-Portrait,1500????,PORTRAIT,RARE,"Acrylic, Oil",,66,49,durer_self.bmp
 205,Albrecht Durer,Young Hare,1502????,PORTRAIT,RARE,"Watercolor, Gouache",,25,23,durer_young.bmp
@@ -218,12 +218,12 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 216,Camille Pissarro,"Rabbit Warren at Pontoise, Snow",1879????,IMPRESSIONISM,RARE,Oil,,9,72,pissarro_rabbit.bmp
 217,Pieter Bruegel the Elder,Hunters in the Snow,1565????,OTHER,RARE,Oil,,117,162,bruegel_hunters.bmp
 218,Pieter Bruegel the Elder,The Triumph of Death,1562????,OTHER,RARE,Oil,,117,162,bruegel_triumph.bmp
-219,Pieter Bruegel the Elder,"The ""Little"" Tower of Babel",1563????,OTHER,ULTRA,Oil,,60,74.5,bruegel_tower.bmp
+219,Pieter Bruegel the Elder,"The ""Little"" Tower of Babel",1563????,OTHER,RARE,Oil,,60,74.5,bruegel_tower.bmp
 220,Pieter Bruegel the Elder,The Fight between Carnival and Lent,1559????,SCENE,RARE,Oil,,118,164.5,bruegel_fight.bmp
 221,Pieter Bruegel the Elder,The Gloomy Day,1559????,LANDSCAPE,RARE,Oil,,118,163,bruegel_gloomy.bmp
 222,Georges Braque,Violin and Candlestick,1910????,CUBISM,RARE,Oil,,61,50,braque_violin.bmp
 223,Georges Braque,Landscape at la Ciotat,1907????,CUBISM,RARE,Oil,,72,59,braque_landscape.bmp
-224,Georges Braque,Woman with a Guitar,1913????,CUBISM,ULTRA,Oil,,130,73,braque_woman.bmp
+224,Georges Braque,Woman with a Guitar,1913????,CUBISM,RARE,Oil,,130,73,braque_woman.bmp
 225,Georges Braque,The Round Table,1929????,CUBISM,RARE,Oil,,144.8,114,braque_round.bmp
 226,Georges Braque,"La Guitare (Mandora, La Mandore)",1910????,CUBISM,RARE,Oil,,71.1,55.9,braque_mandola.bmp
 227,Damien Hirst,Mickey,2012????,ABSTRACT,UNCOMMON,Oil,,182.9,105.5,hirst_mickey.bmp
@@ -284,3 +284,8 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 282,Alice Neel,Nancy and the Twins,1971????,PORTRAIT,UNCOMMON,Oil,,101.6,152.4,neel_nancy.bmp
 283,Alice Neel,"The Family (John Gruen, Jane Wilson and Julia)",1970????,PORTRAIT,COMMON,Oil,,153,147.3,neel_family.bmp
 284,Alice Neel,Kenneth Doolittle,1931????,PORTRAIT,COMMON,Oil,,66,60,neel_kenneth.bmp
+285,Chris Ofili,Blossom,1997????,CONTEMPORARY,UNCOMMON,Oil,,243.8,182.8,ofili_blossom.bmp
+286,Chris Ofili,Afronirvana,2002????,CONTEMPORARY,UNCOMMON,Oil,,474.3,365.8,ofili_afronirvana.bmp
+287,Chris Ofili,Confession (Lady Chancellor),2007????,CONTEMPORARY,UNCOMMON,Oil,,281,195.3,ofili_confession.bmp
+288,Chris Ofili,Untitled (Afromuse),2005????,CONTEMPORARY,UNCOMMON,Oil,,24.3,15.7,ofili_untitled.bmp
+289,Chris Ofili,The Adoration of Captain Shit and the Legend of the Black Stars (ThirdVersion),1998????,CONTEMPORARY,UNCOMMON,Mixed,,243.8,182.8,ofili_adoration.bmp

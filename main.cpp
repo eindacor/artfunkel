@@ -78,50 +78,9 @@ int main(int argc, char* argv[])
 	shared_ptr<art_db> artist_database(new art_db(artists_path.c_str(), paintings_path.c_str(), images_path.c_str()));
 	loot_generator loot(artist_database);
 
-	//MOVE CODE BELOW TO LOOT CLASS
-	//create a map of rarities, with proportions, to pass to jep::catRoll
-	map<rarity, unsigned> rarity_map = {
-		std::pair<rarity, int>(COMMON, 720),
-		std::pair<rarity, int>(UNCOMMON, 360),
-		std::pair<rarity, int>(RARE, 120),
-		std::pair<rarity, int>(ULTRA, 30),
-		std::pair<rarity, int>(LEGENDARY, 6),
-		std::pair<rarity, int>(MASTERPIECE, 1)
-	};
-
-	int rarity_sumtotal = 0;
-	for (auto i : rarity_map)
-		rarity_sumtotal += i.second;
-
-	cout << "Drop chance: " << endl;
-	for (auto i : rarity_map)
-		cout << "\t" << stringFromRarity(i.first) << ": " << 100.0f * ((float)i.second / (float)rarity_sumtotal) << "%" << endl;
-
 	int drop_count = 10;
-	vector< shared_ptr<artwork_instance> > paintings_to_display = loot.generateArtworks(drop_count, rarity_map);
-
-	cout << "Crate Contents: " << endl;
-	for (auto i : paintings_to_display)
-		cout << "\t" << i->getTitle() << " by " << i->getArtistName() << 
-		" (" << stringFromRarity(i->getRarity()) << ")" << endl;
-
-	map<rarity, unsigned> frequency_results{
-		std::pair<rarity, int>(COMMON, 0),
-		std::pair<rarity, int>(UNCOMMON, 0),
-		std::pair<rarity, int>(RARE, 0),
-		std::pair<rarity, int>(ULTRA, 0),
-		std::pair<rarity, int>(LEGENDARY, 0),
-		std::pair<rarity, int>(MASTERPIECE, 0)
-	};
-	for (auto i : paintings_to_display)
-		frequency_results[i->getRarity()]++;
-
-	cout << "Frequency results..." << endl;
-	for (auto i : frequency_results)
-		cout << "\t" << stringFromRarity(i.first) << ": " << i.second << endl;
-
+	vector< shared_ptr<artwork_instance> > paintings_to_display = loot.generateArtworks(drop_count, 1.0f);
 	offsetArtworks(paintings_to_display, eye_level);
-	// MOVE CODE ABOVE TO LOOT CLASS
 
 	//code below filters and displays
 	/*
@@ -204,7 +163,7 @@ int main(int argc, char* argv[])
 				if (frame_count == add_wait)
 				{
 					int add_count = 10;
-					vector< shared_ptr<artwork_instance> > paintings_to_add = loot.generateArtworks(add_count, rarity_map);
+					vector< shared_ptr<artwork_instance> > paintings_to_add = loot.generateArtworks(add_count, 1.0f);
 
 					int painting_count = paintings_to_display.size();
 					float new_z = (painting_count % 10 == 0 ?

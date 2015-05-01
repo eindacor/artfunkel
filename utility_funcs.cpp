@@ -41,10 +41,6 @@ double lookupValue(rarity work_rarity)
 		min = 45.0f;
 		max = 165.0f;
 		break;
-	case ULTRA:
-		min = 165.0f;
-		max = 645.0f;
-		break;
 	case LEGENDARY:
 		min = 645.0f;
 		max = 2565.0f;
@@ -55,7 +51,7 @@ double lookupValue(rarity work_rarity)
 		break;
 	}
 
-	return jep::floatRoll(min, max, 2);
+	return jep::floatRoll(min, max, 0);
 }
 
 void printDate(jep::date d, bool include_day)
@@ -132,9 +128,6 @@ rarity rarityFromString(string s)
 	if (s == "RARE")
 		return RARE;
 
-	if (s == "ULTRA")
-		return ULTRA;
-
 	if (s == "LEGENDARY")
 		return LEGENDARY;
 
@@ -151,7 +144,6 @@ string stringFromRarity(rarity r)
 	case COMMON: return "Common";
 	case UNCOMMON: return "Uncommon";
 	case RARE: return "Rare";
-	case ULTRA: return "Ultra";
 	case LEGENDARY: return "Legendary";
 	case MASTERPIECE: return "Masterpiece";
 	default: return "Unknown Rarity";
