@@ -198,7 +198,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 196,El Greco,The Purification of the Temple,1600????,SCENE,RARE,Oil,,106,128,greco_purification.bmp
 197,Mary Cassatt,The Child's Bath,1893????,SCENE,LEGENDARY,Oil,,100,66,cassatt_child.bmp
 198,Mary Cassatt,The Boating Party,1894????,IMPRESSIONISM,RARE,Oil,,90,118,cassatt_boating.bmp
-199,Mary Cassatt,Child In A Straw Hat,1886????,IMPRESSIONISM,UNCOMMON,Oil,,49.53,64.135,cassatt_hat.bmp
+199,Mary Cassatt,Child In A Straw Hat,1886????,IMPRESSIONISM,UNCOMMON,Oil,,65.3,49.2,cassatt_hat.bmp
 200,Mary Cassatt,Little Girl in a Blue Armchair,1878????,IMPRESSIONISM,RARE,Oil,,89,129.5,cassatt_little.bmp
 201,Mary Cassatt,Lilacs in a Window,1880????,IMPRESSIONISM,RARE,Oil,,50.8,61.595,cassatt_lilacs.bmp
 202,Albrecht Durer,Durer's Rhinoceros,1515????,SKETCH,UNCOMMON,Woodcut,,23.5,29.8,durer_rhinoceros.bmp
@@ -207,7 +207,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 205,Albrecht Durer,Young Hare,1502????,PORTRAIT,UNCOMMON,"Watercolor, Gouache",,25,23,durer_young.bmp
 206,Albrecht Durer,Praying Hands,1508????,SKETCH,RARE,Ink,,29,19,durer_praying.bmp
 207,Jean-Michel Basquiat,Irony of Negro Policeman,1981????,EXPRESSIONISM,RARE,"Acrylic, Crayon",,183,122,basquiat_irony.bmp
-208,Jean-Michel Basquiat,Hollywood Africans,1983????,EXPRESSIONISM,UNCOMMON,"Acrylic, Crayon",,213.4,213.4,basquiat_holllywood.bmp
+208,Jean-Michel Basquiat,Hollywood Africans,1983????,EXPRESSIONISM,UNCOMMON,"Acrylic, Crayon",,213.4,213.4,basquiat_hollywood.bmp
 209,Jean-Michel Basquiat,Bird on Money,1981????,EXPRESSIONISM,RARE,"Acrylic, Crayon",,167.5,228.5,basquiat_bird.bmp
 210,Jean-Michel Basquiat,Fishing,1981????,EXPRESSIONISM,UNCOMMON,"Acrylic, Crayon",,198.1,172.7,basquiat_fishing.bmp
 211,Jean-Michel Basquiat,Scull,1981????,EXPRESSIONISM,RARE,"Acrylic, Crayon",,207,175.9,basquiat_scull.bmp
@@ -279,7 +279,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Rarity Scale,Height (cm),Width (cm),Ima
 277,Idris Khan,"St. Paul's, London",2012????,CONTEMPORARY,COMMON,Digital Bromide Print,,76.5,101.5,khan_st.bmp
 278,Idris Khan,Caravaggio,2006????,CONTEMPORARY,COMMON,Lambda Digital C-Print,,257,173,khan_caravaggio.bmp
 279,John Korner,12 O'clock at the Beach,2012????,CONTEMPORARY,COMMON,Acrylic,,180,240,korner_12.bmp
-280,Wangechi Mutu,My Strength Lies,2007????,CONTEMPORARY,UNCOMMON,"Ink, Acrylic",,228.6,137.2,mutu_my.bmp
+280,Wangechi Mutu,My Strength Lies,2007????,CONTEMPORARY,UNCOMMON,"Ink, Acrylic",,228.6,274.4,mutu_my.bmp
 281,Alice Neel,Ginny in Striped Shirt,1969????,PORTRAIT,UNCOMMON,Oil,,152.4,101.6,neel_ginny.bmp
 282,Alice Neel,Nancy and the Twins,1971????,PORTRAIT,UNCOMMON,Oil,,101.6,152.4,neel_nancy.bmp
 283,Alice Neel,"The Family (John Gruen, Jane Wilson and Julia)",1970????,PORTRAIT,COMMON,Oil,,153,147.3,neel_family.bmp
