@@ -150,4 +150,36 @@ string stringFromRarity(rarity r)
 	}
 }
 
+float getDelta(vec3 first, vec3 second, char axis)
+{
+	switch (axis)
+	{
+	case 'x': return second.x - first.x;
+	case 'y': return second.y - first.y;
+	case 'z': return second.z - first.z;
+	default: return 0.0f;
+	}
+}
+
+vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right, 
+		float uv_map_dimension, char u_axis, char v_axis)
+{
+	vector<float> geometry_data = {
+		bottom_left.x, bottom_left.y, bottom_left.z,	//vert data
+		0.0f, 0.0f,																//uv data
+		top_left.x, top_left.y, top_left.z,
+		getDelta(bottom_left, top_left, u_axis) / uv_map_dimension, getDelta(bottom_left, top_left, v_axis) / uv_map_dimension,
+		top_right.x, top_right.y, top_right.z,
+		getDelta(bottom_left, top_right, u_axis) / uv_map_dimension, getDelta(bottom_left, top_right, v_axis) / uv_map_dimension,
+		bottom_left.x, bottom_left.y, bottom_left.z,
+		0.0f, 0.0f,
+		top_right.x, top_right.y, top_right.z,
+		getDelta(bottom_left, top_right, u_axis) / uv_map_dimension, getDelta(bottom_left, top_right, v_axis) / uv_map_dimension,
+		bottom_right.x, bottom_right.y, bottom_right.z,
+		getDelta(bottom_left, bottom_right, u_axis) / uv_map_dimension, getDelta(bottom_left, bottom_right, v_axis) / uv_map_dimension
+	};
+
+	return geometry_data;
+}
+
 #endif

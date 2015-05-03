@@ -18,16 +18,16 @@ private:
 	shared_ptr<jep::ogl_data> opengl_data;
 };
 
-#endif
-
-class frame
+class frame_model
 {
 public:
-	frame(float painting_width, float painting_height, shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam, const char* frame_texture, const char* matte_texture,
+	frame_model(float painting_width, float painting_height, shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam, const char* frame_texture, const char* matte_texture,
 		float frame_width = 0.15f, float frame_depth = .08f, float matte_width = 0.1f, float matte_setback = 0.025f, float painting_setback = 0.003125f);
-	~frame(){};
+	~frame_model(){};
 
 	void draw(const mat4 &model_matrix) const;
+
+	float getPaintingDistanceToWall() const { return painting_to_wall_dimension; }
 
 private:
 	shared_ptr<ogl_context> context;
@@ -35,4 +35,8 @@ private:
 
 	shared_ptr<jep::ogl_data> frame_opengl_data;
 	shared_ptr<jep::ogl_data> matte_opengl_data;
+
+	float painting_to_wall_dimension;
 };
+
+#endif

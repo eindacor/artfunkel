@@ -1,6 +1,7 @@
 #include "loot.h"
 #include "header.h"
 #include "artwork.h"
+#include "art_db.h"
 
 loot_generator::loot_generator(shared_ptr<art_db> database)
 {

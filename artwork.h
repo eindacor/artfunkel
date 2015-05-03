@@ -73,6 +73,7 @@ public:
 		forgery = work_forgery;
 		condition = work_condition;
 		model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
+		p_frame = nullptr;
 	};	//end of primary constructor
 
 	//copy constructor
@@ -84,6 +85,7 @@ public:
 		forgery = original.isForgery();
 		condition = original.getCondition();
 		model_matrix = original.getModelMatrix();
+		p_frame = nullptr;
 	}; //end of copy constructor
 	~artwork_instance(){};
 
@@ -96,11 +98,21 @@ public:
 	mat4 getModelMatrix() const { return model_matrix; }
 
 	void setValue() { value = lookupValue(getRarity()); }
+	void loadFrame(const shared_ptr<frame_model> &work_frame) { p_frame = work_frame; }
 	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam)
 	{
+		mat4 frame_offset(glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f)));
+		if (p_frame != nullptr)
+		{
+			p_frame->draw(model_matrix);
+			float z_offset = p_frame->getPaintingDistanceToWall();
+			frame_offset = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, z_offset));
+		}
+
 		if (getSurface() == nullptr)
 			loadData(ogl_con, ogl_cam);
-		getSurface()->draw(model_matrix);
+		getSurface()->draw(model_matrix * frame_offset);
+		
 	}
 
 private:
@@ -108,6 +120,8 @@ private:
 	bool forgery;
 	float condition;
 	mat4 model_matrix;
+
+	shared_ptr<frame_model> p_frame;
 };
 
 #endif

@@ -26,6 +26,7 @@ class artwork_data;
 class artwork_instance;
 class art_db;
 class painting_surface;
+class frame_model;
 
 using std::vector;
 using std::list;
@@ -45,11 +46,14 @@ using jep::date;
 
 using glm::vec4;
 using glm::vec3;
+using glm::vec2;
 using glm::mat4;
 
 string getDateString(const date &d, bool include_day);
 double lookupValue(rarity work_rarity);
 string stringFromRarity(rarity r);
 string stringFromGenre(genre g);
+vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right,
+	float uv_map_dimension, char u_axis, char v_axis);
 
 #endif

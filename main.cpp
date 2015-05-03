@@ -41,6 +41,19 @@ void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_l
 	}
 }
 
+void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path)
+{
+	string frame_texture = data_path + "model_data\\black_frame.bmp";
+	string matte_texture = data_path + "model_data\\white_matte.bmp";
+	for (auto i : art_vec)
+	{
+		shared_ptr<frame_model> generated_frame(new frame_model(
+			i->getWidth() / 100.0f, i->getHeight() / 100.0f, context, camera, frame_texture.c_str(), matte_texture.c_str()));
+
+		i->loadFrame(generated_frame);
+	}
+}
+
 int main(int argc, char* argv[])
 {
 	jep::init();
@@ -57,8 +70,8 @@ int main(int argc, char* argv[])
 
 	else
 	{
-		//data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
-		data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
+		data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
+		//data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
 	}
 	
 	string paintings_path = data_path + "paintings.csv";
@@ -66,11 +79,10 @@ int main(int argc, char* argv[])
 	string images_path = data_path + "images\\paintings\\";
 
 	string vert_file = data_path + "vertex_shader.glsl";
-	string frag_file = data_path + "fragment_shader.glsl"; 
+	string frag_file = data_path + "fragment_shader.glsl";
 
 	float eye_level = 1.65f;
-	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1240, 960));		//DESKTOP
-	//shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1020, 700));	//LAPTOP
+	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1020, 700));	//LAPTOP
 	shared_ptr<key_handler> keys(new key_handler(context));
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, vec3(0.0f, eye_level, 5.0f)));
 	shared_ptr<ogl_camera> alt_camera(new ogl_camera_free(keys, vec3(0.0f, eye_level + 10.0f, 5.0f)));
@@ -81,6 +93,7 @@ int main(int argc, char* argv[])
 	int drop_count = 10;
 	vector< shared_ptr<artwork_instance> > paintings_to_display = loot.generateArtworks(drop_count, 1.0f);
 	offsetArtworks(paintings_to_display, eye_level);
+	addFrames(paintings_to_display, context, camera, data_path);
 
 	glfwSetTime(0);
 	float render_fps = 60.0f;
@@ -136,6 +149,7 @@ int main(int argc, char* argv[])
 					float new_z = (painting_count % 10 == 0 ?
 						(painting_count / 10) * -4.0f : (painting_count / 10) + 1 * -4.0f);
 					offsetArtworks(paintings_to_add, eye_level, new_z);
+					addFrames(paintings_to_add, context, camera, data_path);
 					paintings_to_display.insert(paintings_to_display.end(), paintings_to_add.begin(), paintings_to_add.end());
 					frame_count = 0;
 				}
@@ -151,4 +165,6 @@ int main(int argc, char* argv[])
 
 	for (auto i : paintings_to_display)
 		i->unloadData();
+
+	return 0;
 }
