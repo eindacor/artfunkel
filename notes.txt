@@ -1,0 +1,65 @@
+---------------------------npc's---------------------------
+	auctioneers -> invite players to private auctions
+	dealers -> let players purchase rare works
+	collectors -> offer large sums for specific paintings
+	donors -> offer paintings in their collection to players
+	benefactors -> offer currency to players
+	enthusiasts -> automatically boost xp gained from gallery entrance
+	designer -> let players purchase decorative items for gallery
+	forgers -> let players purchase forged rare works
+	experts -> potential to identify forgeries for players
+	staff members (for hire)
+		art historians -> automatically generate deals and auction invitations for player
+		preservationist -> reduced cost of restoring paintings, automatically preserve paintings
+		experts -> reduced cost of identifying forgeries
+		
+		
+---------------------------forgeries---------------------------		
+forgery scenarios:
+
+Original Buyer Displays Forged Painting
+	1. Player X buys forged painting from forger
+	2. X displays painting in gallery
+	3. X attracts users to gallery with painting
+	
+	Alternates:
+	3. Visitor identifies forgery. X loses rep, takes painting down, loses the visitor's entry fee, is unable to display the forgery again.
+	
+Original Buyer Sells Forged Painting	
+	1. Player X buys forged painting from forger
+	2. X sells painting to player Y via auction
+	3. Y 
+	
+	
+	B -> buyer from A
+	C -> buyer from B
+
+
+
+
+---------------------------set bonuses---------------------------	
+increase chance of spawning each type of npc (11)
+increased money per hour
+increased xp from set paintings for visitors
+increased xp from gallery paintings for visitors
+increased xp from gallery decorations for visitors
+xp time limit increased for set paintings
+xp time limit increased for gallery paintings
+% of visitor xp from set paintings goes to owner
+% of visitor xp from gallery paintings goes to owner
+% of visitor xp from gallery decorations goes to owner
+rep boost
+receive additional money for each entry fee paid
+gain money for each player interaction within gallery
+gain xp for each player interaction within gallery
+you gain xp from your own gallery
+increased xp from set paintings for friends
+increased xp from gallery paintings for friends
+increased xp from gallery decorations for friends
+
+---------------------------rollable painting traits---------------------------
+painting does not deteriorate
+painting cannot be identified as a forgery
+increased xp from painting for visitors
+increased xp from painting for friends
+
