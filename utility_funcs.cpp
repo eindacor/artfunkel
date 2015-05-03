@@ -3,7 +3,7 @@
 
 #include "utility_funcs.h"
 
-string getDateString(const jep::date &d, bool include_day)
+string getDateString(const date &d, bool include_day)
 {
 	string date_string;
 
@@ -54,7 +54,7 @@ double lookupValue(rarity work_rarity)
 	return jep::floatRoll(min, max, 1);
 }
 
-void printDate(jep::date d, bool include_day)
+void printDate(date d, bool include_day)
 {
 	cout << getDateString(d, include_day) << endl;
 }

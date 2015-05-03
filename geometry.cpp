@@ -53,3 +53,9 @@ void painting_surface::draw(const mat4 &model_matrix) const
 
 	glBindVertexArray(0);
 }
+
+frame::frame(float painting_width, float painting_height, shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam, const char* frame_texture, const char* matte_texture,
+	float frame_width, float frame_depth, float matte_width, float matte_setback, float painting_setback)
+{
+
+}

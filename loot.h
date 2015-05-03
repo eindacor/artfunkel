@@ -2,7 +2,6 @@
 #define LOOT_H
 
 #include "header.h"
-#include "art_db.h"
 
 class loot_generator
 {

@@ -78,11 +78,11 @@ void loot_generator::printGenerated(const vector< shared_ptr<artwork_instance> >
 		" (" << stringFromRarity(i->getRarity()) << ")" << endl;
 
 	map<rarity, unsigned> frequency_results{
-		std::pair<rarity, int>(COMMON, 0),
-		std::pair<rarity, int>(UNCOMMON, 0),
-		std::pair<rarity, int>(RARE, 0),
-		std::pair<rarity, int>(LEGENDARY, 0),
-		std::pair<rarity, int>(MASTERPIECE, 0)
+		pair<rarity, int>(COMMON, 0),
+		pair<rarity, int>(UNCOMMON, 0),
+		pair<rarity, int>(RARE, 0),
+		pair<rarity, int>(LEGENDARY, 0),
+		pair<rarity, int>(MASTERPIECE, 0)
 	};
 	for (auto i : artwork_vec)
 		frequency_results[i->getRarity()]++;

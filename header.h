@@ -24,23 +24,30 @@ enum rarity { COMMON, UNCOMMON, RARE, LEGENDARY, MASTERPIECE, UNKNOWN_RARITY };
 class artist;
 class artwork_data;
 class artwork_instance;
+class art_db;
+class painting_surface;
 
 using std::vector;
 using std::list;
 using std::string;
 using std::cout;
 using std::endl;
+using std::map;
+using std::pair;
+
 using boost::shared_ptr;
+
 using jep::ogl_context;
 using jep::ogl_camera;
 using jep::ogl_camera_free;
 using jep::key_handler;
+using jep::date;
 
 using glm::vec4;
 using glm::vec3;
 using glm::mat4;
 
-string getDateString(const jep::date &d, bool include_day);
+string getDateString(const date &d, bool include_day);
 double lookupValue(rarity work_rarity);
 string stringFromRarity(rarity r);
 string stringFromGenre(genre g);

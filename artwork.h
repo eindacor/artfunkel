@@ -1,5 +1,6 @@
 #ifndef ARTWORK_H
 #define ARTWORK_H
+
 #include "header.h"
 #include "artist.h"
 #include "geometry.h"
@@ -15,7 +16,7 @@ public:
 		float work_height,
 		float work_width,
 		string work_image_path,
-		jep::date work_date);
+		date work_date);
 	~artwork_data(){};
 
 	int getID() const { return ID; }
@@ -28,7 +29,7 @@ public:
 	float getHeight() const { return height; }
 	float getWidth() const { return width; }
 	string getImagePath() const { return image_path; }
-	jep::date getDate() const { return date; }
+	date getDate() const { return date; }
 	const shared_ptr<painting_surface> getSurface() const { return surface; }
 
 	void setValue() { value = lookupValue(Rarity); }
@@ -46,7 +47,7 @@ private:
 	float height;
 	float width;
 	string image_path;
-	jep::date date;
+	date date;
 
 	shared_ptr<painting_surface> surface;
 };
@@ -95,7 +96,7 @@ public:
 	mat4 getModelMatrix() const { return model_matrix; }
 
 	void setValue() { value = lookupValue(getRarity()); }
-	void draw(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam)
+	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam)
 	{
 		if (getSurface() == nullptr)
 			loadData(ogl_con, ogl_cam);

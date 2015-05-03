@@ -9,7 +9,7 @@ artwork_data::artwork_data(int work_id,
 	float work_height,
 	float work_width,
 	string work_image_path,
-	jep::date work_date)
+	date work_date)
 {
 	ID = work_id;
 	_genre = work_genre;
