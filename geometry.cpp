@@ -60,7 +60,7 @@ frame_model::frame_model(float painting_width, float painting_height, shared_ptr
 	context = ogl_con;
 	camera = ogl_cam;
 
-	float default_texture_dimension = 0.1f;
+	float default_texture_dimension = 0.3f;
 
 	painting_to_wall_dimension = frame_depth - matte_setback - painting_setback;
 	float total_width = painting_width + (matte_width * 2.0f) + (frame_width * 2.0f);

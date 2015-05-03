@@ -43,12 +43,25 @@ void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_l
 
 void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path)
 {
-	string frame_texture = data_path + "model_data\\black_frame.bmp";
 	string matte_texture = data_path + "model_data\\white_matte.bmp";
 	for (auto i : art_vec)
 	{
+		string frame_material_image_name;
+		switch (jep::intRoll(0, 4))
+		{
+		case 0: frame_material_image_name = "frame_white.bmp"; break;
+		case 1: frame_material_image_name = "frame_black.bmp"; break;
+		case 2: frame_material_image_name = "frame_pine.bmp"; break;
+		case 3: frame_material_image_name = "frame_bamboo.bmp"; break;
+		case 4: frame_material_image_name = "frame_aluminum.bmp"; break;
+		}
+
+		string frame_texture = data_path + "model_data\\" + frame_material_image_name;
+
+		float random_frame_width = jep::floatRoll(0.05f, .25f, 2);
+		float random_matte_width = jep::floatRoll(0.05f, .25f, 2);
 		shared_ptr<frame_model> generated_frame(new frame_model(
-			i->getWidth() / 100.0f, i->getHeight() / 100.0f, context, camera, frame_texture.c_str(), matte_texture.c_str()));
+			i->getWidth() / 100.0f, i->getHeight() / 100.0f, context, camera, frame_texture.c_str(), matte_texture.c_str(), random_frame_width));
 
 		i->loadFrame(generated_frame);
 	}
@@ -70,8 +83,8 @@ int main(int argc, char* argv[])
 
 	else
 	{
-		data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
-		//data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
+		//data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
+		data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
 	}
 	
 	string paintings_path = data_path + "paintings.csv";
