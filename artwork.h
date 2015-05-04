@@ -63,6 +63,7 @@ private:
 	shared_ptr<painting_surface> surface;
 };
 
+//TODO revise so artwork_instance is not a child class, but contains and artwork_data object instead
 class artwork_instance : public artwork_data
 {
 public:
@@ -99,14 +100,14 @@ public:
 	//copy constructor
 	//TODO modify copy constructor to use existing surface data if it is available in memory
 	artwork_instance(const artwork_instance &original) :
-		artwork_data(getID(), getTitle(), getArtist(), getGenre(), 
-		getRarity(), getHeight(), getWidth(), getImagePath(), getDate())
+		artwork_data(original.getID(), original.getTitle(), original.getArtist(), original.getGenre(),
+		original.getRarity(), original.getHeight(), original.getWidth(), original.getImagePath(), original.getDate())
 	{
 		forgery = original.isForgery();
 		condition = original.getCondition();
 		model_matrix = original.getModelMatrix();
-		p_frame = nullptr;
-		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		p_frame = original.getFrame();
+		centerpoint = original.getCenter();
 	}; //end of copy constructor
 	~artwork_instance(){};
 
@@ -116,10 +117,11 @@ public:
 	vec4 getCenter() const { return centerpoint; }
 
 	void moveRelative(mat4 translation_matrix) { model_matrix = model_matrix * translation_matrix; centerpoint = centerpoint * translation_matrix; }
-	void moveAbsolute(mat4 position_matrix) { 
-		model_matrix = position_matrix; 
-		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		centerpoint = centerpoint * position_matrix;
+	void moveAbsolute(vec3 position) { 
+		mat4 translation_matrix = glm::translate(mat4(1.0f), position);
+		model_matrix = translation_matrix;
+		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);	
+		centerpoint = translation_matrix * centerpoint;
 	}
 	mat4 getModelMatrix() const { return model_matrix; }
 	shared_ptr<frame_model> getFrame() const { return p_frame; }
@@ -131,17 +133,22 @@ public:
 		mat4 frame_offset(glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f)));
 		if (p_frame != nullptr)
 		{
-			p_frame->draw(model_matrix);
+			p_frame->draw(model_matrix, ogl_cam);
 			float z_offset = p_frame->getPaintingDistanceToWall();
 			frame_offset = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, z_offset));
 		}
 
 		if (getSurface() == nullptr)
 			loadData(ogl_con, ogl_cam);
-		getSurface()->draw(model_matrix * frame_offset);
+		getSurface()->draw(model_matrix * frame_offset, ogl_cam);
 	}
 
 	const artwork_instance& operator = (const artwork_instance &other);
+
+	bool operator == (const artwork_instance &other) const;
+	bool operator != (const artwork_instance &other) const { return !(*this == other); }
+
+	void applyFrameTemplate(const frame_model &frame_template);
 
 private:
 	double value;

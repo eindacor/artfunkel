@@ -39,7 +39,7 @@ artwork_data::artwork_data()
 
 void artwork_data::loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam)
 {
-	shared_ptr<painting_surface> work_surface(new painting_surface(width, height, ogl_con, ogl_cam, image_path.c_str()));
+	shared_ptr<painting_surface> work_surface(new painting_surface(width, height, ogl_con, image_path.c_str()));
 	surface = work_surface;
 }
 
@@ -64,4 +64,25 @@ const artwork_instance& artwork_instance::operator = (const artwork_instance &ot
 
 	setValue();
 	return *this;
-};	//end of primary constructor
+}
+
+bool artwork_instance::operator == (const artwork_instance &other) const
+{
+	if (getID() != other.getID())
+		return false;
+
+	if (forgery != other.isForgery())
+		return false;
+
+	if (condition != other.getCondition())
+		return false;
+
+	return true;
+}
+
+void artwork_instance::applyFrameTemplate(const frame_model &frame_template)
+{
+	p_frame = shared_ptr<frame_model>(new frame_model(
+		getWidth(), getHeight(), frame_template.getContext(), frame_template.getFrameTexturePath(), frame_template.getMatteTexturePath(),
+		frame_template.getFrameWidth(), frame_template.getFrameDepth(), frame_template.getMatteWidth(), frame_template.getMatteSetback(), frame_template.getPaintingSetback()));
+}

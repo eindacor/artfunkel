@@ -23,8 +23,8 @@ int main(int argc, char* argv[])
 
 	else
 	{
-		data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
-		//data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
+		//data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
+		data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
 	}
 	
 	string paintings_path = data_path + "paintings.csv";
@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	shared_ptr<art_db> artist_database(new art_db(artists_path.c_str(), paintings_path.c_str(), images_path.c_str()));
 	shared_ptr<loot_generator> loot(new loot_generator(artist_database));
 
-	shared_ptr<player> current_player(new player("Test Player", loot));
+	shared_ptr<player> current_player(new player("Test Player", loot, context, data_path));
 
 	int drop_count = 10;
 	vector< shared_ptr<artwork_instance> > paintings_to_display = loot->generateArtworks(drop_count, 1.0f);
@@ -57,8 +57,23 @@ int main(int argc, char* argv[])
 	int frame_count = 0;
 	bool add_painting = false;
 
-	if (mainMenu(data_path, context, keys) == 4)
-		return 0;
+	int menu_return = mainMenu(data_path, context, keys);
+
+	while (menu_return != 4)
+	{
+		cout << "displayed works from main().... menu_return =  " << menu_return << endl;
+		map<int, shared_ptr<artwork_instance> > displayed = current_player->getDisplayed();
+		for (auto i : displayed)
+			cout << "\t" << i.second->getTitle() << endl;
+
+		switch (menu_return)
+		{
+		case 0: menu_return = viewGallery(data_path, context, keys, current_player); break;
+		case 1: menu_return = viewInventory(data_path, context, keys, current_player); break;
+		}
+	}
+
+	return 0;
 
 	do
 	{

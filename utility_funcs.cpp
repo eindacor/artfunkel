@@ -183,8 +183,9 @@ vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 
 	return geometry_data;
 }
 
+//TODO templatize function
 //this function takes a vector of instances and modifies their model matrices for proper display
-void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_level, float starting_z, bool x_only)
+void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float space_between, float eye_level, float starting_z, bool x_only)
 {
 	float x_offset = 0.0f;
 	float previous_width = 0.0f;
@@ -204,9 +205,8 @@ void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_l
 			else y_offset = eye_level - (i->getHeight() / 600.0f);
 		}
 
-		float space_between = 2.0f;
 		float buffer = (previous_width / 200.0f) + space_between + (i->getWidth() / 200.0f);
-		if (display_count % 10 == 0)
+		if (display_count % 10 == 0 && display_count != 0)
 		{
 			x_offset = 0.0f;
 			starting_z -= 4.0f;
@@ -218,7 +218,46 @@ void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_l
 			x_offset += buffer;
 
 		previous_width = i->getWidth();
-		i->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, starting_z)));
+		i->moveAbsolute(vec3(x_offset, y_offset, starting_z));
+		display_count++;
+	}
+}
+
+//TODO templatize function
+void offsetArtworks(map<int, shared_ptr<artwork_instance> > &art_map, float space_between, float eye_level, float starting_z, bool x_only)
+{
+	float x_offset = 0.0f;
+	float previous_width = 0.0f;
+	int display_count = 0;
+
+	for (auto i : art_map)
+	{
+		//center on eye level, unless painting is within .5 of floor
+		float y_offset = 0.0f;
+
+		if (!x_only)
+		{
+			float min_distance_from_floor = .5f;
+			if ((i.second->getHeight() * .67f) + min_distance_from_floor > eye_level)
+				y_offset = (i.second->getHeight() / 2.0f) + min_distance_from_floor;
+
+			else y_offset = eye_level - (i.second->getHeight() / 6.0f);
+		}
+
+		float buffer = (previous_width / 2.0f) + space_between + (i.second->getWidth() / 2.0f);
+		if (display_count % 10 == 0 && display_count != 0)
+		{
+			x_offset = 0.0f;
+			starting_z -= 4.0f;
+			previous_width = 0.0f;
+			buffer = 0.0f;
+		}
+
+		else
+			x_offset += buffer;
+
+		previous_width = i.second->getWidth();
+		i.second->moveAbsolute(vec3(x_offset, y_offset, starting_z));
 		display_count++;
 	}
 }
@@ -243,7 +282,7 @@ void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_c
 		float random_frame_width = jep::floatRoll(0.05f, .25f, 2);
 		float random_matte_width = jep::floatRoll(0.05f, .25f, 2);
 		shared_ptr<frame_model> generated_frame(new frame_model(
-			i->getWidth() / 100.0f, i->getHeight() / 100.0f, context, camera, frame_texture.c_str(), matte_texture.c_str(), random_frame_width));
+			i->getWidth(), i->getHeight(), context, frame_texture.c_str(), matte_texture.c_str(), random_frame_width));
 
 		i->loadFrame(generated_frame);
 	}

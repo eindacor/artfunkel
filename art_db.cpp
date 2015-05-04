@@ -41,8 +41,8 @@ art_db::art_db(const char* artists_path,
 		rarity work_rarity(rarityFromString(row.at(5)));
 		//reserved for medium
 		//reserved for rarity scale
-		float work_height(std::stof(row.at(8)));
-		float work_width(std::stof(row.at(9)));
+		float work_height(std::stof(row.at(8)) / 100.0f);
+		float work_width(std::stof(row.at(9)) / 100.0f);
 		string work_image_name(row.at(10));
 		bool work_forgery = false;
 		float work_condition = 1.0f;

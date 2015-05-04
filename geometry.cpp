@@ -2,13 +2,12 @@
 #include "artwork.h"
 
 painting_surface::painting_surface(
-	float width, float height, shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam, const char* texture_path)
+	float width, float height, shared_ptr<ogl_context> ogl_con, const char* texture_path)
 {
 	context = ogl_con;
-	camera = ogl_cam;
 
-	float total_height = height / 100.0f;
-	float total_width = width / 100.0f;
+	float total_height = height;
+	float total_width = width;
 	
 	float width_offset = total_width / 2.0f;
 	float height_offset = total_height / 2.0f;
@@ -36,7 +35,7 @@ painting_surface::painting_surface(
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(ogl_con, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 }
 
-void painting_surface::draw(const mat4 &model_matrix) const
+void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &ogl_cam) const
 {
 	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
 	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
@@ -45,7 +44,7 @@ void painting_surface::draw(const mat4 &model_matrix) const
 	glBindVertexArray(*temp_vao);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);
 
-	mat4 MVP = context->getProjectionMatrix() * camera->getViewMatrix() * model_matrix;
+	mat4 MVP = context->getProjectionMatrix() * ogl_cam->getViewMatrix() * model_matrix;
 	glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
 
@@ -54,11 +53,19 @@ void painting_surface::draw(const mat4 &model_matrix) const
 	glBindVertexArray(0);
 }
 
-frame_model::frame_model(float painting_width, float painting_height, shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam, const char* frame_texture, const char* matte_texture,
-	float frame_width, float frame_depth, float matte_width, float matte_setback, float painting_setback)
+frame_model::frame_model(float painting_width, float painting_height, shared_ptr<ogl_context> ogl_con, string frame_texture, string matte_texture,
+	float f_width, float f_depth, float m_width, float m_setback, float p_setback)
 {
 	context = ogl_con;
-	camera = ogl_cam;
+
+	frame_texture_path = frame_texture;
+	matte_texture_path = matte_texture;
+
+	frame_width = f_width;
+	frame_depth = f_depth;
+	matte_width = m_width;
+	matte_setback = m_setback;
+	painting_setback = p_setback;
 
 	float default_texture_dimension = 0.3f;
 
@@ -184,7 +191,7 @@ frame_model::frame_model(float painting_width, float painting_height, shared_ptr
 	frame_vertices.insert(frame_vertices.begin(), frame_top_inner.begin(), frame_top_inner.end());
 
 	shared_ptr<jep::ogl_data> generated_frame(new jep::ogl_data(
-		ogl_con, frame_texture, GL_STATIC_DRAW, frame_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+		ogl_con, frame_texture_path.c_str(), GL_STATIC_DRAW, frame_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 
 	frame_opengl_data = generated_frame;
 	
@@ -235,7 +242,7 @@ frame_model::frame_model(float painting_width, float painting_height, shared_ptr
 	matte_vertices.insert(matte_vertices.begin(), matte_top_inner.begin(), matte_top_inner.end());
 
 	shared_ptr<jep::ogl_data> generated_matte(new jep::ogl_data(
-		ogl_con, matte_texture, GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+		ogl_con, matte_texture_path.c_str(), GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 
 	matte_opengl_data = generated_matte;
 
@@ -272,7 +279,7 @@ frame_model::frame_model(float painting_width, float painting_height, shared_ptr
 	*/
 }
 
-void frame_model::draw(const mat4 &model_matrix) const
+void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera) const
 {
 	//TODO revise opengl_data class to contain rendering data
 	//draw the frame
@@ -289,7 +296,6 @@ void frame_model::draw(const mat4 &model_matrix) const
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
-
 
 	//draw the matte
 	temp_vao = matte_opengl_data->getVAO();
