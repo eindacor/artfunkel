@@ -26,11 +26,15 @@ public:
 
 	bool isOnDisplay(int index);
 
+	bool alreadyOwned(int painting_index) const;
+
 private:
 	string name;
 	map<int, shared_ptr<artwork_instance> > inventory;
 	shared_ptr<frame_model> default_frame;
 	map<int, shared_ptr<artwork_instance> > paintings_on_display;
+
+	float currency;
 
 	//map<int, gallery> active_galleries;
 };

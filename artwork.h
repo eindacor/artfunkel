@@ -17,12 +17,12 @@ public:
 		float work_height,
 		float work_width,
 		string work_image_path,
-		date work_date);
+		date work_date,
+		float base_value);
 	~artwork_data(){};
 
 	int getID() const { return ID; }
 	genre getGenre() const { return _genre; }
-	double getValue() const { return value; }
 	string getTitle() const { return title; }
 	const shared_ptr<artist> getArtist() const { return artist_ptr; }
 	string getArtistName() const { return artist_ptr->getName(); }
@@ -31,6 +31,7 @@ public:
 	float getWidth() const { return width; }
 	string getImagePath() const { return image_path; }
 	date getDate() const { return date; }
+	float getBaseValue() const { return base_value; }
 	const shared_ptr<painting_surface> getSurface() const { return surface; }
 
 	void setID(int i) { ID = i; }
@@ -42,15 +43,14 @@ public:
 	void setWidth(float w) { width = w; }
 	void setImagePath(string s) { image_path = s; }
 	void setDate(date d) { date = d; }
+	void setBaseValue(float f) { base_value = f; }
 
-	void setValue() { value = lookupValue(Rarity); }
 	void loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam);
 	void unloadData() { surface = shared_ptr<painting_surface>(nullptr); }
 	void setSurface(shared_ptr<painting_surface> surf) { surface = surf; }
 
 private:
 	int ID;
-	double value;
 	genre _genre;
 	string title;
 	shared_ptr<artist> artist_ptr;
@@ -59,6 +59,7 @@ private:
 	float width;
 	string image_path;
 	date date;
+	float base_value;
 
 	shared_ptr<painting_surface> surface;
 };
@@ -86,22 +87,24 @@ public:
 		float work_height,
 		float work_width,
 		string work_image_name,
-		jep::date work_date) :
+		jep::date work_date,
+		float work_base_value) :
 		artwork_data(work_id, work_title, work_artist, work_genre, 
-		work_rarity, work_height, work_width, work_image_name, work_date)
+		work_rarity, work_height, work_width, work_image_name, work_date, work_base_value)
 	{
 		forgery = work_forgery;
 		condition = work_condition;
 		model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
 		p_frame = nullptr;
 		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	};	//end of primary constructor
+		setValue();
+	}	//end of primary constructor
 
 	//copy constructor
 	//TODO modify copy constructor to use existing surface data if it is available in memory
 	artwork_instance(const artwork_instance &original) :
 		artwork_data(original.getID(), original.getTitle(), original.getArtist(), original.getGenre(),
-		original.getRarity(), original.getHeight(), original.getWidth(), original.getImagePath(), original.getDate())
+		original.getRarity(), original.getHeight(), original.getWidth(), original.getImagePath(), original.getDate(), original.getBaseValue())
 	{
 		forgery = original.isForgery();
 		condition = original.getCondition();
@@ -123,10 +126,12 @@ public:
 		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);	
 		centerpoint = translation_matrix * centerpoint;
 	}
+
 	mat4 getModelMatrix() const { return model_matrix; }
 	shared_ptr<frame_model> getFrame() const { return p_frame; }
+	pair<float, float> getOverallDimensions() const;
 
-	void setValue() { value = lookupValue(getRarity()); }
+	void setValue();
 	void loadFrame(const shared_ptr<frame_model> &work_frame) { p_frame = work_frame; }
 	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam)
 	{

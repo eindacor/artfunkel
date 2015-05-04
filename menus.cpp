@@ -180,7 +180,6 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 	//space artwork without in the x axis only
 	offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-	vector<int> paintings_added;
 
 	//add player's default frames to each
 	for (auto i : paintings_to_display)
@@ -226,15 +225,34 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 			if (keys->checkPress(GLFW_KEY_ENTER))
 			{
-				int current_selection_dist = std::distance(paintings_to_display.begin(), current_selection);
-				switch (std::find(paintings_added.begin(), paintings_added.end(), current_selection_dist) != paintings_added.end())
+				int selected_index = (*current_selection).second->getID();
+				bool already_owned = current_player->alreadyOwned(selected_index);
+
+				switch (already_owned)
 				{
-				case true: cout << (*current_selection).second->getTitle() << " was already added to your inventory" << endl;
+				case true: cout << (*current_selection).second->getTitle() << " is already in your inventory" << endl;
 					break;
 				case false: current_player->addWorkToInventory((*current_selection).second);
-					paintings_added.push_back(current_selection_dist);
 					cout << (*current_selection).second->getTitle() << " has been added to your inventory" << endl;
 					break;
+				}
+			}
+
+			if (keys->checkPress(GLFW_KEY_A))
+			{
+				for (auto i : paintings_to_display)
+				{
+					int selected_index = i.second->getID();
+					bool already_owned = current_player->alreadyOwned(selected_index);
+
+					switch (already_owned)
+					{
+					case true: cout << i.second->getTitle() << " is already in your inventory" << endl;
+						break;
+					case false: current_player->addWorkToInventory(i.second);
+						cout << i.second->getTitle() << " has been added to your inventory" << endl;
+						break;
+					}
 				}
 			}
 

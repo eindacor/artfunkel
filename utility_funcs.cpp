@@ -24,7 +24,7 @@ string getDateString(const date &d, bool include_day)
 	return date_string;
 }
 
-double lookupValue(rarity work_rarity)
+double lookupValue(rarity work_rarity, float work_rarity_scale)
 {
 	//placeholder function
 	double min, max;
@@ -52,7 +52,9 @@ double lookupValue(rarity work_rarity)
 		break;
 	}
 
-	return jep::floatRoll(min, max, 1);
+	float value = ((max - min) * work_rarity_scale) + min;
+
+	return value;
 }
 
 void printDate(date d, bool include_day)

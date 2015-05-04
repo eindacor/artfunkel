@@ -40,17 +40,19 @@ art_db::art_db(const char* artists_path,
 		genre work_genre(genreFromString(row.at(4)));
 		rarity work_rarity(rarityFromString(row.at(5)));
 		//reserved for medium
-		//reserved for rarity scale
+		float work_value_scale(std::stof(row.at(7)));
 		float work_height(std::stof(row.at(8)) / 100.0f);
 		float work_width(std::stof(row.at(9)) / 100.0f);
 		string work_image_name(row.at(10));
 		bool work_forgery = false;
 		float work_condition = 1.0f;
 
+		float work_base_value = lookupValue(work_rarity, work_value_scale);
+
 		string image_path = image_directory + work_image_name;
 
 		shared_ptr<artwork_data> new_data(new artwork_data(work_id, work_title, work_artist, work_genre, work_rarity,
-			work_height, work_width, image_path, work_date));
+			work_height, work_width, image_path, work_date, work_base_value));
 
 		artworks.insert(pair<int, shared_ptr<artwork_data> >(work_id, new_data));
 		genre_counts[work_genre] += 1;
@@ -68,7 +70,7 @@ void art_db::printArtist(shared_ptr<artist> target) const
 void art_db::printArtwork(const artwork_data &target) const
 {
 	cout << target.getID() << ": " << target.getTitle() << " by " << target.getArtistName() << endl;
-	cout << "\t" << target.getHeight() << "x" << target.getWidth() << ", " << getDateString(target.getDate(), false) << ", $" << target.getValue() << "k" << endl;
+	cout << "\t" << target.getHeight() << "x" << target.getWidth() << ", " << getDateString(target.getDate(), false) << ", $" << target.getBaseValue() << "k" << endl;
 	cout << "Rarity: " << target.getRarity() << endl;
 }
 

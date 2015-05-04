@@ -4,13 +4,15 @@
 player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_context> ogl_con, string data_path)
 {
 	name = s;
-	map<int, shared_ptr<artwork_instance> > generated_works =  lg->generateArtworks(10, 1.0f);
+
+	map<int, shared_ptr<artwork_instance> > generated_works =  lg->generateArtworks(1, 1.0f);
 	for (auto i : generated_works)
 		addWorkToInventory(i.second);
 
 	string frame_path = data_path + "model_data\\frame_black.bmp";
 	string matte_path = data_path + "model_data\\white_matte.bmp";
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, frame_path, matte_path));
+	currency = 100.0f;
 }
 
 void player::addWorkToInventory(const shared_ptr<artwork_instance> &work)
@@ -71,4 +73,15 @@ void player::removePaintingFromDisplay(const pair<int, shared_ptr<artwork_instan
 bool player::isOnDisplay(int index)
 {
 	return (paintings_on_display.find(index) != paintings_on_display.end());
+}
+
+bool player::alreadyOwned(int painting_index) const
+{
+	for (auto i : inventory)
+	{
+		if (i.second->getID() == painting_index)
+			return true;
+	}
+
+	return false;
 }

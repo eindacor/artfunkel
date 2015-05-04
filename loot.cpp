@@ -31,7 +31,7 @@ map<int, shared_ptr<artwork_instance> > loot_generator::generateArtworks(int cou
 			it++;
 
 		shared_ptr<artwork_instance> toAdd(new artwork_instance((*it)->getID(), (*it)->getTitle(), (*it)->getArtist(), (*it)->getGenre(), (*it)->getRarity(),
-			false, 1.0f, (*it)->getHeight(), (*it)->getWidth(), (*it)->getImagePath(), (*it)->getDate()));
+			false, 1.0f, (*it)->getHeight(), (*it)->getWidth(), (*it)->getImagePath(), (*it)->getDate(), (*it)->getBaseValue()));
 		loot_map.insert(pair< int, shared_ptr<artwork_instance> >(i, toAdd));
 	}
 
@@ -55,7 +55,7 @@ map<int, shared_ptr<artwork_instance> > loot_generator::generateArtworks(int cou
 			it++;
 
 		shared_ptr<artwork_instance> toAdd(new artwork_instance((*it)->getID(), (*it)->getTitle(), (*it)->getArtist(), (*it)->getGenre(), (*it)->getRarity(),
-			false, 1.0f, (*it)->getHeight(), (*it)->getWidth(), (*it)->getImagePath(), (*it)->getDate()));
+			false, 1.0f, (*it)->getHeight(), (*it)->getWidth(), (*it)->getImagePath(), (*it)->getDate(), (*it)->getBaseValue()));
 		loot_map.insert(pair< int, shared_ptr<artwork_instance> >(i, toAdd));
 	}
 
@@ -75,8 +75,11 @@ void loot_generator::printGenerated(const map<int, shared_ptr<artwork_instance> 
 
 	cout << "Crate Contents: " << endl;
 	for (auto i : artwork_map)
+	{
 		cout << "\t" << i.second->getTitle() << " by " << i.second->getArtistName() <<
-		" (" << stringFromRarity(i.second->getRarity()) << ")" << endl;
+			" (" << stringFromRarity(i.second->getRarity()) << ")" << endl;
+		cout << "\tEstimated value: " << i.second->getValue() << endl;
+	}
 
 	map<rarity, unsigned> frequency_results{
 		pair<rarity, int>(COMMON, 0),

@@ -9,7 +9,8 @@ artwork_data::artwork_data(int work_id,
 	float work_height,
 	float work_width,
 	string work_image_path,
-	jep::date work_date)
+	jep::date work_date,
+	float work_value)
 {
 	ID = work_id;
 	_genre = work_genre;
@@ -20,6 +21,7 @@ artwork_data::artwork_data(int work_id,
 	width = work_width;
 	image_path = work_image_path;
 	date = work_date;
+	base_value = work_value;
 	surface = shared_ptr<painting_surface>(nullptr);
 }
 
@@ -34,6 +36,7 @@ artwork_data::artwork_data()
 	width = 0.0f;
 	image_path = "";
 	date = jep::date("0000????");
+	base_value = 0.0f;
 	surface = nullptr;
 }
 
@@ -41,6 +44,22 @@ void artwork_data::loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_came
 {
 	shared_ptr<painting_surface> work_surface(new painting_surface(width, height, ogl_con, image_path.c_str()));
 	surface = work_surface;
+}
+
+pair<float, float> artwork_instance::getOverallDimensions() const
+{
+	float total_width = getWidth();
+	float total_height = getHeight();
+	
+	if (p_frame != nullptr)
+	{
+		total_width += p_frame->getFrameWidth() * 2.0f;
+		total_width += p_frame->getMatteWidth() * 2.0f;
+		total_height += p_frame->getFrameWidth() * 2.0f;
+		total_height += p_frame->getMatteWidth() * 2.0f;
+	}
+
+	return pair<float, float>(total_height, total_width);
 }
 
 const artwork_instance& artwork_instance::operator = (const artwork_instance &other)
@@ -54,6 +73,7 @@ const artwork_instance& artwork_instance::operator = (const artwork_instance &ot
 	setWidth(other.getWidth());
 	setImagePath(other.getImagePath());
 	setDate(other.getDate());
+	setBaseValue(other.getBaseValue());
 	setSurface(other.getSurface());
 
 	forgery = other.isForgery();
@@ -85,4 +105,11 @@ void artwork_instance::applyFrameTemplate(const frame_model &frame_template)
 	p_frame = shared_ptr<frame_model>(new frame_model(
 		getWidth(), getHeight(), frame_template.getContext(), frame_template.getFrameTexturePath(), frame_template.getMatteTexturePath(),
 		frame_template.getFrameWidth(), frame_template.getFrameDepth(), frame_template.getMatteWidth(), frame_template.getMatteSetback(), frame_template.getPaintingSetback()));
+}
+
+void artwork_instance::setValue()
+{
+	value = getBaseValue() * condition;
+	if (forgery)
+		value *= .15;
 }
