@@ -119,6 +119,8 @@ int main(int argc, char* argv[])
 	int frame_count = 0;
 	bool add_painting = false;
 
+	cout << mainMenu(data_path, context, keys) << endl;
+
 	do
 	{
 		if (glfwGetTime() > 1.0f / render_fps)

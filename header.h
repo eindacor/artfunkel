@@ -55,5 +55,6 @@ string stringFromRarity(rarity r);
 string stringFromGenre(genre g);
 vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right,
 	float uv_map_dimension, char u_axis, char v_axis);
+int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys);
 
 #endif
