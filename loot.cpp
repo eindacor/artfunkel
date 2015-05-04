@@ -15,11 +15,11 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	default_rarity_map[MASTERPIECE] = 1;
 }
 
-vector< shared_ptr<artwork_instance> > loot_generator::generateArtworks(int count,
+map<int, shared_ptr<artwork_instance> > loot_generator::generateArtworks(int count,
 	const map<rarity, unsigned int> &rarity_proportions
 	) const
 {
-	vector< shared_ptr<artwork_instance> > loot_vec;
+	map<int, shared_ptr<artwork_instance> > loot_map;
 
 	for (int i = 0; i < count; i++)
 	{
@@ -32,17 +32,17 @@ vector< shared_ptr<artwork_instance> > loot_generator::generateArtworks(int coun
 
 		shared_ptr<artwork_instance> toAdd(new artwork_instance((*it)->getID(), (*it)->getTitle(), (*it)->getArtist(), (*it)->getGenre(), (*it)->getRarity(),
 			false, 1.0f, (*it)->getHeight(), (*it)->getWidth(), (*it)->getImagePath(), (*it)->getDate()));
-		loot_vec.push_back(toAdd);
+		loot_map.insert(pair< int, shared_ptr<artwork_instance> >(i, toAdd));
 	}
 
-	printGenerated(loot_vec, rarity_proportions);
-	return loot_vec;
+	printGenerated(loot_map, rarity_proportions);
+	return loot_map;
 }
 
-vector< shared_ptr<artwork_instance> > loot_generator::generateArtworks(int count, float modifier) const
+map<int, shared_ptr<artwork_instance> > loot_generator::generateArtworks(int count, float modifier) const
 {
 	//add functionality to pass a modifier, increasing/decreasing chances
-	vector< shared_ptr<artwork_instance> > loot_vec;
+	map<int, shared_ptr<artwork_instance> > loot_map;
 
 	for (int i = 0; i < count; i++)
 	{
@@ -56,14 +56,14 @@ vector< shared_ptr<artwork_instance> > loot_generator::generateArtworks(int coun
 
 		shared_ptr<artwork_instance> toAdd(new artwork_instance((*it)->getID(), (*it)->getTitle(), (*it)->getArtist(), (*it)->getGenre(), (*it)->getRarity(),
 			false, 1.0f, (*it)->getHeight(), (*it)->getWidth(), (*it)->getImagePath(), (*it)->getDate()));
-		loot_vec.push_back(toAdd);
+		loot_map.insert(pair< int, shared_ptr<artwork_instance> >(i, toAdd));
 	}
 
-	printGenerated(loot_vec, default_rarity_map);
-	return loot_vec;
+	printGenerated(loot_map, default_rarity_map);
+	return loot_map;
 }
 
-void loot_generator::printGenerated(const vector< shared_ptr<artwork_instance> > &artwork_vec, const map<rarity, unsigned> &rarity_map) const
+void loot_generator::printGenerated(const map<int, shared_ptr<artwork_instance> > &artwork_map, const map<rarity, unsigned> &rarity_map) const
 {
 	int rarity_sumtotal = 0;
 	for (auto i : rarity_map)
@@ -74,9 +74,9 @@ void loot_generator::printGenerated(const vector< shared_ptr<artwork_instance> >
 		cout << "\t" << stringFromRarity(i.first) << ": " << 100.0f * ((float)i.second / (float)rarity_sumtotal) << "%" << endl;
 
 	cout << "Crate Contents: " << endl;
-	for (auto i : artwork_vec)
-		cout << "\t" << i->getTitle() << " by " << i->getArtistName() <<
-		" (" << stringFromRarity(i->getRarity()) << ")" << endl;
+	for (auto i : artwork_map)
+		cout << "\t" << i.second->getTitle() << " by " << i.second->getArtistName() <<
+		" (" << stringFromRarity(i.second->getRarity()) << ")" << endl;
 
 	map<rarity, unsigned> frequency_results{
 		pair<rarity, int>(COMMON, 0),
@@ -85,8 +85,8 @@ void loot_generator::printGenerated(const vector< shared_ptr<artwork_instance> >
 		pair<rarity, int>(LEGENDARY, 0),
 		pair<rarity, int>(MASTERPIECE, 0)
 	};
-	for (auto i : artwork_vec)
-		frequency_results[i->getRarity()]++;
+	for (auto i : artwork_map)
+		frequency_results[i.second->getRarity()]++;
 
 	cout << "Frequency results..." << endl;
 	for (auto i : frequency_results)

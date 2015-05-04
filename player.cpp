@@ -4,9 +4,9 @@
 player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_context> ogl_con, string data_path)
 {
 	name = s;
-	vector< shared_ptr<artwork_instance> > generated_works =  lg->generateArtworks(10, 1.0f);
+	map<int, shared_ptr<artwork_instance> > generated_works =  lg->generateArtworks(10, 1.0f);
 	for (auto i : generated_works)
-		addWorkToInventory(i);
+		addWorkToInventory(i.second);
 
 	string frame_path = data_path + "model_data\\frame_black.bmp";
 	string matte_path = data_path + "model_data\\white_matte.bmp";

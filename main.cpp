@@ -52,6 +52,7 @@ int main(int argc, char* argv[])
 		{
 		case 0: menu_return = viewGallery(data_path, context, keys, current_player); break;
 		case 1: menu_return = viewInventory(data_path, context, keys, current_player); break;
+		case 2: menu_return = openCrate(data_path, context, keys, current_player, loot); break;
 		}
 	}
 

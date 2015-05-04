@@ -10,11 +10,11 @@ public:
 	~loot_generator(){};
 
 	//functions generate instances instead of classes to add random conditions and traits
-	vector< shared_ptr<artwork_instance> > generateArtworks(int count,
+	map<int, shared_ptr<artwork_instance> > generateArtworks(int count,
 		const map<rarity, unsigned int> & rarity_proportions) const;
-	vector< shared_ptr<artwork_instance> > generateArtworks(int count, float modifier) const;
+	map<int, shared_ptr<artwork_instance> > generateArtworks(int count, float modifier) const;
 
-	void printGenerated(const vector< shared_ptr<artwork_instance> > &drop, const map<rarity, unsigned> &rarity_map) const;
+	void printGenerated(const map<int, shared_ptr<artwork_instance> > &drop, const map<rarity, unsigned> &rarity_map) const;
 
 private:
 	shared_ptr<art_db> artist_database;

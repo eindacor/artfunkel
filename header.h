@@ -12,6 +12,7 @@ enum rarity { COMMON, UNCOMMON, RARE, LEGENDARY, MASTERPIECE, UNKNOWN_RARITY };
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <iterator>
 #include <list>
 #include <iostream>
 #include <boost/smart_ptr/shared_ptr.hpp>

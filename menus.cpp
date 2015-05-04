@@ -171,7 +171,88 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 int openCrate(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg)
 {
-	return 0;
+	vec4 original_background = context->getBackgroundColor();
+	context->setBackgroundColor(vec4(0.0f, 0.0f, 0.5f, 1.0f));
+
+	//TODO revise so function doesn't rely on so many containers created/copied per run
+	//add copies of the artwork instances to the local vector, so position can be manipulated
+	map<int, shared_ptr<artwork_instance> > paintings_to_display = lg->generateArtworks(10, 1.0f);
+
+	//space artwork without in the x axis only
+	offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+	vector<int> paintings_added;
+
+	//add player's default frames to each
+	for (auto i : paintings_to_display)
+		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
+
+	float camera_distance_from_items = 10.0f;
+	shared_ptr<ogl_camera> camera(new ogl_camera(keys, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f)));
+
+	map<int, shared_ptr<artwork_instance> >::iterator current_selection = paintings_to_display.begin();
+	map<int, shared_ptr<artwork_instance> >::iterator last_item = paintings_to_display.end();
+	last_item--;
+	glfwSetTime(0);
+	float render_fps = 10.0f;
+	bool finished = false;
+	int menu_return = 0;
+
+	while (!finished)
+	{
+		if (glfwGetTime() > 1.0f / render_fps)
+		{
+			glfwPollEvents();
+			context->clearBuffers();
+
+			if (keys->checkPress(GLFW_KEY_LEFT) && current_selection != paintings_to_display.begin())
+				current_selection--;
+
+			else if (keys->checkPress(GLFW_KEY_RIGHT) && current_selection != last_item)
+				current_selection++;
+
+			//TODO modify height/width of paintings to be world units instead of cm
+			float current_selection_height = ((*current_selection).second->getHeight()) * 2.0f;
+			float current_selection_width = ((*current_selection).second->getWidth()) * 2.0f;
+			camera_distance_from_items = (current_selection_height > current_selection_width ?
+			current_selection_height : current_selection_width);
+
+			vec4 camera_target = (*current_selection).second->getCenter();
+			camera->setFocus(vec3(camera_target.x, camera_target.y, camera_target.z));
+			camera->setPosition(vec3(camera_target.x, camera_target.y, camera_distance_from_items));
+			camera->updateCamera();
+
+			for (auto i : paintings_to_display)
+				i.second->draw(context, camera);
+
+			if (keys->checkPress(GLFW_KEY_ENTER))
+			{
+				int current_selection_dist = std::distance(paintings_to_display.begin(), current_selection);
+				switch (std::find(paintings_added.begin(), paintings_added.end(), current_selection_dist) != paintings_added.end())
+				{
+				case true: cout << (*current_selection).second->getTitle() << " was already added to your inventory" << endl;
+					break;
+				case false: current_player->addWorkToInventory((*current_selection).second);
+					paintings_added.push_back(current_selection_dist);
+					cout << (*current_selection).second->getTitle() << " has been added to your inventory" << endl;
+					break;
+				}
+			}
+
+			context->swapBuffers();
+
+			//TODO fix so crate doesn't disappear when going to the main menu
+			if (keys->checkPress(GLFW_KEY_ESCAPE))
+			{
+				menu_return = mainMenu(data_path, context, keys);
+				finished = true;
+			}
+
+			glfwSetTime(0.0f);
+		}
+	}
+
+	context->setBackgroundColor(original_background);
+	return menu_return;
 }
 
 int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player)
