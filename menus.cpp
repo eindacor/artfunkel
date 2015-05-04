@@ -150,11 +150,6 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					cout << (*current_selection).second->getTitle() << " has been added to the gallery" << endl;
 					break;
 				}
-
-				cout << "displayed works from viewInventory(): " << endl;
-				map<int, shared_ptr<artwork_instance> > displayed = current_player->getDisplayed();
-				for (auto i : displayed)
-					cout << "\t" << i.second->getTitle() << endl;
 			}
 
 			context->swapBuffers();
@@ -163,14 +158,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			{
 				menu_return = mainMenu(data_path, context, keys);
 				if (menu_return != 1)
-				{
 					finished = true;
-
-					cout << "displayed works on exit from viewInventory(): " << endl;
-					map<int, shared_ptr<artwork_instance> > displayed = current_player->getDisplayed();
-					for (auto i : displayed)
-						cout << "\t" << i.second->getTitle() << endl;
-				}
 			}
 
 			glfwSetTime(0.0f);			
@@ -199,10 +187,6 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 	
 	for (auto i : paintings_to_display)
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
-
-	cout << "displayed works from viewGallery(): " << endl;
-	for (auto i : paintings_to_display)
-		cout << "\t" << i.second->getTitle() << endl;
 
 	glfwSetTime(0);
 	float render_fps = 60.0f;
