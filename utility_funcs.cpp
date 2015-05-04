@@ -184,7 +184,7 @@ vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 
 }
 
 //this function takes a vector of instances and modifies their model matrices for proper display
-void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_level, float starting_z)
+void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_level, float starting_z, bool x_only)
 {
 	float x_offset = 0.0f;
 	float previous_width = 0.0f;
@@ -194,11 +194,15 @@ void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_l
 	{
 		//center on eye level, unless painting is within .5 of floor
 		float y_offset = 0.0f;
-		float min_distance_from_floor = .5f;
-		if ((i->getHeight() * .0067f) + min_distance_from_floor > eye_level)
-			y_offset = (i->getHeight() / 200.0f) + min_distance_from_floor;
 
-		else y_offset = eye_level - (i->getHeight() / 600.0f);
+		if (!x_only)
+		{
+			float min_distance_from_floor = .5f;
+			if ((i->getHeight() * .0067f) + min_distance_from_floor > eye_level)
+				y_offset = (i->getHeight() / 200.0f) + min_distance_from_floor;
+
+			else y_offset = eye_level - (i->getHeight() / 600.0f);
+		}
 
 		float space_between = 2.0f;
 		float buffer = (previous_width / 200.0f) + space_between + (i->getWidth() / 200.0f);

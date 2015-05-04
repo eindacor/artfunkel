@@ -53,7 +53,6 @@ art_db::art_db(const char* artists_path,
 			work_height, work_width, image_path, work_date));
 
 		artworks.insert(pair<int, shared_ptr<artwork_data> >(work_id, new_data));
-		//printArtwork(*new_data);
 		genre_counts[work_genre] += 1;
 		rarity_counts[work_rarity] += 1;
 	}

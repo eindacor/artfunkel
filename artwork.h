@@ -8,6 +8,7 @@
 class artwork_data
 {
 public:
+	artwork_data();
 	artwork_data(int work_id,
 		string work_title,
 		shared_ptr<artist> work_artist,
@@ -32,6 +33,16 @@ public:
 	date getDate() const { return date; }
 	const shared_ptr<painting_surface> getSurface() const { return surface; }
 
+	void setID(int i) { ID = i; }
+	void setGenre(genre g) { _genre = g; }
+	void setTitle(string s)  { title = s; }
+	void setArtist(const shared_ptr<artist> &a) { artist_ptr = a; }
+	void setRarity(rarity r) { Rarity = r; }
+	void setHeight(float h) { height = h; }
+	void setWidth(float w) { width = w; }
+	void setImagePath(string s) { image_path = s; }
+	void setDate(date d) { date = d; }
+
 	void setValue() { value = lookupValue(Rarity); }
 	void loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam);
 	void unloadData() { surface = shared_ptr<painting_surface>(nullptr); }
@@ -55,6 +66,14 @@ private:
 class artwork_instance : public artwork_data
 {
 public:
+	artwork_instance() : artwork_data(), p_frame(nullptr)
+	{
+		forgery = false;
+		condition = 0.0f;
+		model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
+		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	};	//end of default constructor
+
 	//primary constructor
 	artwork_instance(int work_id,
 		string work_title,
@@ -74,6 +93,7 @@ public:
 		condition = work_condition;
 		model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
 		p_frame = nullptr;
+		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	};	//end of primary constructor
 
 	//copy constructor
@@ -86,16 +106,23 @@ public:
 		condition = original.getCondition();
 		model_matrix = original.getModelMatrix();
 		p_frame = nullptr;
+		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	}; //end of copy constructor
 	~artwork_instance(){};
 
 	double getValue() const { return value; }
 	bool isForgery() const { return forgery; }
 	float getCondition() const { return condition; }
+	vec4 getCenter() const { return centerpoint; }
 
-	void moveRelative(mat4 translation_matrix) { model_matrix = model_matrix * translation_matrix; }
-	void moveAbsolute(mat4 position_matrix) { model_matrix = position_matrix; }
+	void moveRelative(mat4 translation_matrix) { model_matrix = model_matrix * translation_matrix; centerpoint = centerpoint * translation_matrix; }
+	void moveAbsolute(mat4 position_matrix) { 
+		model_matrix = position_matrix; 
+		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		centerpoint = centerpoint * position_matrix;
+	}
 	mat4 getModelMatrix() const { return model_matrix; }
+	shared_ptr<frame_model> getFrame() const { return p_frame; }
 
 	void setValue() { value = lookupValue(getRarity()); }
 	void loadFrame(const shared_ptr<frame_model> &work_frame) { p_frame = work_frame; }
@@ -112,13 +139,15 @@ public:
 		if (getSurface() == nullptr)
 			loadData(ogl_con, ogl_cam);
 		getSurface()->draw(model_matrix * frame_offset);
-		
 	}
+
+	const artwork_instance& operator = (const artwork_instance &other);
 
 private:
 	double value;
 	bool forgery;
 	float condition;
+	vec4 centerpoint;
 	mat4 model_matrix;
 
 	shared_ptr<frame_model> p_frame;
