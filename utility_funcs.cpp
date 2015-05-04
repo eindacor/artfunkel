@@ -2,6 +2,7 @@
 #define UTILITY_FUNCS_HPP
 
 #include "utility_funcs.h"
+#include "artwork.h"
 
 string getDateString(const date &d, bool include_day)
 {
@@ -180,6 +181,68 @@ vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 
 	};
 
 	return geometry_data;
+}
+
+//this function takes a vector of instances and modifies their model matrices for proper display
+void offsetArtworks(vector< shared_ptr<artwork_instance> > &art_vec, float eye_level, float starting_z)
+{
+	float x_offset = 0.0f;
+	float previous_width = 0.0f;
+	int display_count = 0;
+
+	for (auto i : art_vec)
+	{
+		//center on eye level, unless painting is within .5 of floor
+		float y_offset = 0.0f;
+		float min_distance_from_floor = .5f;
+		if ((i->getHeight() * .0067f) + min_distance_from_floor > eye_level)
+			y_offset = (i->getHeight() / 200.0f) + min_distance_from_floor;
+
+		else y_offset = eye_level - (i->getHeight() / 600.0f);
+
+		float space_between = 2.0f;
+		float buffer = (previous_width / 200.0f) + space_between + (i->getWidth() / 200.0f);
+		if (display_count % 10 == 0)
+		{
+			x_offset = 0.0f;
+			starting_z -= 4.0f;
+			previous_width = 0.0f;
+			buffer = 0.0f;
+		}
+
+		else
+			x_offset += buffer;
+
+		previous_width = i->getWidth();
+		i->moveAbsolute(glm::translate(mat4(1.0f), vec3(x_offset, y_offset, starting_z)));
+		display_count++;
+	}
+}
+
+void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path)
+{
+	string matte_texture = data_path + "model_data\\white_matte.bmp";
+	for (auto i : art_vec)
+	{
+		string frame_material_image_name;
+		switch (jep::intRoll(0, 4))
+		{
+		case 0: frame_material_image_name = "frame_white.bmp"; break;
+		case 1: frame_material_image_name = "frame_black.bmp"; break;
+		case 2: frame_material_image_name = "frame_pine.bmp"; break;
+		case 3: frame_material_image_name = "frame_bamboo.bmp"; break;
+		case 4: frame_material_image_name = "frame_aluminum.bmp"; break;
+		}
+
+		string frame_texture = data_path + "model_data\\" + frame_material_image_name;
+
+		float random_frame_width = jep::floatRoll(0.05f, .25f, 2);
+		float random_matte_width = jep::floatRoll(0.05f, .25f, 2);
+		shared_ptr<frame_model> generated_frame(new frame_model(
+			i->getWidth() / 100.0f, i->getHeight() / 100.0f, context, camera, frame_texture.c_str(), matte_texture.c_str(), random_frame_width));
+
+		i->loadFrame(generated_frame);
+	}
 }
 
 #endif

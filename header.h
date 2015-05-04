@@ -27,6 +27,9 @@ class artwork_instance;
 class art_db;
 class painting_surface;
 class frame_model;
+class player;
+class gallery;
+class loot_generator;
 
 using std::vector;
 using std::list;
