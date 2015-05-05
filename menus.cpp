@@ -14,7 +14,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 	float menu_item_width = 2.0f, menu_item_height = 2.0f;
 
 	vec4 original_background = context->getBackgroundColor();
-	context->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+	context->setBackgroundColor(vec4(0.0f, 0.2f, 0.1f, 1.0f));
 
 	map<int, pair<painting_surface, frame_model> > options;
 
@@ -22,27 +22,27 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 	//TODO CLEAN UP THIS MESS 
 	options.insert(pair<int, pair<painting_surface, frame_model> > (0, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\enter_gallery.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_bamboo.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
 		)));
 
 	options.insert(pair<int, pair<painting_surface, frame_model> >(1, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\view_inventory.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_bamboo.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
 		)));
 
 	options.insert(pair<int, pair<painting_surface, frame_model> >(2, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\open_crate.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_bamboo.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
 		)));
 
 	options.insert(pair<int, pair<painting_surface, frame_model> >(3, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\options.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_bamboo.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
 		)));
 
 	options.insert(pair<int, pair<painting_surface, frame_model> >(4, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\exit.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_bamboo.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
 		)));
 
 	int current_selection = 0;
