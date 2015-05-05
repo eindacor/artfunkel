@@ -234,6 +234,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					break;
 				case false: current_player->addWorkToInventory((*current_selection).second);
 					cout << (*current_selection).second->getTitle() << " has been added to your inventory" << endl;
+					cout << "Collection value: $" << current_player->getCollectionValue().getNumberString(true, false, 2) << endl;
 					break;
 				}
 			}
@@ -254,6 +255,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 						break;
 					}
 				}
+				cout << "Collection value: $" << current_player->getCollectionValue().getNumberString(true, false, 2) << endl;
 			}
 
 			context->swapBuffers();

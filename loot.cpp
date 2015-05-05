@@ -78,7 +78,7 @@ void loot_generator::printGenerated(const map<int, shared_ptr<artwork_instance> 
 	{
 		cout << "\t" << i.second->getTitle() << " by " << i.second->getArtistName() <<
 			" (" << stringFromRarity(i.second->getRarity()) << ")" << endl;
-		cout << "\tEstimated value: " << i.second->getValue() << endl;
+		cout << "\t\tEstimated value: $" << i.second->getValue().getNumberString(true, false, 2) << endl;
 	}
 
 	map<rarity, unsigned> frequency_results{

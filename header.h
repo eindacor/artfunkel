@@ -19,6 +19,7 @@ enum rarity { COMMON, UNCOMMON, RARE, LEGENDARY, MASTERPIECE, UNKNOWN_RARITY };
 #include "jep_util.h"
 #include "jeploot.h"
 #include "ogl_tools.h"
+#include "JEPbignum.h"
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
@@ -47,6 +48,7 @@ using jep::ogl_camera;
 using jep::ogl_camera_free;
 using jep::key_handler;
 using jep::date;
+using jep::bignum;
 
 using glm::vec4;
 using glm::vec3;

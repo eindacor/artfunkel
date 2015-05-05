@@ -21,6 +21,8 @@ public:
 	map<int, shared_ptr<artwork_instance> > getDisplayed() { return paintings_on_display; }
 	map<int, shared_ptr<artwork_instance> > getDisplayedCopy();
 
+	bignum getCollectionValue() const { return collection_value; }
+
 	void addPaintingToDisplay(const pair<int, shared_ptr<artwork_instance> > &toAdd);
 	void removePaintingFromDisplay(const pair<int, shared_ptr<artwork_instance> > &toRemove);
 
@@ -34,7 +36,8 @@ private:
 	shared_ptr<frame_model> default_frame;
 	map<int, shared_ptr<artwork_instance> > paintings_on_display;
 
-	float currency;
+	bignum currency;
+	bignum collection_value;
 
 	//map<int, gallery> active_galleries;
 };

@@ -18,7 +18,7 @@ public:
 		float work_width,
 		string work_image_path,
 		date work_date,
-		float base_value);
+		bignum base_value);
 	~artwork_data(){};
 
 	int getID() const { return ID; }
@@ -31,7 +31,7 @@ public:
 	float getWidth() const { return width; }
 	string getImagePath() const { return image_path; }
 	date getDate() const { return date; }
-	float getBaseValue() const { return base_value; }
+	bignum getBaseValue() const { return base_value; }
 	const shared_ptr<painting_surface> getSurface() const { return surface; }
 
 	void setID(int i) { ID = i; }
@@ -43,7 +43,7 @@ public:
 	void setWidth(float w) { width = w; }
 	void setImagePath(string s) { image_path = s; }
 	void setDate(date d) { date = d; }
-	void setBaseValue(float f) { base_value = f; }
+	void setBaseValue(bignum b) { base_value = b; }
 
 	void loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam);
 	void unloadData() { surface = shared_ptr<painting_surface>(nullptr); }
@@ -59,7 +59,7 @@ private:
 	float width;
 	string image_path;
 	date date;
-	float base_value;
+	bignum base_value;
 
 	shared_ptr<painting_surface> surface;
 };
@@ -88,7 +88,7 @@ public:
 		float work_width,
 		string work_image_name,
 		jep::date work_date,
-		float work_base_value) :
+		bignum work_base_value) :
 		artwork_data(work_id, work_title, work_artist, work_genre, 
 		work_rarity, work_height, work_width, work_image_name, work_date, work_base_value)
 	{
@@ -114,7 +114,7 @@ public:
 	}; //end of copy constructor
 	~artwork_instance(){};
 
-	double getValue() const { return value; }
+	bignum getValue() const { return value; }
 	bool isForgery() const { return forgery; }
 	float getCondition() const { return condition; }
 	vec4 getCenter() const { return centerpoint; }
@@ -156,7 +156,7 @@ public:
 	void applyFrameTemplate(const frame_model &frame_template);
 
 private:
-	double value;
+	bignum value;
 	bool forgery;
 	float condition;
 	vec4 centerpoint;

@@ -24,35 +24,35 @@ string getDateString(const date &d, bool include_day)
 	return date_string;
 }
 
-double lookupValue(rarity work_rarity, float work_rarity_scale)
+bignum lookupValue(rarity work_rarity, float work_rarity_scale)
 {
 	//placeholder function
-	double min, max;
+	bignum min, max;
 	switch (work_rarity)
 	{
 	case COMMON:
-		min = 5.0f;
-		max = 15.0f;
+		min = bignum("5000");
+		max = bignum("15000");
 		break;
 	case UNCOMMON:
-		min = 15.0f;
-		max = 45.0f;
+		min = bignum("15000");
+		max = bignum("45000");
 		break;
 	case RARE:
-		min = 45.0f;
-		max = 165.0f;
+		min = bignum("45000");
+		max = bignum("165000");
 		break;
 	case LEGENDARY:
-		min = 645.0f;
-		max = 2565.0f;
+		min = bignum("645000");
+		max = bignum("2565000");
 		break;
 	case MASTERPIECE:
-		min = 2565.0f;
-		max = 10245.0f;
+		min = bignum("2565000");
+		max = bignum("10245000");
 		break;
 	}
 
-	float value = ((max - min) * work_rarity_scale) + min;
+	bignum value = ((max - min) * (bignum)work_rarity_scale) + min;
 
 	return value;
 }

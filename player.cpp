@@ -26,6 +26,8 @@ void player::addWorkToInventory(const shared_ptr<artwork_instance> &work)
 		index++;
 	}
 
+	collection_value += work->getValue();
+
 	shared_ptr<artwork_instance> copy_ptr(new artwork_instance(*work));
 	inventory.insert(pair<int, shared_ptr<artwork_instance> >(index, copy_ptr));
 }

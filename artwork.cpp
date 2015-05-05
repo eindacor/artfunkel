@@ -10,7 +10,7 @@ artwork_data::artwork_data(int work_id,
 	float work_width,
 	string work_image_path,
 	jep::date work_date,
-	float work_value)
+	bignum work_value)
 {
 	ID = work_id;
 	_genre = work_genre;
@@ -36,7 +36,7 @@ artwork_data::artwork_data()
 	width = 0.0f;
 	image_path = "";
 	date = jep::date("0000????");
-	base_value = 0.0f;
+	base_value = bignum();
 	surface = nullptr;
 }
 
