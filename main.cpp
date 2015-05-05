@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 
 	int menu_return = mainMenu(data_path, context, keys);
 
-	while (menu_return != 4)
+	while (menu_return != 4 && menu_return != 3)
 	{
 		switch (menu_return)
 		{
