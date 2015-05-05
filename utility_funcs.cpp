@@ -24,7 +24,7 @@ string getDateString(const date &d, bool include_day)
 	return date_string;
 }
 
-bignum lookupValue(rarity work_rarity, float work_rarity_scale)
+bignum lookupValue(rarity work_rarity, bignum work_rarity_scale)
 {
 	//placeholder function
 	bignum min, max;
@@ -52,7 +52,7 @@ bignum lookupValue(rarity work_rarity, float work_rarity_scale)
 		break;
 	}
 
-	bignum value = ((max - min) * (bignum)work_rarity_scale) + min;
+	bignum value = ((max - min) * work_rarity_scale) + min;
 
 	return value;
 }

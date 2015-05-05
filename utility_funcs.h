@@ -3,7 +3,7 @@
 #include "header.h"
 
 string getDateString(const date &d, bool include_day);
-bignum lookupValue(rarity work_rarity, float work_value_scale);
+bignum lookupValue(rarity work_rarity, bignum work_value_scale);
 void printDate(date d);
 genre genreFromString(string s);
 rarity rarityFromString(string s);

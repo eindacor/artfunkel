@@ -40,7 +40,7 @@ art_db::art_db(const char* artists_path,
 		genre work_genre(genreFromString(row.at(4)));
 		rarity work_rarity(rarityFromString(row.at(5)));
 		//reserved for medium
-		double work_value_scale(std::stof(row.at(7)));
+		bignum work_value_scale(row.at(7));
 		float work_height(std::stof(row.at(8)) / 100.0f);
 		float work_width(std::stof(row.at(9)) / 100.0f);
 		string work_image_name(row.at(10));
