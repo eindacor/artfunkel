@@ -35,7 +35,7 @@ painting_surface::painting_surface(
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(ogl_con, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 }
 
-void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &ogl_cam) const
+void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
 {
 	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
 	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
@@ -44,8 +44,17 @@ void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camer
 	glBindVertexArray(*temp_vao);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);
 
-	mat4 MVP = context->getProjectionMatrix() * ogl_cam->getViewMatrix() * model_matrix;
-	glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
+	glUniform1i(context->getAbsoluteID(), absolute);
+
+	if (absolute)
+		glUniformMatrix4fv(context->getModelID(), 1, GL_FALSE, &model_matrix[0][0]);
+
+	else
+	{
+		mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * model_matrix;
+		glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
+	}
+
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -245,41 +254,9 @@ frame_model::frame_model(float painting_width, float painting_height, shared_ptr
 		ogl_con, matte_texture_path.c_str(), GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 
 	matte_opengl_data = generated_matte;
-
-	/*
-	vector<float> frame_left_front = {
-		fo_left_bottom_front.x, fo_left_bottom_front.y, fo_left_bottom_front.z,	//vert data
-		0.0f, 0.0f,																//uv data
-		fo_left_top_front.x, fo_left_top_front.y, fo_left_top_front.z,
-		0.0f, total_height / default_texture_dimension,
-		fi_left_top_front.x, fi_left_top_front.y, fi_left_top_front.z,
-		frame_width, (total_height - frame_width) / default_texture_dimension,
-		fo_left_bottom_front.x, fo_left_bottom_front.y, fo_left_bottom_front.z,
-		0.0f, 0.0f,
-		fi_left_top_front.x, fi_left_top_front.y, fi_left_top_front.z,
-		frame_width, (total_height - frame_width) / default_texture_dimension,
-		fi_left_bottom_front.x, fi_left_bottom_front.y, fi_left_bottom_front.z,
-		frame_width, frame_width
-	};
-
-	vector<float> frame_right_front = {
-		fi_right_bottom_front.x, fi_right_bottom_front.y, fi_right_bottom_front.z,	//vert data
-		(total_width - frame_width) / default_texture_dimension, frame_width,	//uv data
-		fi_right_top_front.x, fi_right_top_front.y, fi_right_top_front.z,
-		(total_width - frame_width) / default_texture_dimension, (total_height - frame_width) / default_texture_dimension,
-		fo_right_top_front.x, fo_right_top_front.y, fo_right_top_front.z,
-		total_width / default_texture_dimension, total_height / default_texture_dimension,
-		fi_right_bottom_front.x, fi_right_bottom_front.y, fi_right_bottom_front.z,	
-		(total_width - frame_width) / default_texture_dimension, frame_width,	
-		fo_right_top_front.x, fo_right_top_front.y, fo_right_top_front.z,
-		total_width / default_texture_dimension, total_height / default_texture_dimension,
-		fo_right_bottom_front.x, fo_right_bottom_front.y, fo_right_bottom_front.z,
-		total_width / default_texture_dimension, 0.0f
-	};
-	*/
 }
 
-void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera) const
+void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
 {
 	//TODO revise opengl_data class to contain rendering data
 	//draw the frame
@@ -288,10 +265,20 @@ void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &c
 	shared_ptr<GLuint> temp_tex = frame_opengl_data->getTEX();
 
 	glBindVertexArray(*temp_vao);
-	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+	glBindTexture(GL_TEXTURE_2D, *temp_tex);	
 
-	mat4 MVP = context->getProjectionMatrix() * camera->getViewMatrix() * model_matrix;
-	glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
+	if (absolute)
+	{
+		glUniformMatrix4fv(context->getModelID(), 1, GL_FALSE, &model_matrix[0][0]);
+		glUniform1i(context->getAbsoluteID(), absolute);
+	}
+
+	else
+	{
+		mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * model_matrix;
+		glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
+	}
+	
 	glDrawArrays(GL_TRIANGLES, 0, frame_opengl_data->getVertexCount());
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -305,7 +292,7 @@ void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &c
 	glBindVertexArray(*temp_vao);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);
 
-	glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
+	//glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, matte_opengl_data->getVertexCount());
 
 	glBindTexture(GL_TEXTURE_2D, 0);

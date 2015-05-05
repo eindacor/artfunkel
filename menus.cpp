@@ -18,7 +18,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 
 	map<int, pair<painting_surface, frame_model> > options;
 
-	shared_ptr<ogl_camera> camera(new ogl_camera(keys, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f)));
+	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 	//TODO CLEAN UP THIS MESS 
 	options.insert(pair<int, pair<painting_surface, frame_model> > (0, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\enter_gallery.bmp").c_str()),
@@ -94,14 +94,16 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = current_player->getInventoryCopy();
 
 	//space artwork without in the x axis only
-	offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+	//offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true); //commented out for thumbnail test
+	makeThumbnails(paintings_to_display, context, 0.1f);
 
 	//add player's default frames to each
 	for (auto i : paintings_to_display)
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
 
-	float camera_distance_from_items = 10.0f;
-	shared_ptr<ogl_camera> camera(new ogl_camera(keys, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f)));
+	float camera_distance_from_items = 2.0f;
+	//float camera_distance_from_items = 10.0f;					//commented out for thumbnail test
+	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
 	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
 	vector<pair<int, shared_ptr<artwork_instance> > >::iterator last_item = paintings_to_display.end();
@@ -119,24 +121,34 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			context->clearBuffers();
 
 			if (keys->checkPress(GLFW_KEY_LEFT) && current_selection != paintings_to_display.begin())
+			{
 				current_selection--;
+				vec4 camera_target = (*current_selection).second->getCenter();
+				cout << camera_target.x << endl;
+				cout << camera_target.y << endl;
+				cout << camera_target.z << endl;
+			}
 
 			else if (keys->checkPress(GLFW_KEY_RIGHT) && current_selection != last_item)
+			{
 				current_selection++;
+				vec4 camera_target = (*current_selection).second->getCenter();
+				cout << camera_target.x << endl;
+				cout << camera_target.y << endl;
+				cout << camera_target.z << endl;
+			}
 
-			//TODO modify height/width of paintings to be world units instead of cm
-			float current_selection_height = ((*current_selection).second->getHeight()) * 2.0f;
-			float current_selection_width = ((*current_selection).second->getWidth()) * 2.0f;
-			camera_distance_from_items = (current_selection_height > current_selection_width ?
-			current_selection_height : current_selection_width);
+			//float current_selection_height = ((*current_selection).second->getHeight()) * 2.0f;
+			//float current_selection_width = ((*current_selection).second->getWidth()) * 2.0f;
+			//camera_distance_from_items = (current_selection_height > current_selection_width ? current_selection_height : current_selection_width);
 
-			vec4 camera_target = (*current_selection).second->getCenter();
-			camera->setFocus(vec3(camera_target.x, camera_target.y, camera_target.z));
-			camera->setPosition(vec3(camera_target.x, camera_target.y, camera_distance_from_items));
-			camera->updateCamera();
+			//vec4 camera_target = (*current_selection).second->getCenter();
+			//camera->setFocus(vec3(camera_target.x, camera_target.y, camera_target.z));
+			//camera->setPosition(vec3(camera_target.x, camera_target.y, camera_distance_from_items));
+			//camera->updateCamera();
 
 			for (auto i : paintings_to_display)
-				i.second->draw(context, camera);
+				i.second->draw(context, camera, true);
 
 			if (keys->checkPress(GLFW_KEY_ENTER))
 			{
@@ -251,7 +263,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
 
 	float camera_distance_from_items = 10.0f;
-	shared_ptr<ogl_camera> camera(new ogl_camera(keys, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f)));
+	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
 	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
 	vector<pair<int, shared_ptr<artwork_instance> > >::iterator last_item = paintings_to_display.end();
@@ -407,7 +419,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player)
 {
 	float eye_level = 1.65f;
-	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, vec3(0.0f, eye_level, 5.0f)));
+	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, context, vec3(0.0f, eye_level, 5.0f), 45.0f));
 
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));

@@ -12,5 +12,7 @@ void offsetArtworks(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, 
 void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path);
 vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, sort_options sort, bool ascending = true);
 void printArtworkInstance(const shared_ptr<artwork_instance> &target);
+mat4 calcThumbnailScale(const shared_ptr<artwork_instance> &target, float width_max, float height_max);
+void makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, const shared_ptr<ogl_context> &context, float margin_size);
 
 #endif

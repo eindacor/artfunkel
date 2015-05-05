@@ -338,4 +338,47 @@ void printArtworkInstance(const shared_ptr<artwork_instance> &target)
 	cout << "\tRarity: " << stringFromRarity(target->getRarity()) << endl;
 }
 
+mat4 calcThumbnailScale(const shared_ptr<artwork_instance> &target, float width_max, float height_max)
+{
+	//overall dimensions provides height, width respectively
+	float scale_for_x = width_max / target->getOverallDimensions().second;
+	float scale_for_y = height_max / target->getOverallDimensions().first;
+
+	return (scale_for_x < scale_for_y ?
+		glm::scale(mat4(1.0f), vec3(scale_for_x, scale_for_x, scale_for_x)) :
+		glm::scale(mat4(1.0f), vec3(scale_for_y, scale_for_y, scale_for_y))
+		);
+}
+
+void makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, const shared_ptr<ogl_context> &context, float margin_size)
+{
+	//first 2.0 is for total window width
+	float cell_width = (2.0f - (margin_size * 2.0f)) / art_vec.size();
+	float cell_height = cell_width * context->getAspectRatio();
+	float cell_x_padding = cell_width * 0.1f;
+	float cell_y_padding = cell_x_padding * context->getAspectRatio();
+
+	float max_painting_width = cell_width - (2 * cell_x_padding);
+	float max_painting_height = cell_height - (2 * cell_y_padding);
+
+	float lower_margin = margin_size * context->getAspectRatio();
+	float y_translate = 1.0f - lower_margin - (cell_height / 2.0f);
+	cout << lower_margin << endl;
+
+	for (int i = 0; i < art_vec.size(); i++)
+	{
+		mat4 initial(1.0f);
+		mat4 scale = calcThumbnailScale(art_vec.at(i).second, max_painting_width, max_painting_height);
+
+		float x_offset = ((1.0f - margin_size - (cell_width / 2.0f)) * -1.0f) + (i * cell_width);
+
+		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset * -1.0f, y_translate * -1.0f, 0.0f));
+		mat4 position_matrix = translation * scale * initial;
+
+		art_vec.at(i).second->setModelMatrix(position_matrix);
+	}
+
+	//scale, then move
+}
+
 #endif

@@ -128,24 +128,30 @@ public:
 	}
 
 	mat4 getModelMatrix() const { return model_matrix; }
+	void setModelMatrix(mat4 m) { 
+		model_matrix = m; 
+		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+		centerpoint = model_matrix * centerpoint;
+	}
+
 	shared_ptr<frame_model> getFrame() const { return p_frame; }
 	pair<float, float> getOverallDimensions() const;
 
 	void setValue();
 	void loadFrame(const shared_ptr<frame_model> &work_frame) { p_frame = work_frame; }
-	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam)
+	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam, bool absolute=false)
 	{
 		mat4 frame_offset(glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f)));
 		if (p_frame != nullptr)
 		{
-			p_frame->draw(model_matrix, ogl_cam);
+			p_frame->draw(model_matrix, ogl_cam, absolute);
 			float z_offset = p_frame->getPaintingDistanceToWall();
 			frame_offset = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, z_offset));
 		}
 
 		if (getSurface() == nullptr)
 			loadData(ogl_con, ogl_cam);
-		getSurface()->draw(model_matrix * frame_offset, ogl_cam);
+		getSurface()->draw(model_matrix * frame_offset, ogl_cam, absolute);
 	}
 
 	const artwork_instance& operator = (const artwork_instance &other);
