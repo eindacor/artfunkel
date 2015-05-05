@@ -186,13 +186,13 @@ vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 
 }
 
 //TODO templatize function
-void offsetArtworks(map<int, shared_ptr<artwork_instance> > &art_map, float space_between, float eye_level, float starting_z, bool x_only)
+void offsetArtworks(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, float space_between, float eye_level, float starting_z, bool x_only)
 {
 	float x_offset = 0.0f;
 	float previous_width = 0.0f;
 	int display_count = 0;
 
-	for (auto i : art_map)
+	for (auto i : art_vec)
 	{
 		//center on eye level, unless painting is within .5 of floor
 		float y_offset = 0.0f;
@@ -253,6 +253,89 @@ void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_c
 
 		i->loadFrame(generated_frame);
 	}
+}
+
+//TODO typdef vector of pairs
+vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, sort_options sort, bool ascending)
+{
+	switch (sort)
+	{
+	case ARTIST_NAME:
+		std::sort(art_vec.begin(), art_vec.end(), 
+			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+		{
+			string first_work_name = first_work.second->getArtistName();
+			std::transform(first_work_name.begin(), first_work_name.end(), first_work_name.begin(), ::tolower);
+			string second_work_name = second_work.second->getArtistName();
+			std::transform(second_work_name.begin(), second_work_name.end(), second_work_name.begin(), ::tolower);
+			return (ascending ? first_work_name < second_work_name : first_work_name > second_work_name);
+		});
+		break;
+
+	case VALUE:
+		std::sort(art_vec.begin(), art_vec.end(),
+			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+		{ 
+			return (ascending ? first_work.second->getValue() < second_work.second->getValue() :
+								first_work.second->getValue() > second_work.second->getValue());
+		});
+		break;
+
+	case TITLE:
+		std::sort(art_vec.begin(), art_vec.end(),
+			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+		{
+			string first_work_title = first_work.second->getTitle();
+			std::transform(first_work_title.begin(), first_work_title.end(), first_work_title.begin(), ::tolower);
+			string second_work_title = second_work.second->getTitle();
+			std::transform(second_work_title.begin(), second_work_title.end(), second_work_title.begin(), ::tolower);
+			return (ascending ? first_work_title < second_work_title : first_work_title > second_work_title);
+		});
+		break;
+
+	case RARITY:
+		std::sort(art_vec.begin(), art_vec.end(),
+			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+		{
+			return (ascending ? first_work.second->getRarity() < second_work.second->getRarity() :
+				first_work.second->getRarity() > second_work.second->getRarity());
+		});
+		break;
+
+	case AREA:
+		std::sort(art_vec.begin(), art_vec.end(),
+			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+		{
+			float first_work_area = first_work.second->getHeight() * first_work.second->getWidth();
+			float second_work_area = second_work.second->getHeight() * second_work.second->getWidth();
+			return (ascending ? first_work_area < second_work_area :
+				first_work_area > second_work_area);
+		});
+		break;
+
+	case DATE:
+		std::sort(art_vec.begin(), art_vec.end(),
+			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+		{
+			return (ascending ? first_work.second->getDate() < second_work.second->getDate() :
+				first_work.second->getDate() > second_work.second->getDate());
+		});
+		break;
+
+	default: return art_vec.begin();
+	}
+
+	//ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, TITLE, AREA, HEIGHT, WIDTH, RARITY, PAINTING_ID, NO_SORT
+
+	return art_vec.begin();
+}
+
+void printArtworkInstance(const shared_ptr<artwork_instance> &target)
+{
+	cout << target->getTitle() << " by " << target->getArtistName() << " (" << getDateString(target->getDate(), false) << ")" << endl;
+	cout << "\t" << target->getHeight() * 100.0f << "cm x " << target->getWidth() * 100.0f << "cm" << endl;
+	cout << "\tEstimated value: $" << target->getBaseValue().getNumberString(true, false, 2) << endl;
+	cout << "\tRarity: " << stringFromRarity(target->getRarity()) << endl;
 }
 
 #endif

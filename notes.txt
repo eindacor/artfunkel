@@ -74,3 +74,4 @@ the first x% of the gallery duration is the "opening event", which grants specia
 players cannot modify paintings within a gallery until the end of the event
 forcing a gallery to close reduces rep considerably and the player incurs a penalty
 
+players can contact gallery owners to purchase works, setting can be turned off by gallery owner

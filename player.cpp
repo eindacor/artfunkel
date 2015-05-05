@@ -5,7 +5,7 @@ player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_co
 {
 	name = s;
 
-	map<int, shared_ptr<artwork_instance> > generated_works =  lg->generateArtworks(1, 1.0f);
+	vector<pair<int, shared_ptr<artwork_instance> > > generated_works = lg->generateArtworks(1, 1.0f);
 	for (auto i : generated_works)
 		addWorkToInventory(i.second);
 
@@ -17,44 +17,35 @@ player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_co
 
 void player::addWorkToInventory(const shared_ptr<artwork_instance> &work)
 {
-	int index = 0;
-	for (auto i : inventory)
-	{
-		if (i.first != index)
-			break;
-
-		index++;
-	}
-
 	collection_value += work->getValue();
 
 	shared_ptr<artwork_instance> copy_ptr(new artwork_instance(*work));
-	inventory.insert(pair<int, shared_ptr<artwork_instance> >(index, copy_ptr));
+	inventory.insert(pair<int, shared_ptr<artwork_instance> >(work->getID(), copy_ptr));
 }
 
-map<int, shared_ptr<artwork_instance> > player::getInventoryCopy()
+vector<pair<int, shared_ptr<artwork_instance> > > player::getInventoryCopy()
 {
-	map<int, shared_ptr<artwork_instance> > copied_inventory;
+	vector<pair<int, shared_ptr<artwork_instance> > > copied_inventory;
 	for (auto i : inventory)
 	{
 		shared_ptr<artwork_instance> ptr_copy = i.second;
 		artwork_instance copy = *ptr_copy;
 		shared_ptr<artwork_instance> copy_ptr(new artwork_instance(copy));
-		copied_inventory[i.first] = (copy_ptr);
+		copied_inventory.push_back(pair<int, shared_ptr<artwork_instance> >(i.first, copy_ptr));
 	}
 
 	return copied_inventory;
 }
 
-map<int, shared_ptr<artwork_instance> > player::getDisplayedCopy()
+vector<pair<int, shared_ptr<artwork_instance> > > player::getDisplayedCopy()
 {
-	map<int, shared_ptr<artwork_instance> > copied_displayed;
+	vector<pair<int, shared_ptr<artwork_instance> > > copied_displayed;
 	for (auto i : paintings_on_display)
 	{
 		shared_ptr<artwork_instance> ptr_copy = i.second;
 		artwork_instance copy = *ptr_copy;
 		shared_ptr<artwork_instance> copy_ptr(new artwork_instance(copy));
-		copied_displayed[i.first] = (copy_ptr);
+		copied_displayed.push_back(pair<int, shared_ptr<artwork_instance> >(i.first, copy_ptr));
 	}
 
 	return copied_displayed;

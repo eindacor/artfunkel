@@ -15,11 +15,13 @@ public:
 	shared_ptr<frame_model> getDefaultFrame() const { return default_frame; }
 
 	map<int, shared_ptr<artwork_instance> > getInventory() { return inventory; }
-	//copied inventory is used when the position will be modified, like in menus
-	map<int, shared_ptr<artwork_instance> > getInventoryCopy();
+	//copied inventory is used when the position will be modified, such as menus
+	//returns a vector of pairs for sortability
+	vector<pair<int, shared_ptr<artwork_instance> > > getInventoryCopy();
 
 	map<int, shared_ptr<artwork_instance> > getDisplayed() { return paintings_on_display; }
-	map<int, shared_ptr<artwork_instance> > getDisplayedCopy();
+	//returns a vector of pairs for sortability
+	vector<pair<int, shared_ptr<artwork_instance> > > getDisplayedCopy();
 
 	bignum getCollectionValue() const { return collection_value; }
 
@@ -32,6 +34,7 @@ public:
 
 private:
 	string name;
+	//key corresponds to painting ID
 	map<int, shared_ptr<artwork_instance> > inventory;
 	shared_ptr<frame_model> default_frame;
 	map<int, shared_ptr<artwork_instance> > paintings_on_display;

@@ -91,7 +91,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
-	map<int, shared_ptr<artwork_instance> > paintings_to_display = current_player->getInventoryCopy();
+	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = current_player->getInventoryCopy();
 
 	//space artwork without in the x axis only
 	offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
@@ -103,8 +103,8 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	float camera_distance_from_items = 10.0f;
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f)));
 
-	map<int, shared_ptr<artwork_instance> >::iterator current_selection = paintings_to_display.begin();
-	map<int, shared_ptr<artwork_instance> >::iterator last_item = paintings_to_display.end();
+	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
+	vector<pair<int, shared_ptr<artwork_instance> > >::iterator last_item = paintings_to_display.end();
 	last_item--;
 	glfwSetTime(0);
 	float render_fps = 10.0f;
@@ -152,6 +152,71 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				}
 			}
 
+			if (keys->checkPress(GLFW_KEY_1))
+			{
+				current_selection = sortArtVec(paintings_to_display, ARTIST_NAME);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Artist-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
+			if (keys->checkPress(GLFW_KEY_2))
+			{
+				current_selection = sortArtVec(paintings_to_display, VALUE);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Value-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
+			if (keys->checkPress(GLFW_KEY_3))
+			{
+				current_selection = sortArtVec(paintings_to_display, DATE);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Date-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
+			if (keys->checkPress(GLFW_KEY_4))
+			{
+				current_selection = sortArtVec(paintings_to_display, RARITY);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Rarity-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
+			if (keys->checkPress(GLFW_KEY_5))
+			{
+				current_selection = sortArtVec(paintings_to_display, TITLE);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Title-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
 			context->swapBuffers();
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
@@ -176,7 +241,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
-	map<int, shared_ptr<artwork_instance> > paintings_to_display = lg->generateArtworks(10, 1.0f);
+	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = lg->generateArtworks(10, 1.0f);
 
 	//space artwork without in the x axis only
 	offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
@@ -188,8 +253,8 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	float camera_distance_from_items = 10.0f;
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f)));
 
-	map<int, shared_ptr<artwork_instance> >::iterator current_selection = paintings_to_display.begin();
-	map<int, shared_ptr<artwork_instance> >::iterator last_item = paintings_to_display.end();
+	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
+	vector<pair<int, shared_ptr<artwork_instance> > >::iterator last_item = paintings_to_display.end();
 	last_item--;
 	glfwSetTime(0);
 	float render_fps = 10.0f;
@@ -258,7 +323,70 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				cout << "Collection value: $" << current_player->getCollectionValue().getNumberString(true, false, 2) << endl;
 			}
 
-			context->swapBuffers();
+			if (keys->checkPress(GLFW_KEY_1))
+			{
+				current_selection = sortArtVec(paintings_to_display, ARTIST_NAME);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Artist-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
+			if (keys->checkPress(GLFW_KEY_2))
+			{
+				current_selection = sortArtVec(paintings_to_display, VALUE);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Value-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
+			if (keys->checkPress(GLFW_KEY_3))
+			{
+				current_selection = sortArtVec(paintings_to_display, DATE);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Date-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
+			if (keys->checkPress(GLFW_KEY_4))
+			{
+				current_selection = sortArtVec(paintings_to_display, RARITY);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Rarity-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
+
+			if (keys->checkPress(GLFW_KEY_5))
+			{
+				current_selection = sortArtVec(paintings_to_display, TITLE);
+				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+				last_item = paintings_to_display.end();
+				last_item--;
+
+				cout << endl << "-----Sorted by Title-----" << endl;
+
+				for (auto i : paintings_to_display)
+					printArtworkInstance(i.second);
+			}
 
 			//TODO fix so crate doesn't disappear when going to the main menu
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
@@ -267,6 +395,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				finished = true;
 			}
 
+			context->swapBuffers();
 			glfwSetTime(0.0f);
 		}
 	}
@@ -283,7 +412,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
-	map<int, shared_ptr<artwork_instance> > paintings_to_display = current_player->getDisplayedCopy();
+	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = current_player->getDisplayedCopy();
 	offsetArtworks(paintings_to_display, eye_level);
 	
 	for (auto i : paintings_to_display)
