@@ -318,3 +318,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Value Scale,Height (cm),Width (cm),Imag
 316,Andrew Brischler,Hunger,2014????,CONTEMPORARY,COMMON,Mixed,0.34,43.2,35.7,brischler_hunger.bmp,no
 317,Andrew Brischler,Dark Horse,2014????,CONTEMPORARY,COMMON,Mixed,0.41,35.7,27.9,brischler_dark.bmp,no
 318,Andrew Brischler,Marrow,2014????,CONTEMPORARY,COMMON,Mixed,0.43,213.4,182.9,brischler_marrow.bmp,no
+319,Joseph Pollack,Axon,2005????,MODERNISM,COMMON,Graphite,0.05,113.9,100,pollack_axon.bmp,no
+320,Joseph Pollack,Form,2005????,CONTEMPORARY,COMMON,Charcoal,0.08,62.9,150,pollack_form.bmp,no
+321,Joseph Pollack,Sky,2005????,SKETCH,COMMON,Pencil,0.11,211.8,400,pollack_sky.bmp,no
+322,Joseph Pollack,Sky,2005????,SKETCH,COMMON,Pencil,0.05,149,400,pollack_sky2.bmp,no
