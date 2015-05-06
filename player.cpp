@@ -26,6 +26,7 @@ void player::addWorkToInventory(const shared_ptr<artwork> &work)
 vector<pair<int, shared_ptr<artwork> > > player::getInventoryCopy()
 {
 	vector<pair<int, shared_ptr<artwork> > > copied_inventory;
+	copied_inventory.reserve(inventory.size());
 	for (auto i : inventory)
 	{
 		//TODO simplify
@@ -41,6 +42,7 @@ vector<pair<int, shared_ptr<artwork> > > player::getInventoryCopy()
 vector<pair<int, shared_ptr<artwork> > > player::getDisplayedCopy()
 {
 	vector<pair<int, shared_ptr<artwork> > > copied_displayed;
+	copied_displayed.reserve(paintings_on_display.size());
 	for (auto i : paintings_on_display)
 	{
 		//TODO simplify

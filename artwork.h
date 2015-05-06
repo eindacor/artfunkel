@@ -45,6 +45,7 @@ public:
 	void setDate(date d) { date = d; }
 	void setBaseValue(bignum b) { base_value = b; }
 
+	//load, unload functions increase performance by removing surface data when not needed
 	void loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam);
 	void unloadData() { surface = shared_ptr<painting_surface>(nullptr); }
 	void setSurface(shared_ptr<painting_surface> surf) { surface = surf; }
@@ -70,7 +71,7 @@ public:
 	artwork();
 	artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, float work_condition);
 	artwork(const artwork &original);
-	~artwork(){};
+	~artwork(){ data->unloadData(); }
 
 	bool isForgery() const { return forgery; }
 	float getCondition() const { return condition; }

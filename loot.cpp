@@ -21,6 +21,7 @@ vector<pair<int, shared_ptr<artwork> > > loot_generator::generateArtworks(int co
 	) const
 {
 	vector<pair<int, shared_ptr<artwork> > > loot_vec;
+	loot_vec.reserve(count);
 
 	for (int i = 0; i < count; i++)
 	{

@@ -101,13 +101,14 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	int display_count = 10;
 
-	//TODO revise so function doesn't rely on so many containers created/copied per run
+	//remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<pair<int, shared_ptr<artwork> > > inventory_copy = current_player->getInventoryCopy();
 
 	//add player's default frames to each
 	for (auto i : inventory_copy)
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
+
 
 	//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
 	vector<pair<int, shared_ptr<artwork> > >::const_iterator chunk_first = inventory_copy.begin();
@@ -117,6 +118,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 		findChunkEnd(chunk_first, inventory_copy, display_count);
 
 	vector<pair<int, shared_ptr<artwork> > > paintings_to_display;
+	paintings_to_display.reserve(display_count);
 	paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
 	//adjusts model matrices of each image
@@ -142,17 +144,19 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				if (current_selection == paintings_to_display.begin())
 				{
 					//verifies highlight does not return if on the last page
-					int previous_distance = std::distance(chunk_last, inventory_copy.cend());
+					int previous_distance = std::distance(chunk_first, inventory_copy.cbegin());
 
 					//find new chunk_first based on previous chunk_first, find last and end iterators
 					chunk_first = findChunkFirst(chunk_first, inventory_copy, display_count, false);
-					chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
-					chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
 
-					int new_distance = std::distance(chunk_last, inventory_copy.cend());
+					int new_distance = std::distance(chunk_first, inventory_copy.cbegin());
 
+					//if the page is refreshed
 					if (previous_distance != new_distance)
 					{
+						chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+						chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
+
 						//clear paintings vec, get new paintings from inventory copy
 						paintings_to_display.clear();
 						paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
@@ -172,17 +176,19 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				if (current_selection == paintings_to_display.end() - 1)
 				{
 					//verifies highlight does not return if on the last page
-					int previous_distance = std::distance(chunk_last, inventory_copy.cbegin());
+					int previous_distance = std::distance(chunk_first, inventory_copy.cbegin());
 
 					//find new chunk_first based on previous chunk_first, find last and end iterators
 					chunk_first = findChunkFirst(chunk_first, inventory_copy, display_count, true);
-					chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
-					chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
 
-					int new_distance = std::distance(chunk_last, inventory_copy.cbegin());
+					int new_distance = std::distance(chunk_first, inventory_copy.cbegin());
 
+					//if the page is refreshed
 					if (previous_distance != new_distance)
 					{
+						chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+						chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
+
 						//clear paintings vec, get new paintings from inventory copy
 						paintings_to_display.clear();
 						paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
@@ -352,7 +358,11 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			{
 				menu_return = mainMenu(data_path, context, keys);
 				if (menu_return != 1)
+				{
 					finished = true;
+					for (auto i : inventory_copy)
+						i.second->getData()->unloadData();
+				}
 			}
 
 			glfwSetTime(0.0f);			
@@ -517,6 +527,8 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			{
 				menu_return = mainMenu(data_path, context, keys);
 				finished = true;
+				for (auto i : paintings_to_display)
+					i.second->getData()->unloadData();
 			}
 
 			context->swapBuffers();
