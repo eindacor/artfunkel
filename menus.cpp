@@ -65,11 +65,21 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 			{
 				float x_offset = (float(current_selection) - float(i.first)) * menu_item_offset * -1.0f;
 				mat4 model_matrix(glm::translate(mat4(1.0f), vec3(x_offset, 0.0f, 0.0f)));
-				if (i.first == current_selection)
-					model_matrix = glm::scale(mat4(1.0f), vec3(1.3f, 1.3f, 1.3f));
 
-				i.second.first.draw(model_matrix, camera);
-				i.second.second.draw(model_matrix, camera);
+				if (i.first == current_selection)
+				{
+					model_matrix = glm::scale(mat4(1.0f), vec3(1.3f, 1.3f, 1.3f));
+					i.second.first.draw(model_matrix, camera);
+					i.second.second.draw(model_matrix, camera);			
+				}
+
+				else
+				{
+					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
+					i.second.first.draw(model_matrix, camera);
+					i.second.second.draw(model_matrix, camera);
+					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
+				}
 			}
 
 			item_selected = keys->checkPress(GLFW_KEY_ENTER, false);
