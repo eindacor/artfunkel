@@ -111,6 +111,7 @@ public:
 		model_matrix = original.getModelMatrix();
 		p_frame = original.getFrame();
 		centerpoint = original.getCenter();
+		value = original.getValue();
 	}; //end of copy constructor
 	~artwork_instance(){};
 
