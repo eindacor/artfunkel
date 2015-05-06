@@ -27,7 +27,7 @@ enum sort_options { ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, 
 
 class artist;
 class artwork_data;
-class artwork_instance;
+class artwork;
 class art_db;
 class painting_surface;
 class frame_model;

@@ -103,20 +103,20 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
-	vector<pair<int, shared_ptr<artwork_instance> > > inventory_copy = current_player->getInventoryCopy();
+	vector<pair<int, shared_ptr<artwork> > > inventory_copy = current_player->getInventoryCopy();
 
 	//add player's default frames to each
 	for (auto i : inventory_copy)
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
 
 	//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
-	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator chunk_first = inventory_copy.begin();
-	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator chunk_last = 
+	vector<pair<int, shared_ptr<artwork> > >::const_iterator chunk_first = inventory_copy.begin();
+	vector<pair<int, shared_ptr<artwork> > >::const_iterator chunk_last =
 		findChunkLast(chunk_first, inventory_copy, display_count);
-	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator chunk_end = 
+	vector<pair<int, shared_ptr<artwork> > >::const_iterator chunk_end =
 		findChunkEnd(chunk_first, inventory_copy, display_count);
 
-	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display;
+	vector<pair<int, shared_ptr<artwork> > > paintings_to_display;
 	paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
 	//adjusts model matrices of each image
@@ -124,7 +124,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
-	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
+	vector<pair<int, shared_ptr<artwork> > >::iterator current_selection = paintings_to_display.begin();
 	glfwSetTime(0);
 	float render_fps = 60.0f;
 	bool finished = false;
@@ -210,7 +210,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				{
 					i.second->draw(context, camera, true);
 
-					shared_ptr<artwork_instance> copy(new artwork_instance(*(i.second)));
+					shared_ptr<artwork> copy(new artwork(*(i.second)));
 					mat4 original_matrix = copy->getModelMatrix();
 					makeHighlight(copy, 0.1f, 0.5f, 2.5f);
 					copy->draw(context, camera, true);
@@ -223,10 +223,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				switch (current_player->isOnDisplay((*current_selection).first))
 				{
 				case true: current_player->removePaintingFromDisplay(*current_selection); 
-					cout << (*current_selection).second->getTitle() << " has been removed from the gallery" << endl;
+					cout << (*current_selection).second->getData()->getTitle() << " has been removed from the gallery" << endl;
 					break;
 				case false: current_player->addPaintingToDisplay(*current_selection);
-					cout << (*current_selection).second->getTitle() << " has been added to the gallery" << endl;
+					cout << (*current_selection).second->getData()->getTitle() << " has been added to the gallery" << endl;
 					break;
 				}
 			}
@@ -251,7 +251,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				cout << endl << "-----Sorted by Artist-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			if (keys->checkPress(GLFW_KEY_2, false))
@@ -274,7 +274,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				cout << endl << "-----Sorted by Value-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			if (keys->checkPress(GLFW_KEY_3, false))
@@ -297,7 +297,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				cout << endl << "-----Sorted by Date-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			if (keys->checkPress(GLFW_KEY_4, false))
@@ -320,7 +320,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				cout << endl << "-----Sorted by Rarity-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			if (keys->checkPress(GLFW_KEY_5, false))
@@ -343,7 +343,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				cout << endl << "-----Sorted by Title-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			context->swapBuffers();
@@ -372,7 +372,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
-	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = lg->generateArtworks(drop_count, 1.0f);
+	vector<pair<int, shared_ptr<artwork> > > paintings_to_display = lg->generateArtworks(drop_count, 1.0f);
 
 	//add player's default frames to each
 	for (auto i : paintings_to_display)
@@ -383,7 +383,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
-	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
+	vector<pair<int, shared_ptr<artwork> > >::iterator current_selection = paintings_to_display.begin();
 	glfwSetTime(0);
 	float render_fps = 60.0f;
 	bool finished = false;
@@ -415,7 +415,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				{
 					i.second->draw(context, camera, true);
 
-					shared_ptr<artwork_instance> copy(new artwork_instance(*(i.second)));
+					shared_ptr<artwork> copy(new artwork(*(i.second)));
 					mat4 original_matrix = copy->getModelMatrix();
 					makeHighlight(copy, 0.1f, 0.5f, 2.5f);
 					copy->draw(context, camera, true);
@@ -424,15 +424,15 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 			if (keys->checkPress(GLFW_KEY_ENTER, false))
 			{
-				int selected_index = (*current_selection).second->getID();
+				int selected_index = (*current_selection).second->getData()->getID();
 				bool already_owned = current_player->alreadyOwned(selected_index);
 
 				switch (already_owned)
 				{
-				case true: cout << (*current_selection).second->getTitle() << " is already in your inventory" << endl;
+				case true: cout << (*current_selection).second->getData()->getTitle() << " is already in your inventory" << endl;
 					break;
 				case false: current_player->addWorkToInventory((*current_selection).second);
-					cout << (*current_selection).second->getTitle() << " has been added to your inventory" << endl;
+					cout << (*current_selection).second->getData()->getTitle() << " has been added to your inventory" << endl;
 					cout << "Collection value: $" << current_player->getCollectionValue().getNumberString(true, false, 2) << endl;
 					break;
 				}
@@ -442,15 +442,15 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			{
 				for (auto i : paintings_to_display)
 				{
-					int selected_index = i.second->getID();
+					int selected_index = i.second->getData()->getID();
 					bool already_owned = current_player->alreadyOwned(selected_index);
 
 					switch (already_owned)
 					{
-					case true: cout << i.second->getTitle() << " is already in your inventory" << endl;
+					case true: cout << i.second->getData()->getTitle() << " is already in your inventory" << endl;
 						break;
 					case false: current_player->addWorkToInventory(i.second);
-						cout << i.second->getTitle() << " has been added to your inventory" << endl;
+						cout << i.second->getData()->getTitle() << " has been added to your inventory" << endl;
 						break;
 					}
 				}
@@ -465,7 +465,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				cout << endl << "-----Sorted by Artist-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			if (keys->checkPress(GLFW_KEY_2, false))
@@ -476,7 +476,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				cout << endl << "-----Sorted by Value-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			if (keys->checkPress(GLFW_KEY_3, false))
@@ -487,7 +487,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				cout << endl << "-----Sorted by Date-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			if (keys->checkPress(GLFW_KEY_4, false))
@@ -498,7 +498,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				cout << endl << "-----Sorted by Rarity-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			if (keys->checkPress(GLFW_KEY_5, false))
@@ -509,7 +509,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				cout << endl << "-----Sorted by Title-----" << endl;
 
 				for (auto i : paintings_to_display)
-					printArtworkInstance(i.second);
+					printArtwork(i.second);
 			}
 
 			//TODO fix so crate doesn't disappear when going to the main menu
@@ -536,7 +536,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
-	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = current_player->getDisplayedCopy();
+	vector<pair<int, shared_ptr<artwork> > > paintings_to_display = current_player->getDisplayedCopy();
 	offsetArtworks(paintings_to_display, eye_level);
 	
 	for (auto i : paintings_to_display)
@@ -574,7 +574,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 	}
 
 	for (auto i : paintings_to_display)
-		i.second->unloadData();
+		i.second->getData()->unloadData();
 
 	context->setBackgroundColor(original_background);
 	return menu_return;

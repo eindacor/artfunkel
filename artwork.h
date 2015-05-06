@@ -64,101 +64,34 @@ private:
 	shared_ptr<painting_surface> surface;
 };
 
-//TODO revise so artwork_instance is not a child class, but contains and artwork_data object instead
-class artwork_instance : public artwork_data
+class artwork
 {
-public:
-	artwork_instance() : artwork_data(), p_frame(nullptr)
-	{
-		forgery = false;
-		condition = 0.0f;
-		model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
-		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-	};	//end of default constructor
+public: 
+	artwork();
+	artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, float work_condition);
+	artwork(const artwork &original);
+	~artwork(){};
 
-	//primary constructor
-	artwork_instance(int work_id,
-		string work_title,
-		shared_ptr<artist> work_artist,
-		genre work_genre,
-		rarity work_rarity,
-		bool work_forgery,
-		float work_condition,
-		float work_height,
-		float work_width,
-		string work_image_name,
-		jep::date work_date,
-		bignum work_base_value) :
-		artwork_data(work_id, work_title, work_artist, work_genre, 
-		work_rarity, work_height, work_width, work_image_name, work_date, work_base_value)
-	{
-		forgery = work_forgery;
-		condition = work_condition;
-		model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
-		p_frame = nullptr;
-		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		setValue();
-	}	//end of primary constructor
-
-	//copy constructor
-	//TODO modify copy constructor to use existing surface data if it is available in memory
-	artwork_instance(const artwork_instance &original) :
-		artwork_data(original.getID(), original.getTitle(), original.getArtist(), original.getGenre(),
-		original.getRarity(), original.getHeight(), original.getWidth(), original.getImagePath(), original.getDate(), original.getBaseValue())
-	{
-		forgery = original.isForgery();
-		condition = original.getCondition();
-		model_matrix = original.getModelMatrix();
-		p_frame = original.getFrame();
-		centerpoint = original.getCenter();
-		value = original.getValue();
-	}; //end of copy constructor
-	~artwork_instance(){};
-
-	bignum getValue() const { return value; }
 	bool isForgery() const { return forgery; }
 	float getCondition() const { return condition; }
-	vec4 getCenter() const { return centerpoint; }
-
-	void moveRelative(mat4 translation_matrix) { model_matrix = model_matrix * translation_matrix; centerpoint = centerpoint * translation_matrix; }
-	void moveAbsolute(vec3 position) { 
-		mat4 translation_matrix = glm::translate(mat4(1.0f), position);
-		model_matrix = translation_matrix;
-		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);	
-		centerpoint = translation_matrix * centerpoint;
-	}
-
 	mat4 getModelMatrix() const { return model_matrix; }
-	void setModelMatrix(mat4 m) { 
-		model_matrix = m; 
-		centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
-		centerpoint = model_matrix * centerpoint;
-	}
-
 	shared_ptr<frame_model> getFrame() const { return p_frame; }
+	vec4 getCenter() const { return centerpoint; }
+	bignum getValue() const { return value; }
 	pair<float, float> getOverallDimensions() const;
+	shared_ptr<artwork_data> getData() const { return data; }
+
+	void moveRelative(mat4 move_matrix);
+	void moveAbsolute(vec3 position);
+	void setModelMatrix(mat4 m);
 
 	void setValue();
 	void loadFrame(const shared_ptr<frame_model> &work_frame) { p_frame = work_frame; }
-	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam, bool absolute=false)
-	{
-		mat4 frame_offset(glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f)));
-		if (p_frame != nullptr)
-		{
-			p_frame->draw(model_matrix, ogl_cam, absolute);
-			float z_offset = p_frame->getPaintingDistanceToWall();
-			frame_offset = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, z_offset));
-		}
+	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam, bool absolute = false);
 
-		if (getSurface() == nullptr)
-			loadData(ogl_con, ogl_cam);
-		getSurface()->draw(model_matrix * frame_offset, ogl_cam, absolute);
-	}
-
-	const artwork_instance& operator = (const artwork_instance &other);
-
-	bool operator == (const artwork_instance &other) const;
-	bool operator != (const artwork_instance &other) const { return !(*this == other); }
+	const artwork& operator = (const artwork &other);
+	bool operator == (const artwork &other) const;
+	bool operator != (const artwork &other) const { return !(*this == other); }
 
 	void applyFrameTemplate(const frame_model &frame_template);
 
@@ -170,6 +103,7 @@ private:
 	mat4 model_matrix;
 
 	shared_ptr<frame_model> p_frame;
+	shared_ptr<artwork_data> data;
 };
 
 #endif

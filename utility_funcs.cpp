@@ -1,6 +1,3 @@
-#ifndef UTILITY_FUNCS_HPP
-#define UTILITY_FUNCS_HPP
-
 #include "utility_funcs.h"
 #include "artwork.h"
 
@@ -186,7 +183,7 @@ vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 
 }
 
 //TODO templatize function
-void offsetArtworks(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, float space_between, float eye_level, float starting_z, bool x_only)
+void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float space_between, float eye_level, float starting_z, bool x_only)
 {
 	float x_offset = 0.0f;
 	float previous_width = 0.0f;
@@ -200,36 +197,22 @@ void offsetArtworks(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, 
 		if (!x_only)
 		{
 			float min_distance_from_floor = .5f;
-			if ((i.second->getHeight() * .67f) + min_distance_from_floor > eye_level)
-				y_offset = (i.second->getHeight() / 2.0f) + min_distance_from_floor;
+			if ((i.second->getData()->getHeight() * .67f) + min_distance_from_floor > eye_level)
+				y_offset = (i.second->getData()->getHeight() / 2.0f) + min_distance_from_floor;
 
-			else y_offset = eye_level - (i.second->getHeight() / 6.0f);
+			else y_offset = eye_level - (i.second->getData()->getHeight() / 6.0f);
 		}
 
-		float buffer = (previous_width / 2.0f) + space_between + (i.second->getWidth() / 2.0f);
+		float buffer = (previous_width / 2.0f) + space_between + (i.second->getData()->getWidth() / 2.0f);
 		x_offset += buffer;
 
-		//code below was for wrapping paintings to a new line after 10 were displayed
-		/*
-		if (display_count % 10 == 0 && display_count != 0)
-		{
-			x_offset = 0.0f;
-			starting_z -= 4.0f;
-			previous_width = 0.0f;
-			buffer = 0.0f;
-		}
-
-		else
-			x_offset += buffer;
-		*/
-
-		previous_width = i.second->getWidth();
+		previous_width = i.second->getData()->getWidth();
 		i.second->moveAbsolute(vec3(x_offset, y_offset, starting_z));
 		display_count++;
 	}
 }
 
-void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path)
+void addFrames(vector< shared_ptr<artwork> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path)
 {
 	string matte_texture = data_path + "model_data\\white_matte.bmp";
 	for (auto i : art_vec)
@@ -249,24 +232,24 @@ void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_c
 		float random_frame_width = jep::floatRoll(0.05f, .25f, 2);
 		float random_matte_width = jep::floatRoll(0.05f, .25f, 2);
 		shared_ptr<frame_model> generated_frame(new frame_model(
-			i->getWidth(), i->getHeight(), context, frame_texture.c_str(), matte_texture.c_str(), random_frame_width));
+			i->getData()->getWidth(), i->getData()->getHeight(), context, frame_texture.c_str(), matte_texture.c_str(), random_frame_width));
 
 		i->loadFrame(generated_frame);
 	}
 }
 
 //TODO typdef vector of pairs
-vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, sort_options sort, bool ascending)
+vector<pair<int, shared_ptr<artwork> > >::iterator sortArtVec(vector<pair<int, shared_ptr<artwork> > > &art_vec, sort_options sort, bool ascending)
 {
 	switch (sort)
 	{
 	case ARTIST_NAME:
 		std::sort(art_vec.begin(), art_vec.end(), 
-			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
 		{
-			string first_work_name = first_work.second->getArtistName();
+			string first_work_name = first_work.second->getData()->getArtistName();
 			std::transform(first_work_name.begin(), first_work_name.end(), first_work_name.begin(), ::tolower);
-			string second_work_name = second_work.second->getArtistName();
+			string second_work_name = second_work.second->getData()->getArtistName();
 			std::transform(second_work_name.begin(), second_work_name.end(), second_work_name.begin(), ::tolower);
 			return (ascending ? first_work_name < second_work_name : first_work_name > second_work_name);
 		});
@@ -274,7 +257,7 @@ vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pa
 
 	case VALUE:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
 		{ 
 			return (ascending ? first_work.second->getValue() < second_work.second->getValue() :
 								first_work.second->getValue() > second_work.second->getValue());
@@ -283,11 +266,11 @@ vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pa
 
 	case TITLE:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
 		{
-			string first_work_title = first_work.second->getTitle();
+			string first_work_title = first_work.second->getData()->getTitle();
 			std::transform(first_work_title.begin(), first_work_title.end(), first_work_title.begin(), ::tolower);
-			string second_work_title = second_work.second->getTitle();
+			string second_work_title = second_work.second->getData()->getTitle();
 			std::transform(second_work_title.begin(), second_work_title.end(), second_work_title.begin(), ::tolower);
 			return (ascending ? first_work_title < second_work_title : first_work_title > second_work_title);
 		});
@@ -295,19 +278,19 @@ vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pa
 
 	case RARITY:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
 		{
-			return (ascending ? first_work.second->getRarity() < second_work.second->getRarity() :
-				first_work.second->getRarity() > second_work.second->getRarity());
+			return (ascending ? first_work.second->getData()->getRarity() < second_work.second->getData()->getRarity() :
+				first_work.second->getData()->getRarity() > second_work.second->getData()->getRarity());
 		});
 		break;
 
 	case AREA:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
 		{
-			float first_work_area = first_work.second->getHeight() * first_work.second->getWidth();
-			float second_work_area = second_work.second->getHeight() * second_work.second->getWidth();
+			float first_work_area = first_work.second->getData()->getHeight() * first_work.second->getData()->getWidth();
+			float second_work_area = second_work.second->getData()->getHeight() * second_work.second->getData()->getWidth();
 			return (ascending ? first_work_area < second_work_area :
 				first_work_area > second_work_area);
 		});
@@ -315,10 +298,10 @@ vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pa
 
 	case DATE:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork_instance> > first_work, pair<int, shared_ptr<artwork_instance> > second_work)
+			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
 		{
-			return (ascending ? first_work.second->getDate() < second_work.second->getDate() :
-				first_work.second->getDate() > second_work.second->getDate());
+			return (ascending ? first_work.second->getData()->getDate() < second_work.second->getData()->getDate() :
+				first_work.second->getData()->getDate() > second_work.second->getData()->getDate());
 		});
 		break;
 
@@ -330,15 +313,16 @@ vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pa
 	return art_vec.begin();
 }
 
-void printArtworkInstance(const shared_ptr<artwork_instance> &target)
+void printArtwork(const shared_ptr<artwork> &target)
 {
-	cout << target->getTitle() << " by " << target->getArtistName() << " (" << getDateString(target->getDate(), false) << ")" << endl;
-	cout << "\t" << target->getHeight() * 100.0f << "cm x " << target->getWidth() * 100.0f << "cm" << endl;
-	cout << "\tEstimated value: $" << target->getBaseValue().getNumberString(true, false, 2) << endl;
-	cout << "\tRarity: " << stringFromRarity(target->getRarity()) << endl;
+	shared_ptr<artwork_data> data = target->getData();
+	cout << data->getTitle() << " by " << data->getArtistName() << " (" << getDateString(data->getDate(), false) << ")" << endl;
+	cout << "\t" << data->getHeight() * 100.0f << "cm x " << data->getWidth() * 100.0f << "cm" << endl;
+	cout << "\tEstimated value: $" << data->getBaseValue().getNumberString(true, false, 2) << endl;
+	cout << "\tRarity: " << stringFromRarity(data->getRarity()) << endl;
 }
 
-mat4 calcImageScale(const shared_ptr<artwork_instance> &target, float width_max, float height_max)
+mat4 calcImageScale(const shared_ptr<artwork> &target, float width_max, float height_max)
 {
 	//overall dimensions provides height, width respectively
 	float scale_for_x = width_max / target->getOverallDimensions().second;
@@ -350,7 +334,7 @@ mat4 calcImageScale(const shared_ptr<artwork_instance> &target, float width_max,
 		);
 }
 
-void makeHighlight(shared_ptr<artwork_instance> target, float top_margin, float bottom_margin, float cell_width)
+void makeHighlight(shared_ptr<artwork> target, float top_margin, float bottom_margin, float cell_width)
 {
 	float cell_height = 2.0 - top_margin - bottom_margin;
 	float y_translate = (bottom_margin + (cell_height / 2.0f)) - 1.0f;
@@ -363,7 +347,7 @@ void makeHighlight(shared_ptr<artwork_instance> target, float top_margin, float 
 }
 
 //manipulates paintings to be viewed as thumbnails returns iterator to next starting point of the sequence
-void makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, float margin_size, float cell_size)
+void makeThumbnails(vector<pair<int, shared_ptr<artwork> > > &art_vec, float margin_size, float cell_size)
 {
 	int items_to_display = art_vec.size();
 
@@ -396,9 +380,9 @@ void makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, 
 	}
 }
 
-vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkFirst(
-	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first,
-	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size, bool forward)
+vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkFirst(
+	vector<pair<int, shared_ptr<artwork> > >::const_iterator first,
+	const vector<pair<int, shared_ptr<artwork> > > &art_vec, int chunk_size, bool forward)
 {
 	int distance_to_end = std::distance(first, art_vec.end());
 	int distance_to_begin = std::distance(art_vec.begin(), first);
@@ -425,9 +409,9 @@ vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkFirst
 	}
 }
 
-vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkLast(
-	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first, 
-	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size)
+vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkLast(
+	vector<pair<int, shared_ptr<artwork> > >::const_iterator first,
+	const vector<pair<int, shared_ptr<artwork> > > &art_vec, int chunk_size)
 {
 	int distance_to_end = std::distance(first, art_vec.end());
 	if (distance_to_end <= chunk_size)
@@ -436,9 +420,9 @@ vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkLast(
 	return first + (chunk_size - 1);
 }
 
-vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkEnd(
-	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first,
-	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size)
+vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkEnd(
+	vector<pair<int, shared_ptr<artwork> > >::const_iterator first,
+	const vector<pair<int, shared_ptr<artwork> > > &art_vec, int chunk_size)
 {
 	int distance_to_end = std::distance(first, art_vec.end());
 	if (distance_to_end <= chunk_size)
@@ -446,5 +430,3 @@ vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkEnd(
 
 	return first + chunk_size;
 }
-
-#endif

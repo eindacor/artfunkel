@@ -5,7 +5,7 @@ player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_co
 {
 	name = s;
 
-	vector<pair<int, shared_ptr<artwork_instance> > > generated_works = lg->generateArtworks(1, 1.0f);
+	vector<pair<int, shared_ptr<artwork> > > generated_works = lg->generateArtworks(1, 1.0f);
 	for (auto i : generated_works)
 		addWorkToInventory(i.second);
 
@@ -15,49 +15,51 @@ player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_co
 	currency = 5000.0f;
 }
 
-void player::addWorkToInventory(const shared_ptr<artwork_instance> &work)
+void player::addWorkToInventory(const shared_ptr<artwork> &work)
 {
 	collection_value += work->getValue();
 
-	shared_ptr<artwork_instance> copy_ptr(new artwork_instance(*work));
-	inventory.insert(pair<int, shared_ptr<artwork_instance> >(work->getID(), copy_ptr));
+	shared_ptr<artwork> copy_ptr(new artwork(*work));
+	inventory.insert(pair<int, shared_ptr<artwork> >(work->getData()->getID(), copy_ptr));
 }
 
-vector<pair<int, shared_ptr<artwork_instance> > > player::getInventoryCopy()
+vector<pair<int, shared_ptr<artwork> > > player::getInventoryCopy()
 {
-	vector<pair<int, shared_ptr<artwork_instance> > > copied_inventory;
+	vector<pair<int, shared_ptr<artwork> > > copied_inventory;
 	for (auto i : inventory)
 	{
-		shared_ptr<artwork_instance> ptr_copy = i.second;
-		artwork_instance copy = *ptr_copy;
-		shared_ptr<artwork_instance> copy_ptr(new artwork_instance(copy));
-		copied_inventory.push_back(pair<int, shared_ptr<artwork_instance> >(i.first, copy_ptr));
+		//TODO simplify
+		shared_ptr<artwork> ptr_copy = i.second;
+		artwork copy = *ptr_copy;
+		shared_ptr<artwork> copy_ptr(new artwork(copy));
+		copied_inventory.push_back(pair<int, shared_ptr<artwork> >(i.first, copy_ptr));
 	}
 
 	return copied_inventory;
 }
 
-vector<pair<int, shared_ptr<artwork_instance> > > player::getDisplayedCopy()
+vector<pair<int, shared_ptr<artwork> > > player::getDisplayedCopy()
 {
-	vector<pair<int, shared_ptr<artwork_instance> > > copied_displayed;
+	vector<pair<int, shared_ptr<artwork> > > copied_displayed;
 	for (auto i : paintings_on_display)
 	{
-		shared_ptr<artwork_instance> ptr_copy = i.second;
-		artwork_instance copy = *ptr_copy;
-		shared_ptr<artwork_instance> copy_ptr(new artwork_instance(copy));
-		copied_displayed.push_back(pair<int, shared_ptr<artwork_instance> >(i.first, copy_ptr));
+		//TODO simplify
+		shared_ptr<artwork> ptr_copy = i.second;
+		artwork copy = *ptr_copy;
+		shared_ptr<artwork> copy_ptr(new artwork(copy));
+		copied_displayed.push_back(pair<int, shared_ptr<artwork> >(i.first, copy_ptr));
 	}
 
 	return copied_displayed;
 }
 
-void player::addPaintingToDisplay(const pair<int, shared_ptr<artwork_instance> > &toAdd)
+void player::addPaintingToDisplay(const pair<int, shared_ptr<artwork> > &toAdd)
 {
 	if (paintings_on_display.find(toAdd.first) == paintings_on_display.end())
 		paintings_on_display.insert(toAdd);
 }
 
-void player::removePaintingFromDisplay(const pair<int, shared_ptr<artwork_instance> > &toRemove)
+void player::removePaintingFromDisplay(const pair<int, shared_ptr<artwork> > &toRemove)
 {
 	if (paintings_on_display.find(toRemove.first) != paintings_on_display.end())
 		paintings_on_display.erase(toRemove.first);
@@ -72,7 +74,7 @@ bool player::alreadyOwned(int painting_index) const
 {
 	for (auto i : inventory)
 	{
-		if (i.second->getID() == painting_index)
+		if (i.second->getData()->getID() == painting_index)
 			return true;
 	}
 
