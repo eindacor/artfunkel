@@ -350,35 +350,51 @@ mat4 calcThumbnailScale(const shared_ptr<artwork_instance> &target, float width_
 		);
 }
 
-void makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, const shared_ptr<ogl_context> &context, float margin_size)
+//manipulates paintings to be viewed as thumbnails returns iterator to next starting point of the sequence
+vector<pair<int, shared_ptr<artwork_instance> > >::iterator makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec,
+	const shared_ptr<ogl_context> &context, float margin_size, int items_to_display, vector<pair<int, shared_ptr<artwork_instance> > >::iterator first_element)
 {
+	int items_remaining = std::distance(first_element, art_vec.end());
+	if (items_remaining < items_to_display)
+		items_to_display = items_remaining;
+
+	cout << items_remaining << endl;
+
 	//first 2.0 is for total window width
-	float cell_width = (2.0f - (margin_size * 2.0f)) / art_vec.size();
-	float cell_height = cell_width * context->getAspectRatio();
-	float cell_x_padding = cell_width * 0.1f;
-	float cell_y_padding = cell_x_padding * context->getAspectRatio();
+	float cell_height = 0.3f;
+	float cell_width = 0.3f;
+	float cell_padding = cell_width * 0.05f;
 
-	float max_painting_width = cell_width - (2 * cell_x_padding);
-	float max_painting_height = cell_height - (2 * cell_y_padding);
+	float max_painting_width = cell_width - (2 * cell_padding);
+	float max_painting_height = cell_height - (2 * cell_padding);
 
-	float lower_margin = margin_size * context->getAspectRatio();
-	float y_translate = 1.0f - lower_margin - (cell_height / 2.0f);
-	cout << lower_margin << endl;
+	float y_translate = 1.0f - margin_size - (cell_height / 2.0f);
 
-	for (int i = 0; i < art_vec.size(); i++)
+	float total_width = cell_width * (float)items_to_display;
+	float initial_x_offset = (total_width / -2.0f) + (cell_width / 2.0f);
+	cout << initial_x_offset << endl;
+
+	vector<pair<int, shared_ptr<artwork_instance> > >::iterator it = first_element;
+
+	int item_counter = 0;
+	while (it != art_vec.end() && item_counter < items_to_display)
 	{
 		mat4 initial(1.0f);
-		mat4 scale = calcThumbnailScale(art_vec.at(i).second, max_painting_width, max_painting_height);
+		mat4 scale = calcThumbnailScale((*it).second, max_painting_width, max_painting_height);
 
-		float x_offset = ((1.0f - margin_size - (cell_width / 2.0f)) * -1.0f) + (i * cell_width);
+		float x_offset = initial_x_offset + (item_counter * cell_width);
+		cout << x_offset << endl;
 
-		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset * -1.0f, y_translate * -1.0f, 0.0f));
+		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset, y_translate * -1.0f, 0.0f));
 		mat4 position_matrix = translation * scale * initial;
 
-		art_vec.at(i).second->setModelMatrix(position_matrix);
+		(*it).second->setModelMatrix(position_matrix);
+
+		item_counter++;
+		it++;
 	}
 
-	//scale, then move
+	return it;
 }
 
 #endif

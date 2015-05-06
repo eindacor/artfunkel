@@ -47,7 +47,10 @@ void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camer
 	glUniform1i(context->getAbsoluteID(), absolute);
 
 	if (absolute)
+	{
 		glUniformMatrix4fv(context->getModelID(), 1, GL_FALSE, &model_matrix[0][0]);
+		glUniform1f(context->getAspectID(), context->getAspectRatio());
+	}
 
 	else
 	{
@@ -267,10 +270,12 @@ void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &c
 	glBindVertexArray(*temp_vao);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);	
 
+	glUniform1i(context->getAbsoluteID(), absolute);
+
 	if (absolute)
 	{
 		glUniformMatrix4fv(context->getModelID(), 1, GL_FALSE, &model_matrix[0][0]);
-		glUniform1i(context->getAbsoluteID(), absolute);
+		glUniform1f(context->getAspectID(), context->getAspectRatio());
 	}
 
 	else

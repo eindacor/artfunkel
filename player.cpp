@@ -5,7 +5,7 @@ player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_co
 {
 	name = s;
 
-	vector<pair<int, shared_ptr<artwork_instance> > > generated_works = lg->generateArtworks(1, 1.0f);
+	vector<pair<int, shared_ptr<artwork_instance> > > generated_works = lg->generateArtworks(3, 1.0f);
 	for (auto i : generated_works)
 		addWorkToInventory(i.second);
 

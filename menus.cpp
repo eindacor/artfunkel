@@ -93,13 +93,13 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = current_player->getInventoryCopy();
 
-	//space artwork without in the x axis only
-	//offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true); //commented out for thumbnail test
-	makeThumbnails(paintings_to_display, context, 0.1f);
-
 	//add player's default frames to each
 	for (auto i : paintings_to_display)
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
+
+	//space artwork without in the x axis only
+	//offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true); //commented out for thumbnail test
+	makeThumbnails(paintings_to_display, context, 0.1f, 12, paintings_to_display.begin());
 
 	float camera_distance_from_items = 2.0f;
 	//float camera_distance_from_items = 10.0f;					//commented out for thumbnail test
@@ -121,22 +121,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			context->clearBuffers();
 
 			if (keys->checkPress(GLFW_KEY_LEFT) && current_selection != paintings_to_display.begin())
-			{
 				current_selection--;
-				vec4 camera_target = (*current_selection).second->getCenter();
-				cout << camera_target.x << endl;
-				cout << camera_target.y << endl;
-				cout << camera_target.z << endl;
-			}
 
 			else if (keys->checkPress(GLFW_KEY_RIGHT) && current_selection != last_item)
-			{
 				current_selection++;
-				vec4 camera_target = (*current_selection).second->getCenter();
-				cout << camera_target.x << endl;
-				cout << camera_target.y << endl;
-				cout << camera_target.z << endl;
-			}
 
 			//float current_selection_height = ((*current_selection).second->getHeight()) * 2.0f;
 			//float current_selection_width = ((*current_selection).second->getWidth()) * 2.0f;
