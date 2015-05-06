@@ -357,12 +357,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
 				menu_return = mainMenu(data_path, context, keys);
-				if (menu_return != 1)
-				{
-					finished = true;
-					for (auto i : inventory_copy)
-						i.second->getData()->unloadData();
-				}
+				finished = (menu_return != 1);
 			}
 
 			glfwSetTime(0.0f);			
@@ -527,8 +522,6 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			{
 				menu_return = mainMenu(data_path, context, keys);
 				finished = true;
-				for (auto i : paintings_to_display)
-					i.second->getData()->unloadData();
 			}
 
 			context->swapBuffers();
