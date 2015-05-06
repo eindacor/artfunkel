@@ -23,8 +23,8 @@ int main(int argc, char* argv[])
 
 	else
 	{
-		//data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
-		data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
+		data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
+		//data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
 	}
 	
 	string paintings_path = data_path + "paintings.csv";
@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
 	string frag_file = data_path + "fragment_shader.glsl";
 
 	float eye_level = 1.65f;
-	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1800, 900));
+	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1024, 512));
 	shared_ptr<key_handler> keys(new key_handler(context));
 
 	shared_ptr<art_db> artist_database(new art_db(artists_path.c_str(), paintings_path.c_str(), images_path.c_str()));

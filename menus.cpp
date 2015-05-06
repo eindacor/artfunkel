@@ -89,25 +89,32 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.0f, 0.0f, 1.0f));
 
+	int display_count = 10;
+
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
-	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = current_player->getInventoryCopy();
+	vector<pair<int, shared_ptr<artwork_instance> > > inventory_copy = current_player->getInventoryCopy();
 
 	//add player's default frames to each
-	for (auto i : paintings_to_display)
+	for (auto i : inventory_copy)
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
 
-	//space artwork without in the x axis only
-	//offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true); //commented out for thumbnail test
-	makeThumbnails(paintings_to_display, context, 0.1f, 12, paintings_to_display.begin());
+	//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator chunk_first = inventory_copy.begin();
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator chunk_last = 
+		findChunkLast(chunk_first, inventory_copy, display_count);
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator chunk_end = 
+		findChunkEnd(chunk_first, inventory_copy, display_count);
 
-	float camera_distance_from_items = 2.0f;
-	//float camera_distance_from_items = 10.0f;					//commented out for thumbnail test
-	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f), 45.0f));
+	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display;
+	paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+	//adjusts model matrices of each image
+	makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
 	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
-	vector<pair<int, shared_ptr<artwork_instance> > >::iterator last_item = paintings_to_display.end();
-	last_item--;
 	glfwSetTime(0);
 	float render_fps = 10.0f;
 	bool finished = false;
@@ -120,23 +127,85 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			glfwPollEvents();
 			context->clearBuffers();
 
-			if (keys->checkPress(GLFW_KEY_LEFT) && current_selection != paintings_to_display.begin())
-				current_selection--;
+			if (keys->checkPress(GLFW_KEY_LEFT))
+			{
+				if (current_selection == paintings_to_display.begin())
+				{
+					//verifies highlight does not return if on the last page
+					int previous_distance = std::distance(chunk_last, inventory_copy.cend());
 
-			else if (keys->checkPress(GLFW_KEY_RIGHT) && current_selection != last_item)
-				current_selection++;
+					//find new chunk_first based on previous chunk_first, find last and end iterators
+					chunk_first = findChunkFirst(chunk_first, inventory_copy, display_count, false);
+					chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+					chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
 
-			//float current_selection_height = ((*current_selection).second->getHeight()) * 2.0f;
-			//float current_selection_width = ((*current_selection).second->getWidth()) * 2.0f;
-			//camera_distance_from_items = (current_selection_height > current_selection_width ? current_selection_height : current_selection_width);
+					int new_distance = std::distance(chunk_last, inventory_copy.cend());
 
-			//vec4 camera_target = (*current_selection).second->getCenter();
-			//camera->setFocus(vec3(camera_target.x, camera_target.y, camera_target.z));
-			//camera->setPosition(vec3(camera_target.x, camera_target.y, camera_distance_from_items));
-			//camera->updateCamera();
+					if (previous_distance != new_distance)
+					{
+						//clear paintings vec, get new paintings from inventory copy
+						paintings_to_display.clear();
+						paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+						//space artwork without in the x axis only
+						makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+						current_selection = paintings_to_display.end() - 1;
+					}
+				}
+
+				else current_selection--;
+			}
+
+			else if (keys->checkPress(GLFW_KEY_RIGHT))
+			{
+				if (current_selection == paintings_to_display.end() - 1)
+				{
+					//verifies highlight does not return if on the last page
+					int previous_distance = std::distance(chunk_last, inventory_copy.cbegin());
+
+					//find new chunk_first based on previous chunk_first, find last and end iterators
+					chunk_first = findChunkFirst(chunk_first, inventory_copy, display_count, true);
+					chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+					chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
+
+					int new_distance = std::distance(chunk_last, inventory_copy.cbegin());
+
+					if (previous_distance != new_distance)
+					{
+						//clear paintings vec, get new paintings from inventory copy
+						paintings_to_display.clear();
+						paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+						//space artwork without in the x axis only
+						makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+						current_selection = paintings_to_display.begin();
+					}
+				}
+
+				else current_selection++;
+			}
 
 			for (auto i : paintings_to_display)
-				i.second->draw(context, camera, true);
+			{
+				if ((*current_selection).first != i.first)
+				{
+					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
+					i.second->draw(context, camera, true);
+					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
+				}		
+
+				else
+				{
+					i.second->draw(context, camera, true);
+
+					shared_ptr<artwork_instance> copy(new artwork_instance(*(i.second)));
+					mat4 original_matrix = copy->getModelMatrix();
+					makeHighlight(copy, 0.1f, 0.5f, 2.5f);
+					copy->draw(context, camera, true);
+				}
+			}
 
 			if (keys->checkPress(GLFW_KEY_ENTER))
 			{
@@ -154,10 +223,20 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 			if (keys->checkPress(GLFW_KEY_1))
 			{
-				current_selection = sortArtVec(paintings_to_display, ARTIST_NAME);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				current_selection = sortArtVec(inventory_copy, ARTIST_NAME);
+				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
+				chunk_first = inventory_copy.begin();
+				chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+				chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
+
+				//clear paintings vec, get new paintings from inventory copy
+				paintings_to_display.clear();
+				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+				//space artwork without in the x axis only
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+				current_selection = paintings_to_display.begin();
 
 				cout << endl << "-----Sorted by Artist-----" << endl;
 
@@ -167,10 +246,20 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 			if (keys->checkPress(GLFW_KEY_2))
 			{
-				current_selection = sortArtVec(paintings_to_display, VALUE);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				current_selection = sortArtVec(inventory_copy, VALUE);
+				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
+				chunk_first = inventory_copy.begin();
+				chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+				chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
+
+				//clear paintings vec, get new paintings from inventory copy
+				paintings_to_display.clear();
+				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+				//space artwork without in the x axis only
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+				current_selection = paintings_to_display.begin();
 
 				cout << endl << "-----Sorted by Value-----" << endl;
 
@@ -180,10 +269,20 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 			if (keys->checkPress(GLFW_KEY_3))
 			{
-				current_selection = sortArtVec(paintings_to_display, DATE);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				current_selection = sortArtVec(inventory_copy, DATE);
+				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
+				chunk_first = inventory_copy.begin();
+				chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+				chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
+
+				//clear paintings vec, get new paintings from inventory copy
+				paintings_to_display.clear();
+				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+				//space artwork without in the x axis only
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+				current_selection = paintings_to_display.begin();
 
 				cout << endl << "-----Sorted by Date-----" << endl;
 
@@ -193,10 +292,20 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 			if (keys->checkPress(GLFW_KEY_4))
 			{
-				current_selection = sortArtVec(paintings_to_display, RARITY);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				current_selection = sortArtVec(inventory_copy, RARITY);
+				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
+				chunk_first = inventory_copy.begin();
+				chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+				chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
+
+				//clear paintings vec, get new paintings from inventory copy
+				paintings_to_display.clear();
+				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+				//space artwork without in the x axis only
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+				current_selection = paintings_to_display.begin();
 
 				cout << endl << "-----Sorted by Rarity-----" << endl;
 
@@ -206,10 +315,20 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 			if (keys->checkPress(GLFW_KEY_5))
 			{
-				current_selection = sortArtVec(paintings_to_display, TITLE);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				current_selection = sortArtVec(inventory_copy, TITLE);
+				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
+				chunk_first = inventory_copy.begin();
+				chunk_last = findChunkLast(chunk_first, inventory_copy, display_count);
+				chunk_end = findChunkEnd(chunk_first, inventory_copy, display_count);
+
+				//clear paintings vec, get new paintings from inventory copy
+				paintings_to_display.clear();
+				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+				//space artwork without in the x axis only
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+				current_selection = paintings_to_display.begin();
 
 				cout << endl << "-----Sorted by Title-----" << endl;
 
@@ -238,24 +357,23 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 {
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.0f, 0.0f, 0.5f, 1.0f));
+	
+	int drop_count = 10;
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
-	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = lg->generateArtworks(10, 1.0f);
-
-	//space artwork without in the x axis only
-	offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
+	vector<pair<int, shared_ptr<artwork_instance> > > paintings_to_display = lg->generateArtworks(drop_count, 1.0f);
 
 	//add player's default frames to each
 	for (auto i : paintings_to_display)
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
 
-	float camera_distance_from_items = 10.0f;
-	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, camera_distance_from_items), vec3(0.0f, 0.0f, 0.0f), 45.0f));
+	//adjusts model matrices of each image
+	makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+
+	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
 	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
-	vector<pair<int, shared_ptr<artwork_instance> > >::iterator last_item = paintings_to_display.end();
-	last_item--;
 	glfwSetTime(0);
 	float render_fps = 10.0f;
 	bool finished = false;
@@ -271,22 +389,28 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_LEFT) && current_selection != paintings_to_display.begin())
 				current_selection--;
 
-			else if (keys->checkPress(GLFW_KEY_RIGHT) && current_selection != last_item)
+			else if (keys->checkPress(GLFW_KEY_RIGHT) && current_selection != paintings_to_display.end() - 1)
 				current_selection++;
 
-			//TODO modify height/width of paintings to be world units instead of cm
-			float current_selection_height = ((*current_selection).second->getHeight()) * 2.0f;
-			float current_selection_width = ((*current_selection).second->getWidth()) * 2.0f;
-			camera_distance_from_items = (current_selection_height > current_selection_width ?
-			current_selection_height : current_selection_width);
-
-			vec4 camera_target = (*current_selection).second->getCenter();
-			camera->setFocus(vec3(camera_target.x, camera_target.y, camera_target.z));
-			camera->setPosition(vec3(camera_target.x, camera_target.y, camera_distance_from_items));
-			camera->updateCamera();
-
 			for (auto i : paintings_to_display)
-				i.second->draw(context, camera);
+			{
+				if ((*current_selection).first != i.first)
+				{
+					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
+					i.second->draw(context, camera, true);
+					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
+				}
+
+				else
+				{
+					i.second->draw(context, camera, true);
+
+					shared_ptr<artwork_instance> copy(new artwork_instance(*(i.second)));
+					mat4 original_matrix = copy->getModelMatrix();
+					makeHighlight(copy, 0.1f, 0.5f, 2.5f);
+					copy->draw(context, camera, true);
+				}
+			}
 
 			if (keys->checkPress(GLFW_KEY_ENTER))
 			{
@@ -326,9 +450,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_1))
 			{
 				current_selection = sortArtVec(paintings_to_display, ARTIST_NAME);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
 
 				cout << endl << "-----Sorted by Artist-----" << endl;
 
@@ -339,9 +461,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_2))
 			{
 				current_selection = sortArtVec(paintings_to_display, VALUE);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
 
 				cout << endl << "-----Sorted by Value-----" << endl;
 
@@ -352,9 +472,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_3))
 			{
 				current_selection = sortArtVec(paintings_to_display, DATE);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
 
 				cout << endl << "-----Sorted by Date-----" << endl;
 
@@ -365,9 +483,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_4))
 			{
 				current_selection = sortArtVec(paintings_to_display, RARITY);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
 
 				cout << endl << "-----Sorted by Rarity-----" << endl;
 
@@ -378,9 +494,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_5))
 			{
 				current_selection = sortArtVec(paintings_to_display, TITLE);
-				offsetArtworks(paintings_to_display, 0.5f, 0.0f, 0.0f, true);
-				last_item = paintings_to_display.end();
-				last_item--;
+				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
 
 				cout << endl << "-----Sorted by Title-----" << endl;
 

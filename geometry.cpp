@@ -44,18 +44,18 @@ void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camer
 	glBindVertexArray(*temp_vao);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);
 
-	glUniform1i(context->getAbsoluteID(), absolute);
+	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
 
 	if (absolute)
 	{
-		glUniformMatrix4fv(context->getModelID(), 1, GL_FALSE, &model_matrix[0][0]);
-		glUniform1f(context->getAspectID(), context->getAspectRatio());
+		glUniformMatrix4fv(context->getShaderGLint("model_matrix"), 1, GL_FALSE, &model_matrix[0][0]);
+		glUniform1f(context->getShaderGLint("aspect_scale"), context->getAspectRatio());
 	}
 
 	else
 	{
 		mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * model_matrix;
-		glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(context->getShaderGLint("MVP"), 1, GL_FALSE, &MVP[0][0]);
 	}
 
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
@@ -270,18 +270,18 @@ void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &c
 	glBindVertexArray(*temp_vao);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);	
 
-	glUniform1i(context->getAbsoluteID(), absolute);
+	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
 
 	if (absolute)
 	{
-		glUniformMatrix4fv(context->getModelID(), 1, GL_FALSE, &model_matrix[0][0]);
-		glUniform1f(context->getAspectID(), context->getAspectRatio());
+		glUniformMatrix4fv(context->getShaderGLint("model_matrix"), 1, GL_FALSE, &model_matrix[0][0]);
+		glUniform1f(context->getShaderGLint("ascpect_scale"), context->getAspectRatio());
 	}
 
 	else
 	{
 		mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * model_matrix;
-		glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
+		glUniformMatrix4fv(context->getShaderGLint("MVP"), 1, GL_FALSE, &MVP[0][0]);
 	}
 	
 	glDrawArrays(GL_TRIANGLES, 0, frame_opengl_data->getVertexCount());

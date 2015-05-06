@@ -338,7 +338,7 @@ void printArtworkInstance(const shared_ptr<artwork_instance> &target)
 	cout << "\tRarity: " << stringFromRarity(target->getRarity()) << endl;
 }
 
-mat4 calcThumbnailScale(const shared_ptr<artwork_instance> &target, float width_max, float height_max)
+mat4 calcImageScale(const shared_ptr<artwork_instance> &target, float width_max, float height_max)
 {
 	//overall dimensions provides height, width respectively
 	float scale_for_x = width_max / target->getOverallDimensions().second;
@@ -350,19 +350,25 @@ mat4 calcThumbnailScale(const shared_ptr<artwork_instance> &target, float width_
 		);
 }
 
-//manipulates paintings to be viewed as thumbnails returns iterator to next starting point of the sequence
-vector<pair<int, shared_ptr<artwork_instance> > >::iterator makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec,
-	const shared_ptr<ogl_context> &context, float margin_size, int items_to_display, vector<pair<int, shared_ptr<artwork_instance> > >::iterator first_element)
+void makeHighlight(shared_ptr<artwork_instance> target, float top_margin, float bottom_margin, float cell_width)
 {
-	int items_remaining = std::distance(first_element, art_vec.end());
-	if (items_remaining < items_to_display)
-		items_to_display = items_remaining;
+	float cell_height = 2.0 - top_margin - bottom_margin;
+	float y_translate = (bottom_margin + (cell_height / 2.0f)) - 1.0f;
 
-	cout << items_remaining << endl;
+	mat4 initial(1.0f);
+	mat4 scale = calcImageScale(target, cell_width, cell_height);
+	mat4 translation = glm::translate(mat4(1.0f), vec3(0.0f, y_translate, 0.0f));
+	mat4 position_matrix = translation * scale * initial;
+	target->setModelMatrix(position_matrix);
+}
 
-	//first 2.0 is for total window width
-	float cell_height = 0.3f;
-	float cell_width = 0.3f;
+//manipulates paintings to be viewed as thumbnails returns iterator to next starting point of the sequence
+void makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, float margin_size, float cell_size)
+{
+	int items_to_display = art_vec.size();
+
+	float cell_height = cell_size;
+	float cell_width = cell_size;
 	float cell_padding = cell_width * 0.05f;
 
 	float max_painting_width = cell_width - (2 * cell_padding);
@@ -372,29 +378,73 @@ vector<pair<int, shared_ptr<artwork_instance> > >::iterator makeThumbnails(vecto
 
 	float total_width = cell_width * (float)items_to_display;
 	float initial_x_offset = (total_width / -2.0f) + (cell_width / 2.0f);
-	cout << initial_x_offset << endl;
-
-	vector<pair<int, shared_ptr<artwork_instance> > >::iterator it = first_element;
 
 	int item_counter = 0;
-	while (it != art_vec.end() && item_counter < items_to_display)
+	for (auto i : art_vec)
 	{
 		mat4 initial(1.0f);
-		mat4 scale = calcThumbnailScale((*it).second, max_painting_width, max_painting_height);
+		mat4 scale = calcImageScale(i.second, max_painting_width, max_painting_height);
 
 		float x_offset = initial_x_offset + (item_counter * cell_width);
-		cout << x_offset << endl;
 
 		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset, y_translate * -1.0f, 0.0f));
 		mat4 position_matrix = translation * scale * initial;
 
-		(*it).second->setModelMatrix(position_matrix);
+		i.second->setModelMatrix(position_matrix);
 
 		item_counter++;
-		it++;
 	}
+}
 
-	return it;
+vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkFirst(
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first,
+	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size, bool forward)
+{
+	int distance_to_end = std::distance(first, art_vec.end());
+	int distance_to_begin = std::distance(art_vec.begin(), first);
+
+	switch (forward)
+	{
+	case true:
+		if (distance_to_end <= chunk_size)
+			return first;
+
+		for (int i = 0; i < chunk_size; i++)
+			first++;
+
+		return first;
+
+	case false:
+		if (distance_to_begin <= chunk_size)
+			return art_vec.begin();
+
+		for (int i = 0; i < chunk_size; i++)
+			first--;
+
+		return first;
+	}
+}
+
+vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkLast(
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first, 
+	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size)
+{
+	int distance_to_end = std::distance(first, art_vec.end());
+	if (distance_to_end <= chunk_size)
+		return art_vec.end() - 1;
+
+	return first + (chunk_size - 1);
+}
+
+vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkEnd(
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first,
+	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size)
+{
+	int distance_to_end = std::distance(first, art_vec.end());
+	if (distance_to_end <= chunk_size)
+		return art_vec.end();
+
+	return first + chunk_size;
 }
 
 #endif

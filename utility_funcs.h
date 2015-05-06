@@ -12,8 +12,22 @@ void offsetArtworks(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, 
 void addFrames(vector< shared_ptr<artwork_instance> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path);
 vector<pair<int, shared_ptr<artwork_instance> > >::iterator sortArtVec(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, sort_options sort, bool ascending = true);
 void printArtworkInstance(const shared_ptr<artwork_instance> &target);
-mat4 calcThumbnailScale(const shared_ptr<artwork_instance> &target, float width_max, float height_max);
-vector<pair<int, shared_ptr<artwork_instance> > >::iterator makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec,
-	const shared_ptr<ogl_context> &context, float margin_size, int items_to_display, vector<pair<int, shared_ptr<artwork_instance> > >::iterator first_element);
+mat4 calcImageScale(const shared_ptr<artwork_instance> &target, float width_max, float height_max);
+void makeThumbnails(vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, float margin_size, float cell_size);
+void makeHighlight(shared_ptr<artwork_instance> target, float top_margin, float bottom_margin, float cell_width);
+
+
+//TODO for the love of god, enumerate something
+vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkFirst(
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first,
+	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size, bool forward);
+
+vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkLast(
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first,
+	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size);
+
+vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator findChunkEnd(
+	vector<pair<int, shared_ptr<artwork_instance> > >::const_iterator first,
+	const vector<pair<int, shared_ptr<artwork_instance> > > &art_vec, int chunk_size);
 
 #endif
