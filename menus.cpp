@@ -47,7 +47,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 
 	int current_selection = 0;
 	glfwSetTime(0);
-	float render_fps = 10.0f;
+	float render_fps = 60.0f;
 	while (!item_selected)
 	{
 		if (glfwGetTime() > 1.0f / render_fps)
@@ -55,10 +55,10 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 			glfwPollEvents();
 			context->clearBuffers();
 
-			if (keys->checkPress(GLFW_KEY_LEFT) && current_selection != 0)
+			if (keys->checkPress(GLFW_KEY_LEFT, false) && current_selection != 0)
 				current_selection--;
 
-			else if (keys->checkPress(GLFW_KEY_RIGHT) && current_selection != (options.size() - 1))
+			else if (keys->checkPress(GLFW_KEY_RIGHT, false) && current_selection != (options.size() - 1))
 				current_selection++;
 
 			for (auto i : options)
@@ -72,7 +72,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 				i.second.second.draw(model_matrix, camera);
 			}
 
-			item_selected = keys->checkPress(GLFW_KEY_ENTER);
+			item_selected = keys->checkPress(GLFW_KEY_ENTER, false);
 
 			context->swapBuffers();
 			glfwSetTime(0.0f);
@@ -116,7 +116,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
 	glfwSetTime(0);
-	float render_fps = 10.0f;
+	float render_fps = 60.0f;
 	bool finished = false;
 	int menu_return = 0;
 
@@ -127,7 +127,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			glfwPollEvents();
 			context->clearBuffers();
 
-			if (keys->checkPress(GLFW_KEY_LEFT))
+			if (keys->checkPress(GLFW_KEY_LEFT, false))
 			{
 				if (current_selection == paintings_to_display.begin())
 				{
@@ -157,7 +157,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				else current_selection--;
 			}
 
-			else if (keys->checkPress(GLFW_KEY_RIGHT))
+			else if (keys->checkPress(GLFW_KEY_RIGHT, false))
 			{
 				if (current_selection == paintings_to_display.end() - 1)
 				{
@@ -207,7 +207,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				}
 			}
 
-			if (keys->checkPress(GLFW_KEY_ENTER))
+			if (keys->checkPress(GLFW_KEY_ENTER, false))
 			{
 				//if painting is already on display, take it off. if it's not, add it to display
 				switch (current_player->isOnDisplay((*current_selection).first))
@@ -221,7 +221,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				}
 			}
 
-			if (keys->checkPress(GLFW_KEY_1))
+			if (keys->checkPress(GLFW_KEY_1, false))
 			{
 				current_selection = sortArtVec(inventory_copy, ARTIST_NAME);
 				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
@@ -244,7 +244,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					printArtworkInstance(i.second);
 			}
 
-			if (keys->checkPress(GLFW_KEY_2))
+			if (keys->checkPress(GLFW_KEY_2, false))
 			{
 				current_selection = sortArtVec(inventory_copy, VALUE);
 				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
@@ -267,7 +267,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					printArtworkInstance(i.second);
 			}
 
-			if (keys->checkPress(GLFW_KEY_3))
+			if (keys->checkPress(GLFW_KEY_3, false))
 			{
 				current_selection = sortArtVec(inventory_copy, DATE);
 				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
@@ -290,7 +290,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					printArtworkInstance(i.second);
 			}
 
-			if (keys->checkPress(GLFW_KEY_4))
+			if (keys->checkPress(GLFW_KEY_4, false))
 			{
 				current_selection = sortArtVec(inventory_copy, RARITY);
 				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
@@ -313,7 +313,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					printArtworkInstance(i.second);
 			}
 
-			if (keys->checkPress(GLFW_KEY_5))
+			if (keys->checkPress(GLFW_KEY_5, false))
 			{
 				current_selection = sortArtVec(inventory_copy, TITLE);
 				//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
@@ -338,7 +338,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 			context->swapBuffers();
 
-			if (keys->checkPress(GLFW_KEY_ESCAPE))
+			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
 				menu_return = mainMenu(data_path, context, keys);
 				if (menu_return != 1)
@@ -375,7 +375,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 	vector<pair<int, shared_ptr<artwork_instance> > >::iterator current_selection = paintings_to_display.begin();
 	glfwSetTime(0);
-	float render_fps = 10.0f;
+	float render_fps = 60.0f;
 	bool finished = false;
 	int menu_return = 0;
 
@@ -386,10 +386,10 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			glfwPollEvents();
 			context->clearBuffers();
 
-			if (keys->checkPress(GLFW_KEY_LEFT) && current_selection != paintings_to_display.begin())
+			if (keys->checkPress(GLFW_KEY_LEFT, false) && current_selection != paintings_to_display.begin())
 				current_selection--;
 
-			else if (keys->checkPress(GLFW_KEY_RIGHT) && current_selection != paintings_to_display.end() - 1)
+			else if (keys->checkPress(GLFW_KEY_RIGHT, false) && current_selection != paintings_to_display.end() - 1)
 				current_selection++;
 
 			for (auto i : paintings_to_display)
@@ -412,7 +412,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				}
 			}
 
-			if (keys->checkPress(GLFW_KEY_ENTER))
+			if (keys->checkPress(GLFW_KEY_ENTER, false))
 			{
 				int selected_index = (*current_selection).second->getID();
 				bool already_owned = current_player->alreadyOwned(selected_index);
@@ -428,7 +428,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				}
 			}
 
-			if (keys->checkPress(GLFW_KEY_A))
+			if (keys->checkPress(GLFW_KEY_A, false))
 			{
 				for (auto i : paintings_to_display)
 				{
@@ -447,7 +447,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				cout << "Collection value: $" << current_player->getCollectionValue().getNumberString(true, false, 2) << endl;
 			}
 
-			if (keys->checkPress(GLFW_KEY_1))
+			if (keys->checkPress(GLFW_KEY_1, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, ARTIST_NAME);
 				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
@@ -458,7 +458,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					printArtworkInstance(i.second);
 			}
 
-			if (keys->checkPress(GLFW_KEY_2))
+			if (keys->checkPress(GLFW_KEY_2, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, VALUE);
 				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
@@ -469,7 +469,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					printArtworkInstance(i.second);
 			}
 
-			if (keys->checkPress(GLFW_KEY_3))
+			if (keys->checkPress(GLFW_KEY_3, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, DATE);
 				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
@@ -480,7 +480,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					printArtworkInstance(i.second);
 			}
 
-			if (keys->checkPress(GLFW_KEY_4))
+			if (keys->checkPress(GLFW_KEY_4, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, RARITY);
 				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
@@ -491,7 +491,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					printArtworkInstance(i.second);
 			}
 
-			if (keys->checkPress(GLFW_KEY_5))
+			if (keys->checkPress(GLFW_KEY_5, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, TITLE);
 				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
@@ -503,7 +503,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			}
 
 			//TODO fix so crate doesn't disappear when going to the main menu
-			if (keys->checkPress(GLFW_KEY_ESCAPE))
+			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
 				menu_return = mainMenu(data_path, context, keys);
 				finished = true;
