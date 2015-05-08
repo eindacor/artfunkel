@@ -373,7 +373,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.0f, 0.0f, 0.5f, 1.0f));
 	
-	int drop_count = 10;
+	int drop_count = 6;
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
@@ -533,7 +533,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	return menu_return;
 }
 
-int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player)
+int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys, const shared_ptr<player> &current_player)
 {
 	float eye_level = 1.65f;
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, context, vec3(0.0f, eye_level, 5.0f), 45.0f));
@@ -541,6 +541,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
+	//TODO why does this require a pair with int first?
 	vector<pair<int, shared_ptr<artwork> > > paintings_to_display = current_player->getDisplayedCopy();
 	offsetArtworks(paintings_to_display, eye_level);
 	
@@ -553,6 +554,26 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 	bool finished = false;
 	int menu_return = 0;
 
+	vector<shared_ptr<line> > lines;
+
+	lines.push_back(shared_ptr<line>(new line(
+		vec4(0.25f, 0.0f, 0.0f, 1.0f),
+		vec4(-0.25f, 0.0f, 0.0f, 1.0f), 
+		vec4(0.0f, 0.0f, 0.0f, 1.0f)
+		)));
+
+	lines.push_back(shared_ptr<line>(new line(
+		vec4(0.0f, 0.25f, 0.0f, 1.0f),
+		vec4(0.0f, -0.25, 0.0f, 1.0f),
+		vec4(0.0f, 0.0f, 0.0f, 1.0f)
+		)));
+
+	lines.push_back(shared_ptr<line>(new line(
+		vec4(0.0f, 0.0f, 0.25f, 1.0f),
+		vec4(0.0f, 0.0f, -0.25, 1.0f),
+		vec4(0.0f, 0.0f, 0.0f, 1.0f)
+		)));
+
 	while (!finished)
 	{
 		if (glfwGetTime() > 1.0f / render_fps)
@@ -564,8 +585,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 			for (auto i : paintings_to_display)
 				i.second->draw(context, camera);
 
-			context->swapBuffers();
-			glfwSetTime(0.0f);
+			for (auto i : lines)
+				i->draw(context, camera);
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
@@ -574,6 +595,16 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 					finished = true;
 			}
 
+			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
+			{
+				for (auto i : paintings_to_display)
+				{
+					if (paintingSelected(keys, camera, i.second))
+						printArtwork(i.second);
+				}
+			}
+
+			context->swapBuffers();
 			glfwSetTime(0.0f);
 		}
 	}

@@ -4,11 +4,20 @@
 in vec2 UV;
 uniform sampler2D myTextureSampler;
 uniform float dim_factor = 1.0f;
+uniform bool draw_line = false; 
 
-out vec3 output_color;
+uniform bool color_override = false;
+uniform vec4 override_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);
+
+out vec4 output_color;
 
 void main()
 {
-	vec3 undimmed_color = texture2D( myTextureSampler, UV).rgb;
-	output_color = vec3(undimmed_color.x * dim_factor, undimmed_color.y * dim_factor, undimmed_color.z * dim_factor);
+	if (!color_override)
+	{
+		vec3 undimmed_color = texture2D( myTextureSampler, UV).rgb;
+		output_color = vec4(undimmed_color.x * dim_factor, undimmed_color.y * dim_factor, undimmed_color.z * dim_factor, 1.0f);
+	}
+
+	else output_color = override_color;
 }

@@ -59,9 +59,7 @@ void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camer
 	}
 
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
-
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 	glBindVertexArray(0);
 }
 
@@ -302,4 +300,59 @@ void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &c
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
+}
+
+line::line(vec4 first, vec4 second, vec4 c)
+{
+	p1 = first;
+	p2 = second;
+	color = c;
+
+	VAO = shared_ptr<GLuint>(new GLuint);
+	VBO = shared_ptr<GLuint>(new GLuint);
+
+	glGenVertexArrays(1, VAO.get());
+	glBindVertexArray(*VAO);
+	glGenBuffers(1, VBO.get());
+	glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+
+	vector<float> vec_vertices{ first.x, first.y, first.z, second.x, second.y, second.z };
+
+	glBufferData(GL_ARRAY_BUFFER, vec_vertices.size() * sizeof(float), &vec_vertices[0], GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glDisableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+line::~line()
+{
+	glDeleteVertexArrays(1, VAO.get());
+	glDeleteBuffers(1, VAO.get());
+}
+
+void line::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute) const
+{
+	glBindVertexArray(*VAO);
+	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
+
+	GLint line = true;
+	glUniform1i(context->getShaderGLint("color_override"), true);
+	glUniform4f(context->getShaderGLint("override_color"), color.x, color.y, color.z, color.w);
+
+	mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
+	glUniformMatrix4fv(context->getShaderGLint("MVP"), 1, GL_FALSE, &MVP[0][0]);
+
+	glEnableVertexAttribArray(0);
+	glDrawArrays(GL_LINES, 0, 2);
+	glDisableVertexAttribArray(0);
+
+	glUniform1i(context->getShaderGLint("color_override"), false);
+
+	line = false;
+	glUniform1i(context->getShaderGLint("draw_line"), line);
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 }

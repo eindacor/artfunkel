@@ -325,8 +325,8 @@ void printArtwork(const shared_ptr<artwork> &target)
 mat4 calcImageScale(const shared_ptr<artwork> &target, float width_max, float height_max)
 {
 	//overall dimensions provides height, width respectively
-	float scale_for_x = width_max / target->getOverallDimensions().second;
-	float scale_for_y = height_max / target->getOverallDimensions().first;
+	float scale_for_x = width_max / target->getOverallDimensions().x;
+	float scale_for_y = height_max / target->getOverallDimensions().y;
 
 	return (scale_for_x < scale_for_y ?
 		glm::scale(mat4(1.0f), vec3(scale_for_x, scale_for_x, scale_for_x)) :
@@ -366,13 +366,11 @@ void makeThumbnails(vector<pair<int, shared_ptr<artwork> > > &art_vec, float mar
 	int item_counter = 0;
 	for (auto i : art_vec)
 	{
-		mat4 initial(1.0f);
 		mat4 scale = calcImageScale(i.second, max_painting_width, max_painting_height);
 
 		float x_offset = initial_x_offset + (item_counter * cell_width);
-
 		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset, y_translate * -1.0f, 0.0f));
-		mat4 position_matrix = translation * scale * initial;
+		mat4 position_matrix = translation * scale;
 
 		i.second->setModelMatrix(position_matrix);
 
@@ -429,4 +427,63 @@ vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkEnd(
 		return art_vec.end();
 
 	return first + chunk_size;
+}
+
+pair<vec3, vec3> getRayFromCursorPosition(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera)
+{
+	vec2 cursor_position = keys->getCursorPosition();
+
+	vec3 vector_first(camera->getPosition());
+
+	vec4 ray_clip(cursor_position.x, cursor_position.y, -0.1f, 1.0f);
+	mat4 projection_matrix = camera->getProjectionMatrix();
+	mat4 inverted_projection_matrix = glm::inverse(projection_matrix);
+	vec4 ray_eye = inverted_projection_matrix * ray_clip;
+	ray_eye = vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
+
+	mat4 view_matrix = camera->getViewMatrix();
+	mat4 inverted_view_matrix = glm::inverse(view_matrix);
+	vec3 ray_wor(inverted_view_matrix * ray_eye);
+	// don't forget to normalise the vector at some point
+	ray_wor = glm::normalize(ray_wor);
+
+	ray_wor = vec3(glm::translate(mat4(1.0f), camera->getPosition()) * vec4(ray_wor, 1.0f));
+
+	return pair<vec3, vec3>(vector_first, vec3(ray_wor));
+}
+
+bool paintingSelected(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, const shared_ptr<artwork> &art)
+{	
+	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
+
+	mat4 model_matrix = art->getModelMatrix();
+	mat4 inverse_model_matrix = glm::inverse(model_matrix);
+
+	ray.first = vec3(inverse_model_matrix * vec4(ray.first, 1.0f));
+	ray.second = vec3(inverse_model_matrix * vec4(ray.second, 1.0f));
+
+	vec3 origin = ray.first;
+	vec3 direction = ray.second - ray.first;
+
+	vector< vector<vec3> > select_surfaces = art->getSelectSurfaces();
+	
+	//cycle through each surface, testing ray intersection
+	for (auto i : select_surfaces)
+	{
+		if (i.size() != 3)
+		{
+			cout << "surface tested is missing vertices" << endl;
+			return false;
+		}
+			
+		vec3 first_point(i.at(1));
+		vec3 second_point(i.at(0));
+		vec3 third_point(i.at(2));
+		vec3 result;
+
+		if (glm::intersectRayTriangle(origin, direction, first_point, second_point, third_point, result))
+			return true;
+	}
+
+	return false;
 }

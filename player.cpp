@@ -13,6 +13,9 @@ player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_co
 	string matte_path = data_path + "model_data\\white_matte.bmp";
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, frame_path, matte_path));
 	currency = 5000.0f;
+
+	for (auto i : inventory)
+		addPaintingToDisplay(i);
 }
 
 void player::addWorkToInventory(const shared_ptr<artwork> &work)
