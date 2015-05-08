@@ -79,15 +79,17 @@ public:
 	shared_ptr<frame_model> getFrame() const { return p_frame; }
 	vec4 getCenter() const { return centerpoint; }
 	bignum getValue() const { return value; }
-	pair<float, float> getOverallDimensions() const;
+	void updateOverallDimensions();
+	vec3 getOverallDimensions() const { return overall_dimensions; }
 	shared_ptr<artwork_data> getData() const { return data; }
+	vector < vector<vec3> > getSelectSurfaces() const { return select_surfaces; }
 
 	void moveRelative(mat4 move_matrix);
 	void moveAbsolute(vec3 position);
 	void setModelMatrix(mat4 m);
 
 	void setValue();
-	void loadFrame(const shared_ptr<frame_model> &work_frame) { p_frame = work_frame; }
+	void loadFrame(const shared_ptr<frame_model> &work_frame) { p_frame = work_frame; updateOverallDimensions(); }
 	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam, bool absolute = false);
 
 	const artwork& operator = (const artwork &other);
@@ -102,6 +104,10 @@ private:
 	float condition;
 	vec4 centerpoint;
 	mat4 model_matrix;
+
+	vec3 overall_dimensions;
+	//vector below stores faces to check for click selection;
+	vector < vector<vec3> > select_surfaces;
 
 	shared_ptr<frame_model> p_frame;
 	shared_ptr<artwork_data> data;

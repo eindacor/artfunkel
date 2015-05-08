@@ -55,6 +55,7 @@ artwork::artwork()
 	model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
 	p_frame = nullptr;
 	data = nullptr;
+	updateOverallDimensions();
 }
 
 artwork::artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, float work_condition)
@@ -66,6 +67,7 @@ artwork::artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, f
 	p_frame = nullptr;
 	centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
 	setValue();
+	updateOverallDimensions();
 }
 
 artwork::artwork(const artwork &original)
@@ -77,6 +79,7 @@ artwork::artwork(const artwork &original)
 	centerpoint = original.getCenter();
 	value = original.getValue();
 	data = original.getData();
+	updateOverallDimensions();
 }
 
 void artwork::moveRelative(mat4 move_matrix) 
@@ -123,6 +126,7 @@ const artwork& artwork::operator = (const artwork &other)
 	model_matrix = other.getModelMatrix();
 	p_frame = other.getFrame();
 	centerpoint = other.getCenter();
+	updateOverallDimensions();
 
 	setValue();
 	return *this;
@@ -147,6 +151,8 @@ void artwork::applyFrameTemplate(const frame_model &frame_template)
 	p_frame = shared_ptr<frame_model>(new frame_model(
 		data->getWidth(), data->getHeight(), frame_template.getContext(), frame_template.getFrameTexturePath(), frame_template.getMatteTexturePath(),
 		frame_template.getFrameWidth(), frame_template.getFrameDepth(), frame_template.getMatteWidth(), frame_template.getMatteSetback(), frame_template.getPaintingSetback()));
+
+	updateOverallDimensions();
 }
 
 void artwork::setValue()
@@ -156,10 +162,11 @@ void artwork::setValue()
 		value *= .15;
 }
 
-pair<float, float> artwork::getOverallDimensions() const
+void artwork::updateOverallDimensions()
 {
 	float total_width = data->getWidth();
 	float total_height = data->getHeight();
+	float total_depth = 0.0f;
 	
 	if (p_frame != nullptr)
 	{
@@ -167,7 +174,38 @@ pair<float, float> artwork::getOverallDimensions() const
 		total_width += p_frame->getMatteWidth() * 2.0f;
 		total_height += p_frame->getFrameWidth() * 2.0f;
 		total_height += p_frame->getMatteWidth() * 2.0f;
+		total_depth += p_frame->getFrameDepth();
 	}
 
-	return pair<float, float>(total_height, total_width);
+	overall_dimensions = vec3(total_width, total_height, total_depth);
+
+	vec3 left_top_front(total_width / -2.0f, total_height / 2.0f, total_depth);
+	vec3 left_top_back(total_width / -2.0f, total_height / 2.0f, 0.0f);
+	vec3 left_bottom_front(total_width / -2.0f, total_height / -2.0f, total_depth);
+	vec3 left_bottom_back(total_width / -2.0f, total_height / -2.0f, 0.0f);
+	vec3 right_top_front(total_width / 2.0f, total_height / 2.0f, total_depth);
+	vec3 right_top_back(total_width / 2.0f, total_height / 2.0f, 0.0f);
+	vec3 right_bottom_front(total_width / 2.0f, total_height / -2.0f, total_depth);
+	vec3 right_bottom_back(total_width / 2.0f, total_height / -2.0f, 0.0f);
+
+	select_surfaces.clear();
+	//FRONT FACE
+	select_surfaces.push_back(vector<vec3>{ left_bottom_front, left_top_front, right_top_front }); //upper left	
+	select_surfaces.push_back(vector<vec3>{ left_bottom_front, right_top_front, right_bottom_front }); //lower right
+
+	if (p_frame != nullptr)
+	{
+		//TOP FACE
+		select_surfaces.push_back(vector < vec3 > { left_top_front, left_top_back, right_top_back }); //upper left	
+		select_surfaces.push_back(vector < vec3 > { left_top_front, right_top_back, right_top_front }); //lower right
+		//LEFT FACE
+		select_surfaces.push_back(vector < vec3 > { left_bottom_back, left_top_back, left_top_front }); //upper left	
+		select_surfaces.push_back(vector < vec3 > { left_bottom_back, left_top_front, left_bottom_front }); //lower right
+		//RIGHT FACE
+		select_surfaces.push_back(vector < vec3 > { right_bottom_front, right_top_front, right_top_back }); //upper left	
+		select_surfaces.push_back(vector < vec3 > { right_bottom_front, right_top_back, right_bottom_back }); //lower right
+		//BOTTOM FACE
+		select_surfaces.push_back(vector < vec3 > { left_bottom_back, left_bottom_front, right_bottom_front }); //upper left	
+		select_surfaces.push_back(vector < vec3 > { left_bottom_back, right_bottom_front, right_bottom_back }); //lower right
+	}
 }

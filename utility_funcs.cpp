@@ -325,8 +325,8 @@ void printArtwork(const shared_ptr<artwork> &target)
 mat4 calcImageScale(const shared_ptr<artwork> &target, float width_max, float height_max)
 {
 	//overall dimensions provides height, width respectively
-	float scale_for_x = width_max / target->getOverallDimensions().second;
-	float scale_for_y = height_max / target->getOverallDimensions().first;
+	float scale_for_x = width_max / target->getOverallDimensions().x;
+	float scale_for_y = height_max / target->getOverallDimensions().y;
 
 	return (scale_for_x < scale_for_y ?
 		glm::scale(mat4(1.0f), vec3(scale_for_x, scale_for_x, scale_for_x)) :
@@ -431,33 +431,6 @@ vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkEnd(
 
 pair<vec3, vec3> getRayFromCursorPosition(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera)
 {
-	mat4 test_view_matrix = glm::lookAt(
-		glm::vec3(1.0f, 2.0f, 3.0f),	//position of camera
-		glm::vec3(1.0f, 2.0f, -3.0f),			//position of focal point
-		glm::vec3(0, 1, 0));								//up axis
-
-	mat4 test_projection_matrix = glm::perspective(45.0f, 1.6f, .1f, 150.0f);
-	mat4 test_model_matrix = glm::translate(mat4(1.0f), vec3(10.0f, 20.0f, 30.0f));
-
-	mat4 i_test_view_matrix = glm::inverse(test_view_matrix);
-	mat4 i_test_projection_matrix = glm::inverse(test_projection_matrix);
-	mat4 i_test_model_matrix = glm::inverse(test_model_matrix);
-
-	vec4 point1(0.5f, -0.75f, 1.0f, 1.0f);
-	vec4 point2(0.5f, -0.75f, -1.0f, 1.0f);
-	cout << "------------test" << endl;
-	cout << "original point 1: " << point1.x << ", " << point1.y << ", " << point1.z << endl;
-	cout << "original point 2: " << point2.x << ", " << point2.y << ", " << point2.z << endl;
-	point1 = test_model_matrix * test_view_matrix * test_projection_matrix * point1;
-	point2 = test_model_matrix * test_view_matrix * test_projection_matrix * point2;
-	cout << "position_matrix point 1: " << point1.x << ", " << point1.y << ", " << point1.z << endl;
-	cout << "position_matrix point 2: " << point2.x << ", " << point2.y << ", " << point2.z << endl;
-	point1 = i_test_projection_matrix * i_test_view_matrix * i_test_model_matrix * point1;
-	point2 = i_test_projection_matrix * i_test_view_matrix * i_test_model_matrix * point2;
-	cout << "inverse_position_matrix point 1: " << point1.x << ", " << point1.y << ", " << point1.z << endl;
-	cout << "inverse_position_matrix point 2: " << point2.x << ", " << point2.y << ", " << point2.z << endl;
-	cout << "------------test" << endl;
-
 	vec2 cursor_position = keys->getCursorPosition();
 
 	vec3 vector_first(camera->getPosition());
@@ -477,4 +450,40 @@ pair<vec3, vec3> getRayFromCursorPosition(shared_ptr<key_handler> &keys, const s
 	ray_wor = vec3(glm::translate(mat4(1.0f), camera->getPosition()) * vec4(ray_wor, 1.0f));
 
 	return pair<vec3, vec3>(vector_first, vec3(ray_wor));
+}
+
+bool paintingSelected(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, const shared_ptr<artwork> &art)
+{	
+	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
+
+	mat4 model_matrix = art->getModelMatrix();
+	mat4 inverse_model_matrix = glm::inverse(model_matrix);
+
+	ray.first = vec3(inverse_model_matrix * vec4(ray.first, 1.0f));
+	ray.second = vec3(inverse_model_matrix * vec4(ray.second, 1.0f));
+
+	vec3 origin = ray.first;
+	vec3 direction = ray.second - ray.first;
+
+	vector< vector<vec3> > select_surfaces = art->getSelectSurfaces();
+	
+	//cycle through each surface, testing ray intersection
+	for (auto i : select_surfaces)
+	{
+		if (i.size() != 3)
+		{
+			cout << "surface tested is missing vertices" << endl;
+			return false;
+		}
+			
+		vec3 first_point(i.at(1));
+		vec3 second_point(i.at(0));
+		vec3 third_point(i.at(2));
+		vec3 result;
+
+		if (glm::intersectRayTriangle(origin, direction, first_point, second_point, third_point, result))
+			return true;
+	}
+
+	return false;
 }

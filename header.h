@@ -25,6 +25,7 @@ enum sort_options { ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, 
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtx/string_cast.hpp>
+#include <gtx/intersect.hpp>
 
 class artist;
 class artwork_data;

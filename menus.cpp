@@ -554,27 +554,25 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	bool finished = false;
 	int menu_return = 0;
 
-	//CODE BELOW IS FOR TESTING RAY TRACING
-	GLuint VAO;
-	glGenVertexArrays(1, &VAO);
-	glBindVertexArray(VAO);
-	GLuint VBO;
-	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	vector<shared_ptr<line> > lines;
 
-	pair<vec3, vec3> traced_ray(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.65f, 0.0f));
+	lines.push_back(shared_ptr<line>(new line(
+		vec4(0.25f, 0.0f, 0.0f, 1.0f),
+		vec4(-0.25f, 0.0f, 0.0f, 1.0f), 
+		vec4(0.0f, 0.0f, 0.0f, 1.0f)
+		)));
 
-	vector<float> vec_vertices{ traced_ray.first.x, traced_ray.first.y, traced_ray.first.z,
-		traced_ray.second.x, traced_ray.second.y, traced_ray.second.z };
+	lines.push_back(shared_ptr<line>(new line(
+		vec4(0.0f, 0.25f, 0.0f, 1.0f),
+		vec4(0.0f, -0.25, 0.0f, 1.0f),
+		vec4(0.0f, 0.0f, 0.0f, 1.0f)
+		)));
 
-	glBufferData(GL_ARRAY_BUFFER, vec_vertices.size() * sizeof(float), &vec_vertices[0], GL_STATIC_DRAW);
-
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-	glDisableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindVertexArray(0);
-	///END OF TEST CODE
+	lines.push_back(shared_ptr<line>(new line(
+		vec4(0.0f, 0.0f, 0.25f, 1.0f),
+		vec4(0.0f, 0.0f, -0.25, 1.0f),
+		vec4(0.0f, 0.0f, 0.0f, 1.0f)
+		)));
 
 	while (!finished)
 	{
@@ -587,8 +585,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			for (auto i : paintings_to_display)
 				i.second->draw(context, camera);
 
-			//context->swapBuffers();
-			//glfwSetTime(0.0f);
+			for (auto i : lines)
+				i->draw(context, camera);
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
@@ -597,60 +595,19 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					finished = true;
 			}
 
-			//TEST CODE BELOW
-			if (keys->checkPress(GLFW_KEY_ENTER, false))
+			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
-				cout << "ray calculated" << endl;
-				vec2 cursor_position = keys->getCursorPosition();
-				traced_ray = getRayFromCursorPosition(keys, camera);
-				cout << "camera position: " << camera->getPosition().x << ", " << camera->getPosition().y << ", " << camera->getPosition().z << endl;
-				cout << "cursor position: " << cursor_position.x << ", " << cursor_position.y << endl;
-				cout << "ray origin: " << traced_ray.first.x << ", " << traced_ray.first.y << ", " << traced_ray.first.z << endl;
-				cout << "ray target: " << traced_ray.second.x << ", " << traced_ray.second.y << ", " << traced_ray.second.z << endl << endl;	
-
-				glBindVertexArray(VAO);
-				glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-				vector<float> new_vec_vertices{ traced_ray.first.x, traced_ray.first.y, traced_ray.first.z,
-					traced_ray.second.x, traced_ray.second.y, traced_ray.second.z };
-
-				glBufferData(GL_ARRAY_BUFFER, new_vec_vertices.size() * sizeof(float), &new_vec_vertices[0], GL_STATIC_DRAW);
-
-				glEnableVertexAttribArray(0);
-				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-				glDisableVertexAttribArray(0);
-				glBindBuffer(GL_ARRAY_BUFFER, 0);
-				glBindVertexArray(0);
+				for (auto i : paintings_to_display)
+				{
+					if (paintingSelected(keys, camera, i.second))
+						printArtwork(i.second);
+				}
 			}
 
-			glBindVertexArray(VAO);
-
-			GLint absolute = false;
-			glUniform1i(context->getShaderGLint("absolute_position"), absolute);
-
-			GLint line = true;
-			glUniform1i(context->getShaderGLint("draw_line"), line);
-
-			mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
-			glUniformMatrix4fv(context->getShaderGLint("MVP"), 1, GL_FALSE, &MVP[0][0]);
-
-			glEnableVertexAttribArray(0);
-			glDrawArrays(GL_LINES, 0, 2);
-			glDisableVertexAttribArray(0);
-
-			line = false;
-			glUniform1i(context->getShaderGLint("draw_line"), line);
-
-			glBindVertexArray(0);
 			context->swapBuffers();
-			///END OF TEST CODE
-
 			glfwSetTime(0.0f);
 		}
 	}
-
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VAO);
 
 	for (auto i : paintings_to_display)
 		i.second->getData()->unloadData();
