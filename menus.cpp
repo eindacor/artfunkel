@@ -373,7 +373,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.0f, 0.0f, 0.5f, 1.0f));
 	
-	int drop_count = 6;
+	int drop_count = 10;
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
