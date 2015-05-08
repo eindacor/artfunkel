@@ -29,4 +29,6 @@ vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkEnd(
 	vector<pair<int, shared_ptr<artwork> > >::const_iterator first,
 	const vector<pair<int, shared_ptr<artwork> > > &art_vec, int chunk_size);
 
+pair<vec3, vec3> getRayFromCursorPosition(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera);
+
 #endif

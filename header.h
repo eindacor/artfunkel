@@ -24,6 +24,7 @@ enum sort_options { ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, 
 #include "JEPbignum.h"
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
+#include <gtx/string_cast.hpp>
 
 class artist;
 class artwork_data;

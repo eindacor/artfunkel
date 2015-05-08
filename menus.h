@@ -11,7 +11,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 int openCrate(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, 
 	const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg);
 
-int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, 
+int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys, 
 	const shared_ptr<player> &current_player);
 
 #endif

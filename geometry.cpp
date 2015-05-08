@@ -59,9 +59,7 @@ void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camer
 	}
 
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
-
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 	glBindVertexArray(0);
 }
 

@@ -533,7 +533,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	return menu_return;
 }
 
-int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player)
+int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys, const shared_ptr<player> &current_player)
 {
 	float eye_level = 1.65f;
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, context, vec3(0.0f, eye_level, 5.0f), 45.0f));
@@ -541,6 +541,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
+	//TODO why does this require a pair with int first?
 	vector<pair<int, shared_ptr<artwork> > > paintings_to_display = current_player->getDisplayedCopy();
 	offsetArtworks(paintings_to_display, eye_level);
 	
@@ -553,6 +554,28 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 	bool finished = false;
 	int menu_return = 0;
 
+	//CODE BELOW IS FOR TESTING RAY TRACING
+	GLuint VAO;
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	GLuint VBO;
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	pair<vec3, vec3> traced_ray(vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 1.65f, 0.0f));
+
+	vector<float> vec_vertices{ traced_ray.first.x, traced_ray.first.y, traced_ray.first.z,
+		traced_ray.second.x, traced_ray.second.y, traced_ray.second.z };
+
+	glBufferData(GL_ARRAY_BUFFER, vec_vertices.size() * sizeof(float), &vec_vertices[0], GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glDisableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	///END OF TEST CODE
+
 	while (!finished)
 	{
 		if (glfwGetTime() > 1.0f / render_fps)
@@ -564,8 +587,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 			for (auto i : paintings_to_display)
 				i.second->draw(context, camera);
 
-			context->swapBuffers();
-			glfwSetTime(0.0f);
+			//context->swapBuffers();
+			//glfwSetTime(0.0f);
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
@@ -574,9 +597,60 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, const 
 					finished = true;
 			}
 
+			//TEST CODE BELOW
+			if (keys->checkPress(GLFW_KEY_ENTER, false))
+			{
+				cout << "ray calculated" << endl;
+				vec2 cursor_position = keys->getCursorPosition();
+				traced_ray = getRayFromCursorPosition(keys, camera);
+				cout << "camera position: " << camera->getPosition().x << ", " << camera->getPosition().y << ", " << camera->getPosition().z << endl;
+				cout << "cursor position: " << cursor_position.x << ", " << cursor_position.y << endl;
+				cout << "ray origin: " << traced_ray.first.x << ", " << traced_ray.first.y << ", " << traced_ray.first.z << endl;
+				cout << "ray target: " << traced_ray.second.x << ", " << traced_ray.second.y << ", " << traced_ray.second.z << endl << endl;	
+
+				glBindVertexArray(VAO);
+				glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+				vector<float> new_vec_vertices{ traced_ray.first.x, traced_ray.first.y, traced_ray.first.z,
+					traced_ray.second.x, traced_ray.second.y, traced_ray.second.z };
+
+				glBufferData(GL_ARRAY_BUFFER, new_vec_vertices.size() * sizeof(float), &new_vec_vertices[0], GL_STATIC_DRAW);
+
+				glEnableVertexAttribArray(0);
+				glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+				glDisableVertexAttribArray(0);
+				glBindBuffer(GL_ARRAY_BUFFER, 0);
+				glBindVertexArray(0);
+			}
+
+			glBindVertexArray(VAO);
+
+			GLint absolute = false;
+			glUniform1i(context->getShaderGLint("absolute_position"), absolute);
+
+			GLint line = true;
+			glUniform1i(context->getShaderGLint("draw_line"), line);
+
+			mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
+			glUniformMatrix4fv(context->getShaderGLint("MVP"), 1, GL_FALSE, &MVP[0][0]);
+
+			glEnableVertexAttribArray(0);
+			glDrawArrays(GL_LINES, 0, 2);
+			glDisableVertexAttribArray(0);
+
+			line = false;
+			glUniform1i(context->getShaderGLint("draw_line"), line);
+
+			glBindVertexArray(0);
+			context->swapBuffers();
+			///END OF TEST CODE
+
 			glfwSetTime(0.0f);
 		}
 	}
+
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VAO);
 
 	for (auto i : paintings_to_display)
 		i.second->getData()->unloadData();

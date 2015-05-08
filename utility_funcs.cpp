@@ -366,13 +366,11 @@ void makeThumbnails(vector<pair<int, shared_ptr<artwork> > > &art_vec, float mar
 	int item_counter = 0;
 	for (auto i : art_vec)
 	{
-		mat4 initial(1.0f);
 		mat4 scale = calcImageScale(i.second, max_painting_width, max_painting_height);
 
 		float x_offset = initial_x_offset + (item_counter * cell_width);
-
 		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset, y_translate * -1.0f, 0.0f));
-		mat4 position_matrix = translation * scale * initial;
+		mat4 position_matrix = translation * scale;
 
 		i.second->setModelMatrix(position_matrix);
 
@@ -429,4 +427,54 @@ vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkEnd(
 		return art_vec.end();
 
 	return first + chunk_size;
+}
+
+pair<vec3, vec3> getRayFromCursorPosition(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera)
+{
+	mat4 test_view_matrix = glm::lookAt(
+		glm::vec3(1.0f, 2.0f, 3.0f),	//position of camera
+		glm::vec3(1.0f, 2.0f, -3.0f),			//position of focal point
+		glm::vec3(0, 1, 0));								//up axis
+
+	mat4 test_projection_matrix = glm::perspective(45.0f, 1.6f, .1f, 150.0f);
+	mat4 test_model_matrix = glm::translate(mat4(1.0f), vec3(10.0f, 20.0f, 30.0f));
+
+	mat4 i_test_view_matrix = glm::inverse(test_view_matrix);
+	mat4 i_test_projection_matrix = glm::inverse(test_projection_matrix);
+	mat4 i_test_model_matrix = glm::inverse(test_model_matrix);
+
+	vec4 point1(0.5f, -0.75f, 1.0f, 1.0f);
+	vec4 point2(0.5f, -0.75f, -1.0f, 1.0f);
+	cout << "------------test" << endl;
+	cout << "original point 1: " << point1.x << ", " << point1.y << ", " << point1.z << endl;
+	cout << "original point 2: " << point2.x << ", " << point2.y << ", " << point2.z << endl;
+	point1 = test_model_matrix * test_view_matrix * test_projection_matrix * point1;
+	point2 = test_model_matrix * test_view_matrix * test_projection_matrix * point2;
+	cout << "position_matrix point 1: " << point1.x << ", " << point1.y << ", " << point1.z << endl;
+	cout << "position_matrix point 2: " << point2.x << ", " << point2.y << ", " << point2.z << endl;
+	point1 = i_test_projection_matrix * i_test_view_matrix * i_test_model_matrix * point1;
+	point2 = i_test_projection_matrix * i_test_view_matrix * i_test_model_matrix * point2;
+	cout << "inverse_position_matrix point 1: " << point1.x << ", " << point1.y << ", " << point1.z << endl;
+	cout << "inverse_position_matrix point 2: " << point2.x << ", " << point2.y << ", " << point2.z << endl;
+	cout << "------------test" << endl;
+
+	vec2 cursor_position = keys->getCursorPosition();
+
+	vec3 vector_first(camera->getPosition());
+
+	vec4 ray_clip(cursor_position.x, cursor_position.y, -0.1f, 1.0f);
+	mat4 projection_matrix = camera->getProjectionMatrix();
+	mat4 inverted_projection_matrix = glm::inverse(projection_matrix);
+	vec4 ray_eye = inverted_projection_matrix * ray_clip;
+	ray_eye = vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
+
+	mat4 view_matrix = camera->getViewMatrix();
+	mat4 inverted_view_matrix = glm::inverse(view_matrix);
+	vec3 ray_wor(inverted_view_matrix * ray_eye);
+	// don't forget to normalise the vector at some point
+	ray_wor = glm::normalize(ray_wor);
+
+	ray_wor = vec3(glm::translate(mat4(1.0f), camera->getPosition()) * vec4(ray_wor, 1.0f));
+
+	return pair<vec3, vec3>(vector_first, vec3(ray_wor));
 }
