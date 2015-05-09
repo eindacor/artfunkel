@@ -577,6 +577,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	for (int i = 32; i < 127; i++)
 		cout << i << ": " << (char)i << endl;
 
+	shared_ptr<static_text> test_text(nullptr);
+
 	while (!finished)
 	{
 		if (glfwGetTime() > 1.0f / render_fps)
@@ -591,6 +593,9 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			for (auto i : lines)
 				i->draw(context, camera);
 
+			if (test_text != nullptr)
+				test_text->draw(camera, context, "text", "text_color", "transparency_color");
+
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
 				menu_return = mainMenu(data_path, context, keys);
@@ -600,11 +605,24 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
+				bool painting_was_selected = false;
+
 				for (auto i : paintings_to_display)
 				{
 					if (paintingSelected(keys, camera, i.second))
+					{
 						printArtwork(i.second);
+						string to_print = i.second->getData()->getTitle() + " by " + i.second->getData()->getArtistName();
+						to_print += "\nEstimated value: %" + i.second->getValue().getNumberString(true, false, 2);
+						test_text = shared_ptr<static_text>(new static_text(to_print, context,
+							"C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\images\\text_template.bmp",
+							vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(0.0f, 1.0f, 0.0f, 1.0f), true, vec2(-.75f, -.75f), 0.0625f));
+						painting_was_selected = true;
+					}
 				}
+
+				if (!painting_was_selected)
+					test_text = nullptr;
 			}
 
 			context->swapBuffers();

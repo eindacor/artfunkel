@@ -5,7 +5,7 @@ layout (location = 1) in vec2 vertexUV;
 
 uniform mat4 MVP;
 uniform mat4 model_matrix;
-uniform bool absolute_position;
+uniform bool absolute_position = false;
 uniform float aspect_scale;
 
 out vec2 UV;

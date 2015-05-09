@@ -50,6 +50,7 @@ using boost::shared_ptr;
 using jep::ogl_context;
 using jep::ogl_camera;
 using jep::ogl_camera_free;
+using jep::static_text;
 using jep::key_handler;
 using jep::date;
 using jep::bignum;

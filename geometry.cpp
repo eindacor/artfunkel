@@ -338,7 +338,6 @@ void line::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_cam
 	glBindVertexArray(*VAO);
 	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
 
-	GLint line = true;
 	glUniform1i(context->getShaderGLint("color_override"), true);
 	glUniform4f(context->getShaderGLint("override_color"), color.x, color.y, color.z, color.w);
 
@@ -351,8 +350,6 @@ void line::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_cam
 
 	glUniform1i(context->getShaderGLint("color_override"), false);
 
-	line = false;
-	glUniform1i(context->getShaderGLint("draw_line"), line);
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
