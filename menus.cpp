@@ -557,22 +557,25 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	vector<shared_ptr<line> > lines;
 
 	lines.push_back(shared_ptr<line>(new line(
-		vec4(0.25f, 0.0f, 0.0f, 1.0f),
-		vec4(-0.25f, 0.0f, 0.0f, 1.0f), 
+		vec4(1.0f, 0.0f, 0.0f, 1.0f),
+		vec4(-1.0f, 0.0f, 0.0f, 1.0f),
 		vec4(0.0f, 0.0f, 0.0f, 1.0f)
 		)));
 
 	lines.push_back(shared_ptr<line>(new line(
-		vec4(0.0f, 0.25f, 0.0f, 1.0f),
-		vec4(0.0f, -0.25, 0.0f, 1.0f),
+		vec4(0.0f, 1.0f, 0.0f, 1.0f),
+		vec4(0.0f, -1.0f, 0.0f, 1.0f),
 		vec4(0.0f, 0.0f, 0.0f, 1.0f)
 		)));
 
 	lines.push_back(shared_ptr<line>(new line(
-		vec4(0.0f, 0.0f, 0.25f, 1.0f),
-		vec4(0.0f, 0.0f, -0.25, 1.0f),
+		vec4(0.0f, 0.0f, 1.0f, 1.0f),
+		vec4(0.0f, 0.0f, -1.0f, 1.0f),
 		vec4(0.0f, 0.0f, 0.0f, 1.0f)
 		)));
+
+	for (int i = 32; i < 127; i++)
+		cout << i << ": " << (char)i << endl;
 
 	while (!finished)
 	{
