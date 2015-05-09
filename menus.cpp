@@ -6,7 +6,7 @@
 #include "utility_funcs.h"
 #include "menus.h"
 
-int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys)
+int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<text_handler> &text)
 {
 	bool item_selected = false;
 	float camera_distance_from_items = 10.0f;
@@ -94,7 +94,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 }
 
 int viewInventory(string data_path, const shared_ptr<ogl_context> &context, 
-	const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player)
+	const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player, const shared_ptr<text_handler> &text)
 {
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.0f, 0.0f, 1.0f));
@@ -356,7 +356,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
-				menu_return = mainMenu(data_path, context, keys);
+				menu_return = mainMenu(data_path, context, keys, text);
 				finished = (menu_return != 1);
 			}
 
@@ -368,7 +368,8 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	return menu_return;
 }
 
-int openCrate(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg)
+int openCrate(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, 
+	const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, const shared_ptr<text_handler> &text)
 {
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.0f, 0.0f, 0.5f, 1.0f));
@@ -520,7 +521,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			//TODO fix so crate doesn't disappear when going to the main menu
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
-				menu_return = mainMenu(data_path, context, keys);
+				menu_return = mainMenu(data_path, context, keys, text);
 				finished = true;
 			}
 
@@ -533,7 +534,8 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	return menu_return;
 }
 
-int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys, const shared_ptr<player> &current_player)
+int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys, 
+	const shared_ptr<player> &current_player, const shared_ptr<text_handler> &text)
 {
 	float eye_level = 1.65f;
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, context, vec3(0.0f, eye_level, 5.0f), 45.0f));
@@ -598,7 +600,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
-				menu_return = mainMenu(data_path, context, keys);
+				menu_return = mainMenu(data_path, context, keys, text);
 				if (menu_return != 0)
 					finished = true;
 			}
@@ -613,10 +615,13 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					{
 						printArtwork(i.second);
 						string to_print = i.second->getData()->getTitle() + " by " + i.second->getData()->getArtistName();
-						to_print += "\nEstimated value: %" + i.second->getValue().getNumberString(true, false, 2);
-						test_text = shared_ptr<static_text>(new static_text(to_print, context,
-							"C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\images\\text_template.bmp",
-							vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(0.0f, 1.0f, 0.0f, 1.0f), true, vec2(-.75f, -.75f), 0.0625f));
+						to_print += "\nEstimated value: $" + i.second->getValue().getNumberString(true, false, 2);
+
+						vec4 color(1.0f, 1.0f, 1.0f, 1.0f);
+						vec4 transparent_color(0.0f, 1.0f, 0.0f, 1.0f);
+						vec2 screen_position(-.75f, -.75f);
+						float scale(0.04f);
+						test_text = text->getTextArray(to_print, context, false, color, transparent_color, true, screen_position, scale);
 						painting_was_selected = true;
 					}
 				}

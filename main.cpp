@@ -23,35 +23,38 @@ int main(int argc, char* argv[])
 
 	else
 	{
-		data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
-		//data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
+		//data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
+		data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
 	}
 	
 	string paintings_path = data_path + "paintings.csv";
 	string artists_path = data_path + "artists.csv";
 	string images_path = data_path + "images\\paintings\\";
-
+	string text_file = data_path + "images\\text_template.bmp";
 	string vert_file = data_path + "vertex_shader.glsl";
 	string frag_file = data_path + "fragment_shader.glsl";
 
 	float eye_level = 1.65f;
 	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1280, 720));
 	shared_ptr<key_handler> keys(new key_handler(context));
+	shared_ptr<text_handler> text(new text_handler(context, text_file.c_str()));
 
 	shared_ptr<art_db> artist_database(new art_db(artists_path.c_str(), paintings_path.c_str(), images_path.c_str()));
 	shared_ptr<loot_generator> loot(new loot_generator(artist_database));
 
 	shared_ptr<player> current_player(new player("Test Player", loot, context, data_path));
 
-	int menu_return = mainMenu(data_path, context, keys);
+	int menu_return = mainMenu(data_path, context, keys, text);
 
+
+	//TODO possibly give context a text handler
 	while (menu_return != 4 && menu_return != 3)
 	{
 		switch (menu_return)
 		{
-		case 0: menu_return = viewGallery(data_path, context, keys, current_player); break;
-		case 1: menu_return = viewInventory(data_path, context, keys, current_player); break;
-		case 2: menu_return = openCrate(data_path, context, keys, current_player, loot); break;
+		case 0: menu_return = viewGallery(data_path, context, keys, current_player, text); break;
+		case 1: menu_return = viewInventory(data_path, context, keys, current_player, text); break;
+		case 2: menu_return = openCrate(data_path, context, keys, current_player, loot, text); break;
 		}
 	}
 
