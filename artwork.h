@@ -90,7 +90,8 @@ public:
 
 	void setValue();
 	void loadFrame(const shared_ptr<frame_model> &work_frame) { p_frame = work_frame; updateOverallDimensions(); }
-	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam, bool absolute = false);
+	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam) const;
+	void draw2D(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam, const mat4 &position_matrix) const;
 
 	const artwork& operator = (const artwork &other);
 	bool operator == (const artwork &other) const;

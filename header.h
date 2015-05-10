@@ -8,7 +8,6 @@ enum genre {
 	FOLK_ART, FAUVISM, CUBISM, PHOTOGRAPH, UNKNOWN_GENRE
 };
 enum rarity { COMMON, UNCOMMON, RARE, LEGENDARY, MASTERPIECE, UNKNOWN_RARITY };
-
 enum sort_options { ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, TITLE, AREA, HEIGHT, WIDTH, RARITY, PAINTING_ID, NO_SORT };
 
 #include <string>
@@ -55,6 +54,7 @@ using jep::text_handler;
 using jep::key_handler;
 using jep::date;
 using jep::bignum;
+using jep::render_type;
 
 using glm::vec4;
 using glm::vec3;

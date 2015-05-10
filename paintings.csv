@@ -35,9 +35,9 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Value Scale,Height (cm),Width (cm),Imag
 33,Henri Matisse,The Open Window,1905????,MODERNISM,LEGENDARY,Oil,0.55,55.3,46,matisse_open.bmp,no
 34,Henri Matisse,"Luxe, Calme et Volupte",1904????,MODERNISM,RARE,Oil,0.55,98.5,118.5,matisse_luxe.bmp,no
 35,Piet Mondrian,Broadway Boogie-Woogie,1943????,MODERNISM,LEGENDARY,Oil,0.54,127,127,mondrian_broadway.bmp,no
-36,Piet Mondrian,"Composition with Red, yellow, and Blue",1942????,MODERNISM,RARE,Oil,0.54,72.5,69,mondrian_composition.bmp,no
-37,Piet Mondrian,Gray Tree,1912????,MODERNISM,LEGENDARY,Oil,0.54,78.5,107.5,mondrian_gray.bmp,no
-38,Piet Mondrian,Victory Boogie-Woogie,1944????,MODERNISM,LEGENDARY,"Charcoal, Oil",0.54,127,127,mondrian_victory.bmp,no
+36,Piet Mondrian,"Composition with Red, yellow, and Blue",1942????,MODERNISM,LEGENDARY,Oil,0.54,72.5,69,mondrian_composition.bmp,no
+37,Piet Mondrian,Gray Tree,1912????,MODERNISM,RARE,Oil,0.54,78.5,107.5,mondrian_gray.bmp,no
+38,Piet Mondrian,Victory Boogie-Woogie,1944????,MODERNISM,RARE,"Charcoal, Oil",0.54,127,127,mondrian_victory.bmp,no
 39,Piet Mondrian,Composition in Oval with Color Planes 2,1914????,MODERNISM,RARE,Oil,0.54,108,79,mondrian_oval.bmp,no
 40,Georgia O'Keeffe,Ram's Head White Hollyhock and Little Hills,1935????,ABSTRACT,LEGENDARY,Oil,0.45,76.2,91.5,okeeffe_ram.bmp,no
 41,Georgia O'Keeffe,"Cow's Skull: Red, White, and Blue",1931????,ABSTRACT,LEGENDARY,Oil,0.45,101.3,91.1,okeeffe_cow.bmp,no
@@ -151,7 +151,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Value Scale,Height (cm),Width (cm),Imag
 149,Jasper Johns,False Start,1959????,ABSTRACT,UNCOMMON,Oil,0.95,171,137,johns_false.bmp,no
 150,Jasper Johns,Numbers in Colors,1959????,ABSTRACT,UNCOMMON,Oil,0.95,169,126,johns_numbers.bmp,no
 151,Edouard Manet,Olympia,1863????,PORTRAIT,RARE,Oil,0.93,130.5,190,manet_olympia.bmp,no
-152,Edouard Manet,Le Dejeuner sur l’herbe,1863????,PORTRAIT,LEGENDARY,Oil,0.93,208,264,manet_dejeuner.bmp,no
+152,Edouard Manet,Le Dejeuner sur l'herbe,1863????,PORTRAIT,LEGENDARY,Oil,0.93,208,264,manet_dejeuner.bmp,no
 153,Edouard Manet,A Bar at the Foiles-Bergere,1882????,PORTRAIT,RARE,Oil,0.93,96,130,manet_bar.bmp,no
 154,Edouard Manet,The Railway,1873????,PORTRAIT,UNCOMMON,Oil,0.93,93,112,manet_railway.bmp,no
 155,Edouard Manet,The Spanish Singer,1860????,PORTRAIT,UNCOMMON,Oil,0.93,147.3,114.3,manet_spanish.bmp,no

@@ -8,12 +8,28 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 {
 	artist_database = database;
 
-	//create a map of rarities, with proportions, to pass to jep::catRoll
-	default_rarity_map[COMMON] = 2048;
-	default_rarity_map[UNCOMMON] = 1024;
-	default_rarity_map[RARE] = 256;
-	default_rarity_map[LEGENDARY] = 16;
-	default_rarity_map[MASTERPIECE] = 1;
+	bool even_odds = false;
+
+	if (even_odds)
+	{
+		default_rarity_map[COMMON] = 1;
+		default_rarity_map[UNCOMMON] = 1;
+		default_rarity_map[RARE] = 1;
+		default_rarity_map[LEGENDARY] = 1;
+		default_rarity_map[MASTERPIECE] = 1;
+	}
+
+	else
+	{
+		//create a map of rarities, with proportions, to pass to jep::catRoll
+		default_rarity_map[COMMON] = 2048;
+		default_rarity_map[UNCOMMON] = 1024;
+		default_rarity_map[RARE] = 256;
+		default_rarity_map[LEGENDARY] = 16;
+		default_rarity_map[MASTERPIECE] = 1;
+	}
+
+	
 }
 
 vector<pair<int, shared_ptr<artwork> > > loot_generator::generateArtworks(int count,

@@ -334,26 +334,18 @@ mat4 calcImageScale(const shared_ptr<artwork> &target, float width_max, float he
 		);
 }
 
-void makeHighlight(shared_ptr<artwork> target, float top_margin, float bottom_margin, float cell_width)
-{
-	float cell_height = 2.0 - top_margin - bottom_margin;
-	float y_translate = (bottom_margin + (cell_height / 2.0f)) - 1.0f;
-
-	mat4 initial(1.0f);
-	mat4 scale = calcImageScale(target, cell_width, cell_height);
-	mat4 translation = glm::translate(mat4(1.0f), vec3(0.0f, y_translate, 0.0f));
-	mat4 position_matrix = translation * scale * initial;
-	target->setModelMatrix(position_matrix);
-}
-
+//TODO create thumbnail_table class to handle thumbnails, include adding/removing
 //manipulates paintings to be viewed as thumbnails returns iterator to next starting point of the sequence
-void makeThumbnails(vector<pair<int, shared_ptr<artwork> > > &art_vec, float margin_size, float cell_size)
+map<int, mat4> getThumbnailMatrixMap(const shared_ptr<ogl_context> &context, const vector<pair<int, shared_ptr<artwork> > > &art_vec,
+	float margin_size, float cell_size, float cell_padding_factor)
 {
+	map<int, mat4> matrix_map;
+
 	int items_to_display = art_vec.size();
 
 	float cell_height = cell_size;
-	float cell_width = cell_size;
-	float cell_padding = cell_width * 0.05f;
+	float cell_width = cell_size / context->getAspectRatio();
+	float cell_padding = cell_width * cell_padding_factor;
 
 	float max_painting_width = cell_width - (2 * cell_padding);
 	float max_painting_height = cell_height - (2 * cell_padding);
@@ -361,21 +353,52 @@ void makeThumbnails(vector<pair<int, shared_ptr<artwork> > > &art_vec, float mar
 	float y_translate = 1.0f - margin_size - (cell_height / 2.0f);
 
 	float total_width = cell_width * (float)items_to_display;
+	//adding half-width because the work is initially centered on y-axis
 	float initial_x_offset = (total_width / -2.0f) + (cell_width / 2.0f);
 
 	int item_counter = 0;
 	for (auto i : art_vec)
 	{
-		mat4 scale = calcImageScale(i.second, max_painting_width, max_painting_height);
+		//TODO reduce confusion of scaling funciton not taking aspect-ratio-modified size
+		//must take cell size since aspect ratio is not accounted for in scaling
+		mat4 scale = calcImageScale(i.second, cell_size - (2 * cell_padding), max_painting_height);
 
 		float x_offset = initial_x_offset + (item_counter * cell_width);
 		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset, y_translate * -1.0f, 0.0f));
 		mat4 position_matrix = translation * scale;
 
-		i.second->setModelMatrix(position_matrix);
-
-		item_counter++;
+		matrix_map.insert(pair<int, mat4>(item_counter++, position_matrix));
 	}
+
+	return matrix_map;
+}
+
+map<int, mat4> getHighlightMatrixMap(const shared_ptr<ogl_context> &context, const vector<pair<int, shared_ptr<artwork> > > &art_vec,
+	const vec2 &screen_position, float cell_size)
+{
+	map<int, mat4> matrix_map;
+
+	int items_to_display = art_vec.size();
+
+	float max_painting_height = cell_size;
+	float max_painting_width = cell_size / context->getAspectRatio();
+
+	float y_translate = screen_position.y;
+	float x_offset = screen_position.x;
+
+	int item_counter = 0;
+	for (auto i : art_vec)
+	{
+		//TODO reduce confusion of scaling funciton not taking aspect-ratio-modified size
+		//must take cell size since aspect ratio is not accounted for in scaling
+		mat4 scale = calcImageScale(i.second, cell_size, max_painting_height);
+		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset, y_translate, 0.0f));
+		mat4 position_matrix = translation * scale;
+
+		matrix_map.insert(pair<int, mat4>(item_counter++, position_matrix));
+	}
+
+	return matrix_map;
 }
 
 vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkFirst(

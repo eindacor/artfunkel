@@ -69,15 +69,15 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 				if (i.first == current_selection)
 				{
 					model_matrix = glm::scale(mat4(1.0f), vec3(1.3f, 1.3f, 1.3f));
-					i.second.first.draw(model_matrix, camera);
-					i.second.second.draw(model_matrix, camera);			
+					i.second.first.draw(context, model_matrix, camera);
+					i.second.second.draw(context, model_matrix, camera);			
 				}
 
 				else
 				{
 					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
-					i.second.first.draw(model_matrix, camera);
-					i.second.second.draw(model_matrix, camera);
+					i.second.first.draw(context, model_matrix, camera);
+					i.second.second.draw(context, model_matrix, camera);
 					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 				}
 			}
@@ -118,15 +118,46 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 		findChunkEnd(chunk_first, inventory_copy, display_count);
 
 	vector<pair<int, shared_ptr<artwork> > > paintings_to_display;
+
 	paintings_to_display.reserve(display_count);
 	paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
-	//adjusts model matrices of each image
-	makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+	//generate a maps of matrices
+	float thumbnail_cell_size(0.3f);
+	float thumbnail_margin(0.1f);
+	float thumbnail_cell_padding_factor(0.05f);
+	map<int, mat4> thumbnail_matrix_index = getThumbnailMatrixMap(
+		context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+
+	float top_margin(0.1f);
+	float thumbnail_buffer(0.05f);
+	float highlight_image_size(2.0f - thumbnail_cell_size - thumbnail_margin - thumbnail_buffer - top_margin);
+	float left_margin(0.1f);
+	//TODO text is placed properly in window, find out how aspect ratio is adjusted and make matrix maps work similarly
+	//x_offset based on left margin/image size
+	float x_offset(-0.4f);
+	vec2 highlight_position(x_offset, 0.25f);
+	map<int, mat4> highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
+
+	//identify positions for text
+	vec4 title_color(1.0f, 1.0f, 1.0f, 1.0f);
+	vec4 rarity_color;
+	vec4 info_color(0.6f, 0.6f, 0.6f, 1.0f);
+	vec4 transparent_color(0.0f, 1.0f, 0.0f, 1.0f);
+	float title_scale(0.06f);
+	float info_scale(0.04f);
+	float highlight_buffer(0.1f);
+	vec2 title_screen_position(0.2f, 0.75f);
+	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
+	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
 	vector<pair<int, shared_ptr<artwork> > >::iterator current_selection = paintings_to_display.begin();
+	shared_ptr<static_text> title_text(nullptr);
+	shared_ptr<static_text> rarity_text(nullptr);
+	shared_ptr<static_text> info_text(nullptr);
+
 	glfwSetTime(0);
 	float render_fps = 60.0f;
 	bool finished = false;
@@ -161,8 +192,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						paintings_to_display.clear();
 						paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
-						//space artwork without in the x axis only
-						makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+						//generate new matrix maps
+						thumbnail_matrix_index = getThumbnailMatrixMap(
+							context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+						highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 						current_selection = paintings_to_display.end() - 1;
 					}
@@ -193,8 +226,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						paintings_to_display.clear();
 						paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
-						//space artwork without in the x axis only
-						makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+						//generate new matrix maps
+						thumbnail_matrix_index = getThumbnailMatrixMap(
+							context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+						highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 						current_selection = paintings_to_display.begin();
 					}
@@ -203,23 +238,40 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				else current_selection++;
 			}
 
-			for (auto i : paintings_to_display)
+			for (vector<pair<int, shared_ptr<artwork> > >::const_iterator it = paintings_to_display.cbegin(); it != paintings_to_display.cend(); it++)
 			{
-				if ((*current_selection).first != i.first)
+				int index = std::distance(paintings_to_display.cbegin(), it);
+				
+				if (current_selection != it)
 				{
 					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
-					i.second->draw(context, camera, true);
+					(*it).second->draw2D(context, camera, thumbnail_matrix_index.at(index));
 					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
-				}		
+				}
 
 				else
 				{
-					i.second->draw(context, camera, true);
+					(*it).second->draw2D(context, camera, thumbnail_matrix_index.at(index));
+					(*it).second->draw2D(context, camera, highlight_matrix_index.at(index));
 
-					shared_ptr<artwork> copy(new artwork(*(i.second)));
-					mat4 original_matrix = copy->getModelMatrix();
-					makeHighlight(copy, 0.1f, 0.5f, 2.5f);
-					copy->draw(context, camera, true);
+					title_text = text->getTextArray((*it).second->getData()->getTitle(), context,
+						true, title_color, transparent_color, true, title_screen_position, title_scale);
+
+					switch ((*it).second->getData()->getRarity())
+					{
+					case COMMON: rarity_color = vec4(0.6f, 0.9f, 0.6f, 1.0f); break;
+					case UNCOMMON: rarity_color = vec4(0.6f, 0.6f, 0.9f, 1.0f); break;
+					case RARE: rarity_color = vec4(0.9f, 0.9f, 0.6f, 1.0f); break;
+					case LEGENDARY: rarity_color = vec4(1.0f, 0.75f, 0.6f, 1.0f); break;
+					case MASTERPIECE: rarity_color = vec4(0.6f, 0.9f, 0.9f, 1.0f); break;
+					}
+
+					rarity_text = text->getTextArray(stringFromRarity((*it).second->getData()->getRarity()), context,
+						false, rarity_color, transparent_color, true, rarity_screen_position, info_scale);
+
+					string to_print = std::to_string((*it).second->getData()->getDate().getYear()) + "\n" + (*it).second->getData()->getArtistName();
+					to_print += "\n$" + (*it).second->getValue().getNumberString(true, false, 2);
+					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, true, info_screen_position, info_scale);
 				}
 			}
 
@@ -249,8 +301,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				paintings_to_display.clear();
 				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
-				//space artwork without in the x axis only
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				current_selection = paintings_to_display.begin();
 
@@ -272,8 +326,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				paintings_to_display.clear();
 				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
-				//space artwork without in the x axis only
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				current_selection = paintings_to_display.begin();
 
@@ -295,8 +351,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				paintings_to_display.clear();
 				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
-				//space artwork without in the x axis only
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				current_selection = paintings_to_display.begin();
 
@@ -318,8 +376,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				paintings_to_display.clear();
 				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
-				//space artwork without in the x axis only
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				current_selection = paintings_to_display.begin();
 
@@ -341,8 +401,10 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				paintings_to_display.clear();
 				paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
 
-				//space artwork without in the x axis only
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				current_selection = paintings_to_display.begin();
 
@@ -351,6 +413,13 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				for (auto i : paintings_to_display)
 					printArtwork(i.second);
 			}
+
+			if (title_text != nullptr)
+				title_text->draw(camera, context, "text", "text_color", "transparency_color");
+			if (info_text != nullptr)
+				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+			if (rarity_text != nullptr)
+				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
 
 			context->swapBuffers();
 
@@ -384,12 +453,42 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	for (auto i : paintings_to_display)
 		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
 
-	//adjusts model matrices of each image
-	makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+	//generate a maps of matrices
+	float thumbnail_cell_size(0.3f);
+	float thumbnail_margin(0.1f);
+	float thumbnail_cell_padding_factor(0.05f);
+	map<int, mat4> thumbnail_matrix_index = getThumbnailMatrixMap(
+		context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+
+	float top_margin(0.1f);
+	float thumbnail_buffer(0.05f);
+	float highlight_image_size(2.0f - thumbnail_cell_size - thumbnail_margin - thumbnail_buffer - top_margin);
+	float left_margin(0.1f);
+	//TODO text is placed properly in window, find out how aspect ratio is adjusted and make matrix maps work similarly
+	//x_offset based on left margin/image size
+	float x_offset(-0.4f);
+	vec2 highlight_position(x_offset, 0.25f);
+	map<int, mat4> highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
+
+	//identify positions for text
+	vec4 title_color(1.0f, 1.0f, 1.0f, 1.0f);
+	vec4 rarity_color;
+	vec4 info_color(0.6f, 0.6f, 0.6f, 1.0f);
+	vec4 transparent_color(0.0f, 1.0f, 0.0f, 1.0f);
+	float title_scale(0.06f);
+	float info_scale(0.04f);
+	float highlight_buffer(0.1f);
+	vec2 title_screen_position(0.2f, 0.75f);
+	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
+	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
 	vector<pair<int, shared_ptr<artwork> > >::iterator current_selection = paintings_to_display.begin();
+	shared_ptr<static_text> title_text(nullptr);
+	shared_ptr<static_text> rarity_text(nullptr);
+	shared_ptr<static_text> info_text(nullptr);
+	
 	glfwSetTime(0);
 	float render_fps = 60.0f;
 	bool finished = false;
@@ -408,23 +507,40 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			else if (keys->checkPress(GLFW_KEY_RIGHT, false) && current_selection != paintings_to_display.end() - 1)
 				current_selection++;
 
-			for (auto i : paintings_to_display)
+			for (vector<pair<int, shared_ptr<artwork> > >::const_iterator it = paintings_to_display.cbegin(); it != paintings_to_display.cend(); it++)
 			{
-				if ((*current_selection).first != i.first)
+				int index = std::distance(paintings_to_display.cbegin(), it);
+
+				if (current_selection != it)
 				{
 					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
-					i.second->draw(context, camera, true);
+					(*it).second->draw2D(context, camera, thumbnail_matrix_index.at(index));
 					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 				}
 
 				else
 				{
-					i.second->draw(context, camera, true);
+					(*it).second->draw2D(context, camera, thumbnail_matrix_index.at(index));
+					(*it).second->draw2D(context, camera, highlight_matrix_index.at(index));
 
-					shared_ptr<artwork> copy(new artwork(*(i.second)));
-					mat4 original_matrix = copy->getModelMatrix();
-					makeHighlight(copy, 0.1f, 0.5f, 2.5f);
-					copy->draw(context, camera, true);
+					title_text = text->getTextArray((*it).second->getData()->getTitle(), context,
+						true, title_color, transparent_color, true, title_screen_position, title_scale);
+
+					switch ((*it).second->getData()->getRarity())
+					{
+					case COMMON: rarity_color = vec4(0.6f, 0.9f, 0.6f, 1.0f); break;
+					case UNCOMMON: rarity_color = vec4(0.6f, 0.6f, 0.9f, 1.0f); break;
+					case RARE: rarity_color = vec4(0.9f, 0.9f, 0.6f, 1.0f); break;
+					case LEGENDARY: rarity_color = vec4(1.0f, 0.75f, 0.6f, 1.0f); break;
+					case MASTERPIECE: rarity_color = vec4(0.6f, 0.9f, 0.9f, 1.0f); break;
+					}
+
+					rarity_text = text->getTextArray(stringFromRarity((*it).second->getData()->getRarity()), context,
+						false, rarity_color, transparent_color, true, rarity_screen_position, info_scale);
+
+					string to_print = std::to_string((*it).second->getData()->getDate().getYear()) + "\n" + (*it).second->getData()->getArtistName();
+					to_print += "\n$" + (*it).second->getValue().getNumberString(true, false, 2);
+					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, true, info_screen_position, info_scale);
 				}
 			}
 
@@ -466,7 +582,11 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_1, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, ARTIST_NAME);
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				cout << endl << "-----Sorted by Artist-----" << endl;
 
@@ -477,7 +597,11 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_2, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, VALUE);
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				cout << endl << "-----Sorted by Value-----" << endl;
 
@@ -488,7 +612,11 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_3, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, DATE);
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				cout << endl << "-----Sorted by Date-----" << endl;
 
@@ -499,7 +627,11 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_4, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, RARITY);
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				cout << endl << "-----Sorted by Rarity-----" << endl;
 
@@ -510,13 +642,25 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (keys->checkPress(GLFW_KEY_5, false))
 			{
 				current_selection = sortArtVec(paintings_to_display, TITLE);
-				makeThumbnails(paintings_to_display, 0.1f, 0.3f);
+				
+				//generate new matrix maps
+				thumbnail_matrix_index = getThumbnailMatrixMap(
+					context, paintings_to_display, thumbnail_margin, thumbnail_cell_size, thumbnail_cell_padding_factor);
+				highlight_matrix_index = getHighlightMatrixMap(context, paintings_to_display, highlight_position, highlight_image_size);
 
 				cout << endl << "-----Sorted by Title-----" << endl;
 
 				for (auto i : paintings_to_display)
 					printArtwork(i.second);
 			}
+
+			if (title_text != nullptr)
+				title_text->draw(camera, context, "text", "text_color", "transparency_color");
+			if (info_text != nullptr)
+				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+			if (rarity_text != nullptr)
+				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+
 
 			//TODO fix so crate doesn't disappear when going to the main menu
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
@@ -576,10 +720,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 		vec4(0.0f, 0.0f, 0.0f, 1.0f)
 		)));
 
-	for (int i = 32; i < 127; i++)
-		cout << i << ": " << (char)i << endl;
-
-	shared_ptr<static_text> test_text(nullptr);
+	shared_ptr<static_text> info_text(nullptr);
 
 	while (!finished)
 	{
@@ -595,8 +736,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			for (auto i : lines)
 				i->draw(context, camera);
 
-			if (test_text != nullptr)
-				test_text->draw(camera, context, "text", "text_color", "transparency_color");
+			if (info_text != nullptr)
+				info_text->draw(camera, context, "text", "text_color", "transparency_color");
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
@@ -619,15 +760,15 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 						vec4 color(1.0f, 1.0f, 1.0f, 1.0f);
 						vec4 transparent_color(0.0f, 1.0f, 0.0f, 1.0f);
-						vec2 screen_position(-.75f, -.75f);
+						vec2 screen_position(-1.0f, -.75f);
 						float scale(0.04f);
-						test_text = text->getTextArray(to_print, context, false, color, transparent_color, true, screen_position, scale);
+						info_text = text->getTextArray(to_print, context, true, color, transparent_color, true, screen_position, scale);
 						painting_was_selected = true;
 					}
 				}
 
 				if (!painting_was_selected)
-					test_text = nullptr;
+					info_text = nullptr;
 			}
 
 			context->swapBuffers();

@@ -13,8 +13,10 @@ void addFrames(vector< shared_ptr<artwork> > &art_vec, shared_ptr<ogl_context> c
 vector<pair<int, shared_ptr<artwork> > >::iterator sortArtVec(vector<pair<int, shared_ptr<artwork> > > &art_vec, sort_options sort, bool ascending = true);
 void printArtwork(const shared_ptr<artwork> &target);
 mat4 calcImageScale(const shared_ptr<artwork> &target, float width_max, float height_max);
-void makeThumbnails(vector<pair<int, shared_ptr<artwork> > > &art_vec, float margin_size, float cell_size);
-void makeHighlight(shared_ptr<artwork> target, float top_margin, float bottom_margin, float cell_width);
+map<int, mat4> getThumbnailMatrixMap(const shared_ptr<ogl_context> &context, const vector<pair<int, shared_ptr<artwork> > > &art_vec,
+	float margin_size, float cell_size, float cell_padding_factor);
+map<int, mat4> getHighlightMatrixMap(const shared_ptr<ogl_context> &context, const vector<pair<int, shared_ptr<artwork> > > &art_vec,
+	const vec2 &screen_position, float cell_size);
 
 //TODO for the love of god, enumerate something
 vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkFirst(

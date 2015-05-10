@@ -35,7 +35,7 @@ painting_surface::painting_surface(
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(ogl_con, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 }
 
-void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
+void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
 {
 	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
 	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
@@ -44,19 +44,8 @@ void painting_surface::draw(const mat4 &model_matrix, const shared_ptr<ogl_camer
 	glBindVertexArray(*temp_vao);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);
 
-	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
-
-	if (absolute)
-	{
-		glUniformMatrix4fv(context->getShaderGLint("model_matrix"), 1, GL_FALSE, &model_matrix[0][0]);
-		glUniform1f(context->getShaderGLint("aspect_scale"), context->getAspectRatio());
-	}
-
-	else
-	{
-		mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * model_matrix;
-		glUniformMatrix4fv(context->getShaderGLint("MVP"), 1, GL_FALSE, &MVP[0][0]);
-	}
+	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
+	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
 
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -257,7 +246,7 @@ frame_model::frame_model(float painting_width, float painting_height, shared_ptr
 	matte_opengl_data = generated_matte;
 }
 
-void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
+void frame_model::draw(const shared_ptr<ogl_context> &context, const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
 {
 	//TODO revise opengl_data class to contain rendering data
 	//draw the frame
@@ -268,19 +257,7 @@ void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &c
 	glBindVertexArray(*temp_vao);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);	
 
-	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
-
-	if (absolute)
-	{
-		glUniformMatrix4fv(context->getShaderGLint("model_matrix"), 1, GL_FALSE, &model_matrix[0][0]);
-		glUniform1f(context->getShaderGLint("ascpect_scale"), context->getAspectRatio());
-	}
-
-	else
-	{
-		mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * model_matrix;
-		glUniformMatrix4fv(context->getShaderGLint("MVP"), 1, GL_FALSE, &MVP[0][0]);
-	}
+	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
 	
 	glDrawArrays(GL_TRIANGLES, 0, frame_opengl_data->getVertexCount());
 
@@ -297,7 +274,6 @@ void frame_model::draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &c
 
 	//glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, matte_opengl_data->getVertexCount());
-
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 }
@@ -341,8 +317,7 @@ void line::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_cam
 	glUniform1i(context->getShaderGLint("color_override"), true);
 	glUniform4f(context->getShaderGLint("override_color"), color.x, color.y, color.z, color.w);
 
-	mat4 MVP = camera->getProjectionMatrix() * camera->getViewMatrix() * glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
-	glUniformMatrix4fv(context->getShaderGLint("MVP"), 1, GL_FALSE, &MVP[0][0]);
+	camera->setMVP(context, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f)), (absolute ? (render_type)2 : (render_type)0));
 
 	glEnableVertexAttribArray(0);
 	glDrawArrays(GL_LINES, 0, 2);

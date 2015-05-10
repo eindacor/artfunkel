@@ -9,7 +9,7 @@ public:
 	painting_surface(float width, float height, shared_ptr<ogl_context> ogl_con, const char* texture_path);
 	~painting_surface(){};
 
-	void draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &ogl_cam, bool absolute=false) const;
+	void draw(const shared_ptr<ogl_context> &context, const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute = false) const;
 
 private:
 	shared_ptr<ogl_context> context;
@@ -23,7 +23,8 @@ public:
 		float frame_width = 0.10f, float frame_depth = .08f, float matte_width = 0.1f, float matte_setback = 0.025f, float painting_setback = 0.003125f);
 	~frame_model(){};
 
-	void draw(const mat4 &model_matrix, const shared_ptr<ogl_camera> &ogl_cam, bool absolute=false) const;
+	void draw(const shared_ptr<ogl_context> &context, const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, 
+		bool absolute = false) const;
 
 	float getPaintingDistanceToWall() const { return painting_to_wall_dimension; }
 	

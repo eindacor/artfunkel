@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
 	string paintings_path = data_path + "paintings.csv";
 	string artists_path = data_path + "artists.csv";
 	string images_path = data_path + "images\\paintings\\";
-	string text_file = data_path + "images\\text_template.bmp";
+	string text_file = data_path + "images\\text_template_small.bmp";
 	string vert_file = data_path + "vertex_shader.glsl";
 	string frag_file = data_path + "fragment_shader.glsl";
 
