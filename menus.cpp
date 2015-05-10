@@ -150,14 +150,20 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	vec2 title_screen_position(0.2f, 0.75f);
 	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
 	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
-	float text_box_width(0.6f);
-
-	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
+	float text_box_width(0.7f);
 
 	vector<pair<int, shared_ptr<artwork> > >::iterator current_selection = paintings_to_display.begin();
 	shared_ptr<static_text> title_text(nullptr);
 	shared_ptr<static_text> rarity_text(nullptr);
 	shared_ptr<static_text> info_text(nullptr);
+
+	vec4 alert_color(0.8f, 0.5f, 0.5f, 1.0f);
+	float alert_scale(0.04f);
+	float alert_buffer(0.1f);
+	vec2 alert_screen_position(info_screen_position.x, info_screen_position.y - alert_buffer);
+	shared_ptr<static_text> alert_text(nullptr);
+
+	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
 	glfwSetTime(0);
 	float render_fps = 60.0f;
@@ -202,7 +208,11 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					}
 				}
 
-				else current_selection--;
+				else
+				{
+					alert_text = nullptr;
+					current_selection--;
+				}
 			}
 
 			else if (keys->checkPress(GLFW_KEY_RIGHT, false))
@@ -236,7 +246,11 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					}
 				}
 
-				else current_selection++;
+				else
+				{
+					alert_text = nullptr;
+					current_selection++;
+				}
 			}
 
 			for (vector<pair<int, shared_ptr<artwork> > >::const_iterator it = paintings_to_display.cbegin(); it != paintings_to_display.cend(); it++)
@@ -280,16 +294,23 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 			if (keys->checkPress(GLFW_KEY_ENTER, false))
 			{
+				alert_text = nullptr;
+				string alert_string;
+
 				//if painting is already on display, take it off. if it's not, add it to display
 				switch (current_player->isOnDisplay((*current_selection).first))
 				{
 				case true: current_player->removePaintingFromDisplay(*current_selection); 
-					cout << (*current_selection).second->getData()->getTitle() << " has been removed from the gallery" << endl;
+					alert_string = (*current_selection).second->getData()->getTitle() + " has been removed from the gallery"; 
 					break;
 				case false: current_player->addPaintingToDisplay(*current_selection);
-					cout << (*current_selection).second->getData()->getTitle() << " has been added to the gallery" << endl;
+					alert_string = (*current_selection).second->getData()->getTitle() + " has been added to the gallery";
 					break;
 				}
+
+				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
+					true, info_text->getLowerLeft() - vec2(0.0f, alert_buffer), alert_scale, text_box_width);
+
 			}
 
 			if (keys->checkPress(GLFW_KEY_1, false))
@@ -423,6 +444,8 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				info_text->draw(camera, context, "text", "text_color", "transparency_color");
 			if (rarity_text != nullptr)
 				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+			if (alert_text != nullptr)
+				alert_text->draw(camera, context, "text", "text_color", "transparency_color");
 
 			context->swapBuffers();
 
@@ -484,11 +507,17 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	vec2 title_screen_position(0.2f, 0.75f);
 	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
 	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
-	float text_box_width(0.6f);
+	float text_box_width(0.7f);
 
 	shared_ptr<static_text> title_text(nullptr);
 	shared_ptr<static_text> rarity_text(nullptr);
 	shared_ptr<static_text> info_text(nullptr);
+
+	vec4 alert_color(0.8f, 0.5f, 0.5f, 1.0f);
+	float alert_scale(0.04f);
+	float alert_buffer(0.1f);
+	vec2 alert_screen_position(info_screen_position.x, info_screen_position.y - alert_buffer);
+	shared_ptr<static_text> alert_text(nullptr);
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
@@ -507,10 +536,16 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			context->clearBuffers();
 
 			if (keys->checkPress(GLFW_KEY_LEFT, false) && current_selection != paintings_to_display.begin())
+			{
+				alert_text = nullptr;
 				current_selection--;
+			}
 
 			else if (keys->checkPress(GLFW_KEY_RIGHT, false) && current_selection != paintings_to_display.end() - 1)
+			{
+				alert_text = nullptr;
 				current_selection++;
+			}
 
 			for (vector<pair<int, shared_ptr<artwork> > >::const_iterator it = paintings_to_display.cbegin(); it != paintings_to_display.cend(); it++)
 			{
@@ -556,15 +591,19 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				int selected_index = (*current_selection).second->getData()->getID();
 				bool already_owned = current_player->alreadyOwned(selected_index);
 
+				string alert_string;
+
 				switch (already_owned)
 				{
-				case true: cout << (*current_selection).second->getData()->getTitle() << " is already in your inventory" << endl;
-					break;
+				case true: alert_string = (*current_selection).second->getData()->getTitle() + " is already in your inventory"; break;
 				case false: current_player->addWorkToInventory((*current_selection).second);
-					cout << (*current_selection).second->getData()->getTitle() << " has been added to your inventory" << endl;
-					cout << "Collection value: $" << current_player->getCollectionValue().getNumberString(true, false, 2) << endl;
+					alert_string = (*current_selection).second->getData()->getTitle() + " has been added to your inventory";
+					alert_string += "\n\nCollection value: $" + current_player->getCollectionValue().getNumberString(true, false, 2);
 					break;
 				}
+
+				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
+					true, info_text->getLowerLeft() - vec2(0.0f, alert_buffer), alert_scale, text_box_width);
 			}
 
 			if (keys->checkPress(GLFW_KEY_A, false))
@@ -583,6 +622,10 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 						break;
 					}
 				}
+
+				alert_text = text->getTextArray("All paintings have been added to your inventory", context, false, alert_color, transparent_color,
+					true, info_text->getLowerLeft() - vec2(0.0f, alert_buffer), alert_scale, text_box_width);
+
 				cout << "Collection value: $" << current_player->getCollectionValue().getNumberString(true, false, 2) << endl;
 			}
 
@@ -663,11 +706,12 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 			if (title_text != nullptr)
 				title_text->draw(camera, context, "text", "text_color", "transparency_color");
-			if (info_text != nullptr)
-				info_text->draw(camera, context, "text", "text_color", "transparency_color");
 			if (rarity_text != nullptr)
 				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
-
+			if (info_text != nullptr)
+				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+			if (alert_text != nullptr)
+				alert_text->draw(camera, context, "text", "text_color", "transparency_color");
 
 			//TODO fix so crate doesn't disappear when going to the main menu
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
