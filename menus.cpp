@@ -150,6 +150,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	vec2 title_screen_position(0.2f, 0.75f);
 	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
 	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
+	float text_box_width(0.6f);
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
@@ -255,7 +256,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					(*it).second->draw2D(context, camera, highlight_matrix_index.at(index));
 
 					title_text = text->getTextArray((*it).second->getData()->getTitle(), context,
-						true, title_color, transparent_color, true, title_screen_position, title_scale);
+						true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
 
 					switch ((*it).second->getData()->getRarity())
 					{
@@ -267,11 +268,13 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					}
 
 					rarity_text = text->getTextArray(stringFromRarity((*it).second->getData()->getRarity()), context,
-						false, rarity_color, transparent_color, true, rarity_screen_position, info_scale);
+						false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
 
 					string to_print = std::to_string((*it).second->getData()->getDate().getYear()) + "\n" + (*it).second->getData()->getArtistName();
 					to_print += "\n$" + (*it).second->getValue().getNumberString(true, false, 2);
-					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, true, info_screen_position, info_scale);
+
+					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, 
+						true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 				}
 			}
 
@@ -481,13 +484,15 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 	vec2 title_screen_position(0.2f, 0.75f);
 	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
 	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
+	float text_box_width(0.6f);
+
+	shared_ptr<static_text> title_text(nullptr);
+	shared_ptr<static_text> rarity_text(nullptr);
+	shared_ptr<static_text> info_text(nullptr);
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
 	vector<pair<int, shared_ptr<artwork> > >::iterator current_selection = paintings_to_display.begin();
-	shared_ptr<static_text> title_text(nullptr);
-	shared_ptr<static_text> rarity_text(nullptr);
-	shared_ptr<static_text> info_text(nullptr);
 	
 	glfwSetTime(0);
 	float render_fps = 60.0f;
@@ -524,7 +529,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					(*it).second->draw2D(context, camera, highlight_matrix_index.at(index));
 
 					title_text = text->getTextArray((*it).second->getData()->getTitle(), context,
-						true, title_color, transparent_color, true, title_screen_position, title_scale);
+						true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
 
 					switch ((*it).second->getData()->getRarity())
 					{
@@ -536,11 +541,13 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					}
 
 					rarity_text = text->getTextArray(stringFromRarity((*it).second->getData()->getRarity()), context,
-						false, rarity_color, transparent_color, true, rarity_screen_position, info_scale);
+						false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
 
 					string to_print = std::to_string((*it).second->getData()->getDate().getYear()) + "\n" + (*it).second->getData()->getArtistName();
 					to_print += "\n$" + (*it).second->getValue().getNumberString(true, false, 2);
-					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, true, info_screen_position, info_scale);
+
+					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
+						true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 				}
 			}
 
@@ -720,6 +727,21 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 		vec4(0.0f, 0.0f, 0.0f, 1.0f)
 		)));
 
+	//identify positions for text
+	vec4 title_color(1.0f, 1.0f, 1.0f, 1.0f);
+	vec4 rarity_color;
+	vec4 info_color(0.3f, 0.3f, 0.3f, 1.0f);
+	vec4 transparent_color(0.0f, 1.0f, 0.0f, 1.0f);
+	float title_scale(0.045f);
+	float info_scale(0.035f);
+	float highlight_buffer(0.1f);
+	vec2 title_screen_position(0.5f, 0.75f);
+	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
+	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
+	float text_box_width(0.45f);
+
+	shared_ptr<static_text> title_text(nullptr);
+	shared_ptr<static_text> rarity_text(nullptr);
 	shared_ptr<static_text> info_text(nullptr);
 
 	while (!finished)
@@ -736,8 +758,12 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			for (auto i : lines)
 				i->draw(context, camera);
 
+			if (title_text != nullptr)
+				title_text->draw(camera, context, "text", "text_color", "transparency_color");
 			if (info_text != nullptr)
 				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+			if (rarity_text != nullptr)
+				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
@@ -755,20 +781,45 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					if (paintingSelected(keys, camera, i.second))
 					{
 						printArtwork(i.second);
-						string to_print = i.second->getData()->getTitle() + " by " + i.second->getData()->getArtistName();
-						to_print += "\nEstimated value: $" + i.second->getValue().getNumberString(true, false, 2);
 
-						vec4 color(1.0f, 1.0f, 1.0f, 1.0f);
-						vec4 transparent_color(0.0f, 1.0f, 0.0f, 1.0f);
-						vec2 screen_position(-1.0f, -.75f);
-						float scale(0.04f);
-						info_text = text->getTextArray(to_print, context, true, color, transparent_color, true, screen_position, scale);
+						title_text = text->getTextArray(i.second->getData()->getTitle(), context,
+							true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
+
+						switch (i.second->getData()->getRarity())
+						{
+						case COMMON: rarity_color = vec4(0.6f, 0.9f, 0.6f, 1.0f); break;
+						case UNCOMMON: rarity_color = vec4(0.6f, 0.6f, 0.9f, 1.0f); break;
+						case RARE: rarity_color = vec4(0.9f, 0.9f, 0.6f, 1.0f); break;
+						case LEGENDARY: rarity_color = vec4(1.0f, 0.75f, 0.6f, 1.0f); break;
+						case MASTERPIECE: rarity_color = vec4(0.6f, 0.9f, 0.9f, 1.0f); break;
+						}
+
+						rarity_text = text->getTextArray(stringFromRarity(i.second->getData()->getRarity()), context,
+							false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
+
+						string to_print = std::to_string(i.second->getData()->getDate().getYear()) + "\n" + i.second->getData()->getArtistName();
+						to_print += "\n$" + i.second->getValue().getNumberString(true, false, 2);
+
+						info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
+							true, rarity_text->getLowerLeft(), info_scale, text_box_width);
+
 						painting_was_selected = true;
 					}
 				}
 
+				if (title_text != nullptr)
+					title_text->draw(camera, context, "text", "text_color", "transparency_color");
+				if (info_text != nullptr)
+					info_text->draw(camera, context, "text", "text_color", "transparency_color");
+				if (rarity_text != nullptr)
+					rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+
 				if (!painting_was_selected)
+				{
+					title_text = nullptr;
 					info_text = nullptr;
+					rarity_text = nullptr;
+				}
 			}
 
 			context->swapBuffers();
