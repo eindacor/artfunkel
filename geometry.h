@@ -3,6 +3,16 @@
 
 #include "header.h"
 
+class triangle
+{
+public:
+	triangle(vec3 p1, vec3 p2, vec3 p3);
+	~triangle(){};
+
+private:
+
+};
+
 class painting_surface
 {
 public:
