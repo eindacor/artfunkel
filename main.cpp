@@ -6,6 +6,7 @@
 #include "loot.h"
 #include "menus.h"
 #include "player.h"
+#include "gallery.h"
 
 int main(int argc, char* argv[])
 {

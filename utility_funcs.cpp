@@ -510,3 +510,127 @@ bool paintingSelected(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera
 
 	return false;
 }
+
+vector< vector<vec3> > getTriangles(const vector<float> &vec_vertices, int offset, int stride)
+{
+	vector<vec3> vertices;
+	//stride output from obj parser is in bit size, not count
+	int stride_count = stride / sizeof(float);
+	//for each stride there will be 3 extracted vertices
+	vertices.reserve((vec_vertices.size() / stride_count) * 3);
+
+	vector<float> point_found;
+	for (int i = offset; i < vec_vertices.size(); i++)
+	{
+		int local_index = i % stride_count;
+		//skip if local index is before or after target range
+		if (local_index < offset || local_index >= offset + 3)
+			continue;
+
+		point_found.push_back(vec_vertices.at(i));
+		if (point_found.size() == 3)
+		{
+			vertices.push_back(vec3(point_found.at(0), point_found.at(1), point_found.at(2)));
+			point_found.clear();
+		}
+	}
+
+	vector< vector<vec3> > triangles;
+	triangles.reserve(vertices.size() / 3);
+
+	vector<vec3> triangle_found;
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		triangle_found.push_back(vertices.at(i));
+
+		if (triangle_found.size() == 3)
+		{
+			triangles.push_back(triangle_found);
+			triangle_found.clear();
+		}
+	}
+
+	return triangles;
+}
+
+vector< pair<vec3, vec3> > getOuterEdges(const vector< vector<vec3> > &triangles)
+{
+	map< int, pair<vec3, vec3> > edges;
+	int edge_counter = 0;
+
+	//for each side of each triangle
+	for (auto i : triangles)
+	{
+		pair<vec3, vec3> edge1(i.at(0), i.at(1));
+		pair<vec3, vec3> edge2(i.at(1), i.at(2));
+		pair<vec3, vec3> edge3(i.at(2), i.at(0));
+
+		edges.insert(pair<int, pair<vec3, vec3> >(edge_counter++, edge1));
+		edges.insert(pair<int, pair<vec3, vec3> >(edge_counter++, edge2));
+		edges.insert(pair<int, pair<vec3, vec3> >(edge_counter++, edge3));
+	}
+
+	vector<int> unique_edges;
+	vector<int> shared_edges;
+
+	for (auto i : edges)
+	{
+		if (std::find(shared_edges.begin(), shared_edges.end(), i.first) != shared_edges.end())
+			continue;
+
+		pair<vec3, vec3> i_edge = i.second;
+
+		bool unique = true;
+
+		for (auto j : edges)
+		{
+			//skip if the edge has already been confirmed as unique or shared
+			if (std::find(shared_edges.begin(), shared_edges.end(), j.first) != shared_edges.end())
+				continue;
+
+			if (std::find(unique_edges.begin(), unique_edges.end(), j.first) != unique_edges.end())
+				continue;
+
+			pair<vec3, vec3> j_edge = j.second;
+
+			//if each edge has similar points, in any order, add to shared edges
+			if ((i_edge.second == j_edge.first && i_edge.second == j_edge.second) || 
+				(i_edge.first == j_edge.second && i_edge.second == j_edge.first))
+			{
+				shared_edges.push_back(i.first);
+				shared_edges.push_back(j.first);
+				unique = false;
+				break;
+			}
+		}
+
+		if (unique)
+			unique_edges.push_back(i.first);
+	}
+
+	vector< pair<vec3, vec3> > outer_edges;
+
+	for (auto i : unique_edges)
+		outer_edges.push_back(edges.at(i));
+
+	return outer_edges;
+}
+
+//function applies to vertical walls only, based on first normal
+float getNormalRotation(const vector<float> &vec_vertices, int normal_offset, int stride)
+{
+	vector<float> normal_vertex;
+	int normal_count = normal_offset / sizeof(float);
+	for (int i = normal_count; i < normal_count + 3; i++)
+		normal_vertex.push_back(vec_vertices.at(i));
+
+	vec3 normal_vec(normal_vertex.at(0), normal_vertex.at(1), normal_vertex.at(2));
+
+	//TODO experiment with left-handed vs. right-handed
+	//passes z location as y-value of second point because surface should be vertical
+	cout << "normal_vec: " << normal_vec.x << ", " << normal_vec.y << ", " << normal_vec.z << endl;
+	float normal_angle = jep::getLineAngle(vec2(0.0f, 0.0f), vec2(normal_vec.x, normal_vec.z), true);
+	cout << "normal_angle in utility funcs: " << normal_angle << endl;
+
+	return normal_angle;
+}

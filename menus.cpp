@@ -5,6 +5,7 @@
 #include "artwork.h"
 #include "utility_funcs.h"
 #include "menus.h"
+#include "gallery.h"
 
 int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<text_handler> &text)
 {
@@ -107,7 +108,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	//add player's default frames to each
 	for (auto i : inventory_copy)
-		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
+		i.second->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 
 
 	//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
@@ -478,7 +479,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 	//add player's default frames to each
 	for (auto i : paintings_to_display)
-		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
+		i.second->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 
 	//generate a maps of matrices
 	float thumbnail_cell_size(0.3f);
@@ -740,12 +741,22 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
+	//GALLERY TEST CODE
+	shared_ptr<gallery> test_gallery(new gallery(
+		context, data_path + "model_data\\",
+		data_path + "model_data\\",
+		"test_surface.obj",
+		"test_filler.obj",
+		"test_surface.mtl",
+		"test_filler.mtl"));
+	//GALLERY TEST CODE
+
 	//TODO why does this require a pair with int first?
 	vector<pair<int, shared_ptr<artwork> > > paintings_to_display = current_player->getDisplayedCopy();
 	offsetArtworks(paintings_to_display, eye_level);
 	
 	for (auto i : paintings_to_display)
-		i.second->applyFrameTemplate(*(current_player->getDefaultFrame()));
+		i.second->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 
 	glfwSetTime(0);
 	float render_fps = 60.0f;
@@ -803,6 +814,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			for (auto i : lines)
 				i->draw(context, camera);
+
+			test_gallery->renderGallery(context, camera);
 
 			if (title_text != nullptr)
 				title_text->draw(camera, context, "text", "text_color", "transparency_color");

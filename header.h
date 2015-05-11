@@ -21,6 +21,7 @@ enum sort_options { ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, 
 #include "jeploot.h"
 #include "ogl_tools.h"
 #include "JEPbignum.h"
+#include "obj_parser.h"
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 #include <gtx/string_cast.hpp>
@@ -34,6 +35,7 @@ class painting_surface;
 class frame_model;
 class player;
 class gallery;
+class display_wall;
 class loot_generator;
 
 using std::vector;

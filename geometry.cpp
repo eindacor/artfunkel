@@ -2,10 +2,8 @@
 #include "artwork.h"
 
 painting_surface::painting_surface(
-	float width, float height, shared_ptr<ogl_context> ogl_con, const char* texture_path)
+	float width, float height, const shared_ptr<ogl_context> &context, const char* texture_path)
 {
-	context = ogl_con;
-
 	float total_height = height;
 	float total_width = width;
 	
@@ -32,7 +30,7 @@ painting_surface::painting_surface(
 			1.0f, 0.0f,
 	};
 
-	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(ogl_con, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 }
 
 void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
@@ -52,11 +50,9 @@ void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &
 	glBindVertexArray(0);
 }
 
-frame_model::frame_model(float painting_width, float painting_height, shared_ptr<ogl_context> ogl_con, string frame_texture, string matte_texture,
+frame_model::frame_model(float painting_width, float painting_height, const shared_ptr<ogl_context> &context, string frame_texture, string matte_texture,
 	float f_width, float f_depth, float m_width, float m_setback, float p_setback)
 {
-	context = ogl_con;
-
 	frame_texture_path = frame_texture;
 	matte_texture_path = matte_texture;
 
@@ -190,7 +186,7 @@ frame_model::frame_model(float painting_width, float painting_height, shared_ptr
 	frame_vertices.insert(frame_vertices.begin(), frame_top_inner.begin(), frame_top_inner.end());
 
 	shared_ptr<jep::ogl_data> generated_frame(new jep::ogl_data(
-		ogl_con, frame_texture_path.c_str(), GL_STATIC_DRAW, frame_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+		context, frame_texture_path.c_str(), GL_STATIC_DRAW, frame_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 
 	frame_opengl_data = generated_frame;
 	
@@ -241,7 +237,7 @@ frame_model::frame_model(float painting_width, float painting_height, shared_ptr
 	matte_vertices.insert(matte_vertices.begin(), matte_top_inner.begin(), matte_top_inner.end());
 
 	shared_ptr<jep::ogl_data> generated_matte(new jep::ogl_data(
-		ogl_con, matte_texture_path.c_str(), GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+		context, matte_texture_path.c_str(), GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 
 	matte_opengl_data = generated_matte;
 }

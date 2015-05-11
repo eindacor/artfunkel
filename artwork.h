@@ -97,7 +97,7 @@ public:
 	bool operator == (const artwork &other) const;
 	bool operator != (const artwork &other) const { return !(*this == other); }
 
-	void applyFrameTemplate(const frame_model &frame_template);
+	void applyFrameTemplate(const shared_ptr<ogl_context> &context, const frame_model &frame_template);
 
 private:
 	bignum value;
