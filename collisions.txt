@@ -1,0 +1,379 @@
+#include <iostream>
+#include <vector>
+#include <string>
+ 
+ 
+class point
+{
+    public:
+                point (int a, int b): x(a), y(b) {};
+                ~point () {};
+ 
+                int getX() {return x;}
+                int getY() {return y;}
+ 
+        private:
+                int x;
+                int y;
+};
+ 
+ 
+class side
+{
+        public:
+                side(point f, point s): first(f), second(s) {};
+                ~side() {};
+                point getFirst() {return first;}
+                point getSecond() {return second;}
+ 
+        private:
+                point first;
+                point second;
+};
+ 
+ 
+class boundingBox
+{
+	public:
+		boundingBox(point p, std::string n): centroid(p), name(n) {};
+		virtual ~boundingBox() {};
+
+		virtual void takeDamage(point c) = 0;
+		virtual std::vector <side> getSides() = 0;	
+		virtual void printPoints() = 0;
+
+	protected:
+		point centroid;
+		std::string name;
+};
+
+
+
+class enemyOne: public boundingBox
+{
+	public:
+		enemyOne(point p);
+		~enemyOne() {};
+		void takeDamage(point c);
+		std::vector <side> getSides() {return boundingSides;}
+		void printPoints();
+
+	private:
+		std::vector <point> boundingPoints;
+		std::vector <side> boundingSides;
+};
+
+void enemyOne::printPoints()
+{
+	for (std::vector <point>::iterator i = boundingPoints.begin(); i != boundingPoints.end(); i++)
+	{
+		std::cout << (*i).getX() << ", " << (*i).getY() << std::endl;
+	}
+
+	std::cout << std::endl;
+}
+
+
+void enemyOne::takeDamage(point c)
+{
+	std::cout << "------ " << (*this).boundingBox::name << " took damage: " << c.getX() << ", " << c.getY() << std::endl;
+}
+
+
+class enemyTwo: public boundingBox
+{
+	public:
+		enemyTwo(point p);
+		~enemyTwo() {};
+		void takeDamage(point c);
+		std::vector <side> getSides() {return boundingSides;}
+		void printPoints();
+
+	private:
+		std::vector <point> boundingPoints;
+		std::vector <side> boundingSides;
+};
+
+void enemyTwo::printPoints()
+{
+	for (std::vector <point>::iterator i = boundingPoints.begin(); i != boundingPoints.end(); i++)
+	{
+		std::cout << (*i).getX() << ", " << (*i).getY() << std::endl;
+	}
+
+	std::cout << std::endl;
+}
+
+void enemyTwo::takeDamage(point c)
+{
+	std::cout << "------ " << (*this).boundingBox::name << " took damage: " << c.getX() << ", " << c.getY() << std::endl;
+}
+
+class enemyThree: public boundingBox
+{
+	public:
+		enemyThree(point p);
+		~enemyThree() {};
+		void takeDamage(point c);
+		std::vector <side> getSides() {return boundingSides;}
+		void printPoints();
+
+
+	private:
+		std::vector <point> boundingPoints;
+		std::vector <side> boundingSides;
+};
+
+void enemyThree::printPoints()
+{
+	for (std::vector <point>::iterator i = boundingPoints.begin(); i != boundingPoints.end(); i++)
+	{
+		std::cout << (*i).getX() << ", " << (*i).getY() << std::endl;
+	}
+
+	std::cout << std::endl;
+}
+
+void enemyThree::takeDamage(point c)
+{
+	std::cout << "------ " << (*this).boundingBox::name << " took damage: " << c.getX() << ", " << c.getY() << std::endl;
+}
+
+
+enemyOne::enemyOne (point p): boundingBox(p, "Enemy One")
+{
+	boundingPoints.push_back( point (p.getX(), p.getY()+2) );
+	boundingPoints.push_back( point (p.getX()+3, p.getY()+4) );
+	boundingPoints.push_back( point (p.getX()+2, p.getY()+1) );
+	boundingPoints.push_back( point (p.getX()+3, p.getY()-2) );
+	boundingPoints.push_back( point (p.getX()+1, p.getY()-1) );
+	boundingPoints.push_back( point (p.getX(), p.getY()-4) );
+	boundingPoints.push_back( point (p.getX()-1, p.getY()-1) );
+	boundingPoints.push_back( point (p.getX()-3, p.getY()-2) );
+	boundingPoints.push_back( point (p.getX()-2, p.getY()+1) );
+	boundingPoints.push_back( point (p.getX()-3, p.getY()+4) );
+
+	for (std::vector <point>::iterator i = boundingPoints.begin(); i != boundingPoints.end()-1; i++)
+        {
+                boundingSides.push_back( side(*i, *(i+1)) );
+        }
+ 
+        boundingSides.push_back( side (*(boundingPoints.end()-1), *(boundingPoints.begin()) ) );
+}
+
+
+enemyTwo::enemyTwo (point p): boundingBox(p, "Enemy Two")
+{
+	boundingPoints.push_back( point (p.getX(), p.getY()+1) );
+	boundingPoints.push_back( point (p.getX()+2, p.getY()+3) );
+	boundingPoints.push_back( point (p.getX()+2, p.getY()-6) );
+	boundingPoints.push_back( point (p.getX(), p.getY()-2) );
+	boundingPoints.push_back( point (p.getX()-2, p.getY()-6) );
+	boundingPoints.push_back( point (p.getX()-2, p.getY()+3) );
+
+	for (std::vector <point>::iterator i = boundingPoints.begin(); i != boundingPoints.end()-1; i++)
+        {
+                boundingSides.push_back( side(*i, *(i+1)) );
+        }
+ 
+        boundingSides.push_back( side (*(boundingPoints.end()-1), *(boundingPoints.begin()) ) );
+}
+
+enemyThree::enemyThree (point p): boundingBox(p, "Enemy Three")
+{
+	boundingPoints.push_back( point (p.getX(), p.getY()+3) );
+	boundingPoints.push_back( point (p.getX()+3, p.getY()+2) );
+	boundingPoints.push_back( point (p.getX()+2, p.getY()-3) );
+	boundingPoints.push_back( point (p.getX()-2, p.getY()-3) );
+	boundingPoints.push_back( point (p.getX()-3, p.getY()+2) );
+
+	for (std::vector <point>::iterator i = boundingPoints.begin(); i != boundingPoints.end()-1; i++)
+        {
+                boundingSides.push_back( side(*i, *(i+1)) );
+        }
+ 
+        boundingSides.push_back( side (*(boundingPoints.end()-1), *(boundingPoints.begin()) ) );
+}
+
+
+//collision detection based on ray casting algorithm http://alienryderflex.com/polygon/
+bool collisionCheck(std::vector <side> s, point p)
+{
+        std::vector <side> nodeSides;
+ 
+        int toleft = 0;
+        int toright = 0;
+ 
+        for (std::vector <side>::iterator i = s.begin(); i != s.end(); i++)
+        {
+		//if the side is horizontal, true if p.x is between x of 1st and 2nd, false if it's not
+		if ((*i).getFirst().getY() == (*i).getSecond().getY() && (*i).getFirst().getY() == p.getY())
+		{
+			if (p.getX() > (*i).getFirst().getX() && p.getX() < (*i).getSecond().getX() ||
+                   	    p.getX() < (*i).getFirst().getX() && p.getX() > (*i).getSecond().getX() )
+			{
+				return true;
+			}
+
+			else
+			{
+				return false;
+			}
+		}
+
+                //if the Y value of the point being tested is between the Y values of a side, add a node
+                if (p.getY() > (*i).getFirst().getY() && p.getY() < (*i).getSecond().getY() ||
+                    p.getY() < (*i).getFirst().getY() && p.getY() > (*i).getSecond().getY() )
+                {
+                  	std::cout << "Adding node based on this side: " <<
+				(*i).getFirst().getX() << ", " << (*i).getFirst().getY() << " -> " <<
+				(*i).getSecond().getX() << ", " << (*i).getSecond().getY() << 
+				".... point = " << p.getX() << ", " << p.getY() << std::endl;				
+
+			nodeSides.push_back( side ( (*i).getFirst(), (*i).getSecond() ) );
+                }
+ 
+                
+                // if the Y value of the point being tested is also the Y of the second point of the side...
+                if (p.getY() == (*i).getSecond().getY())
+                {
+                        //if it isn't the last side, and this side and the next strattle that y value, add a node
+                        if (i != s.end()-1)
+                        {
+                                if ((*i).getFirst().getY() < p.getY() && (*(i+1)).getSecond().getY() > p.getY() ||
+                                    (*i).getFirst().getY() > p.getY() && (*(i+1)).getSecond().getY() < p.getY() )
+                                {
+					std::cout << "Adding node based on this side: " <<
+						(*i).getFirst().getX() << ", " << (*i).getFirst().getY() << " -> " <<
+						(*i).getSecond().getX() << ", " << (*i).getSecond().getY() << 
+						".... point = " << p.getX() << ", " << p.getY() << std::endl;
+
+                                        nodeSides.push_back( side ( (*i).getFirst(), (*i).getSecond() ) );
+                                }       
+                        }       
+ 
+                        //if it is the last side, and this side and the first side strattle that y value, add a node
+                        else if ((*i).getFirst().getY() < p.getY() && s.front().getSecond().getY() > p.getY() ||
+                                 (*i).getFirst().getY() > p.getY() && s.front().getSecond().getY() < p.getY() )
+                        {
+				std::cout << "Adding node based on this side: " <<
+						(*i).getFirst().getX() << ", " << (*i).getFirst().getY() << " -> " <<
+						(*i).getSecond().getX() << ", " << (*i).getSecond().getY() << 
+						".... point = " << p.getX() << ", " << p.getY() << std::endl;
+
+                                nodeSides.push_back( side ( (*i).getFirst(), (*i).getSecond() ) );
+                        }
+
+			//if the sides don't strattle that y value, no nodes are added
+                }
+        }
+ 
+	//take each side node, and find the x for the y value of the point
+        for (std::vector <side>::iterator i = nodeSides.begin(); i != nodeSides.end(); i++)
+        {
+		double x;
+
+		//if the line isn't vertical, determine x using y=mx+b
+		if ((*i).getSecond().getX() != (*i).getFirst().getX())
+		{	
+			double deltaY = (*i).getSecond().getY() - (*i).getFirst().getY();
+                	double deltaX = (*i).getSecond().getX() - (*i).getFirst().getX();
+ 
+                	double slope = deltaY / deltaX;
+
+			double b = (*i).getSecond().getY() - (slope * (*i).getSecond().getX());
+        
+                	//x = ( p.getY() - (*i).getSecond().getY() + (slope * (*i).getSecond().getX()) ) / slope;
+
+			x = (p.getY() - b)/slope;
+			
+		}
+
+		else
+		{
+			x = (*i).getSecond().getX();
+		}
+ 
+			
+			std::cout << "x from " << 
+				(*i).getFirst().getX() << ", " << (*i).getFirst().getY() << " -> " <<
+				(*i).getSecond().getX() << ", " << (*i).getSecond().getY() << 
+				" = " << x << std::endl;
+		
+                if (x < p.getX()) 
+                {
+                        toleft++;
+                }
+ 
+                else
+                {
+                        toright++;
+                }
+        }
+ 
+        
+        if (toleft % 2 == 0)
+        {
+                return false;
+        }
+ 
+        else
+        {
+		std::cout << "Analysis: " << toleft << " nodes to the left, " << toright << " nodes to the right." << std::endl;
+                return true;
+        }
+}
+                        
+ 
+//takes all enemies from a vector, tests collisions for each point in a vector
+void allCollisions(std::vector <boundingBox*> ae, std::vector <point> ap)
+{	
+	for (std::vector <boundingBox*>::iterator i = ae.begin(); i != ae.end(); i++)
+	{
+		for (std::vector <point>::iterator c = ap.begin(); c != ap.end(); c++)
+		{
+			if ( collisionCheck( (*i)->getSides(), *c ) )
+			{
+				(*i)->takeDamage(*c);
+			}
+		}
+	}
+}
+ 
+int main ()
+{
+        std::vector <boundingBox*> allEnemies;
+	std::vector <point> allPoints;
+	
+	allEnemies.push_back( new enemyOne(point(8,25)) );
+	allEnemies.push_back( new enemyTwo(point(7,10)) );
+	allEnemies.push_back( new enemyThree(point(16,11)) );
+
+	allPoints.push_back( point(6, 11) );
+	allPoints.push_back( point(15, 10) );
+	allPoints.push_back( point(17, 9) );
+	allPoints.push_back( point(6, 27) );
+	allPoints.push_back( point(10, 28) );
+	allPoints.push_back( point(15, 8) );
+
+	allPoints.push_back( point(9, 23) );
+	allPoints.push_back( point(12, 18) );
+	allPoints.push_back( point(18, 26) );
+	allPoints.push_back( point(18, 14) );	
+	allPoints.push_back( point(7, 6) );
+	allPoints.push_back( point(7, 23) );
+	allPoints.push_back( point(23, 8) );	
+
+
+	allCollisions( allEnemies, allPoints);
+
+	std::cout << std::endl;
+
+	for (std::vector <boundingBox*>::iterator i = allEnemies.begin(); i != allEnemies.end(); i++)
+	{
+		(*i)->printPoints();
+	}
+
+
+        return 0;
+}

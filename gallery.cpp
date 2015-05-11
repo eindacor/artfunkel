@@ -1,6 +1,35 @@
 #include "gallery.h"
 #include "artwork.h"
 
+bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 &position)
+{
+	vec3 dimensions(placed->getOverallDimensions());
+	float width(dimensions.x);
+	float height(dimensions.y);
+
+	float half_width(width / 2.0f);
+	float half_height(height / 2.0f);
+
+	vector<vec2> points_to_check{
+		vec2(half_width * -1.0f, half_height) + position,			//upper left
+		vec2(half_width, half_height) + position, 					//upper right
+		vec2(half_width * -1.0f, half_height * -1.0f) + position,	//lower left	
+		vec2(half_width, half_height * -1.0f) + position			//lower right
+	};
+
+	for (vector<vec2>::const_iterator it = wall_points.cbegin(); it != wall_points.cend(); it++)
+	{
+		vector<vec2>::const_iterator next;
+
+		if (it + 1 == wall_points.end())
+			next = wall_points.cbegin();
+
+		else next = it + 1;
+
+
+	}
+}
+
 void gallery::addPainting(int index, const shared_ptr<artwork> &work)
 {
 	//TODO check to verify painting position is not occupied

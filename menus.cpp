@@ -253,19 +253,17 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				}
 			}
 
+			glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
 			for (vector<pair<int, shared_ptr<artwork> > >::const_iterator it = paintings_to_display.cbegin(); it != paintings_to_display.cend(); it++)
 			{
 				int index = std::distance(paintings_to_display.cbegin(), it);
 				
 				if (current_selection != it)
-				{
-					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
 					(*it).second->draw2D(context, camera, thumbnail_matrix_index.at(index));
-					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
-				}
 
 				else
 				{
+					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 					(*it).second->draw2D(context, camera, thumbnail_matrix_index.at(index));
 					(*it).second->draw2D(context, camera, highlight_matrix_index.at(index));
 
@@ -289,8 +287,11 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, 
 						true, rarity_text->getLowerLeft(), info_scale, text_box_width);
+
+					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
 				}
 			}
+			glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 
 			if (keys->checkPress(GLFW_KEY_ENTER, false))
 			{
@@ -547,19 +548,17 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				current_selection++;
 			}
 
+			glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
 			for (vector<pair<int, shared_ptr<artwork> > >::const_iterator it = paintings_to_display.cbegin(); it != paintings_to_display.cend(); it++)
 			{
 				int index = std::distance(paintings_to_display.cbegin(), it);
 
 				if (current_selection != it)
-				{
-					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
 					(*it).second->draw2D(context, camera, thumbnail_matrix_index.at(index));
-					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
-				}
 
 				else
 				{
+					glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 					(*it).second->draw2D(context, camera, thumbnail_matrix_index.at(index));
 					(*it).second->draw2D(context, camera, highlight_matrix_index.at(index));
 
@@ -583,8 +582,11 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 
 					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
 						true, rarity_text->getLowerLeft(), info_scale, text_box_width);
+
+					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
 				}
 			}
+			glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 
 			if (keys->checkPress(GLFW_KEY_ENTER, false))
 			{
