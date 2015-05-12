@@ -14,6 +14,7 @@ public:
 
 	bool validPlacement(const shared_ptr<artwork> &placed, const vec2 &position);
 	mat4 getWallModelMatrix() const { return wall_model_matrix; }
+	bool wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera);
 	//vec2 getCursorLocationOnWall(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera) const;
 
 	void addPainting(const vec2 &position, const shared_ptr<artwork> &toAdd) { wall_contents.push_back(pair<vec2, shared_ptr<artwork> >(position, toAdd)); }
@@ -26,6 +27,7 @@ private:
 	vector< vector<vec3> > wall_triangles;
 	//wall_origin is used to determine translation offset of paintings
 	vec2 wall_origin;
+	vec2 click_position;
 	//vec2 indicates position on wall, which is NOT directly related to the model matrix. model matrix of painting is identified separately
 	//and incorporates the wall_model_matrix. position vector is stored separately for artwork collision purposes
 	vector< pair<vec2, shared_ptr<artwork> > >wall_contents;

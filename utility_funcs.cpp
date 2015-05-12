@@ -629,7 +629,7 @@ float getNormalRotation(const vector<float> &vec_vertices, int normal_offset, in
 	//TODO experiment with left-handed vs. right-handed
 	//passes z location as y-value of second point because surface should be vertical
 	cout << "normal_vec: " << normal_vec.x << ", " << normal_vec.y << ", " << normal_vec.z << endl;
-	float normal_angle = jep::getLineAngle(vec2(0.0f, 0.0f), vec2(normal_vec.x, normal_vec.z), true);
+	float normal_angle = jep::getLineAngle(vec2(0.0f, 0.0f), vec2(normal_vec.x, normal_vec.z), false);
 	cout << "normal_angle in utility funcs: " << normal_angle << endl;
 
 	return normal_angle;

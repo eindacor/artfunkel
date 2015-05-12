@@ -745,9 +745,9 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	shared_ptr<gallery> test_gallery(new gallery(
 		context, data_path + "model_data\\",
 		data_path + "model_data\\",
-		"test_surface.obj",
+		"test_gallery.obj",
 		"test_filler.obj",
-		"test_surface.mtl",
+		"test_gallery.mtl",
 		"test_filler.mtl"));
 	//GALLERY TEST CODE
 

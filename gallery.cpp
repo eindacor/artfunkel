@@ -21,7 +21,7 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 	float normal_rotation = getNormalRotation(vec_vertices, normal_offset, stride);
 	//offset 270 since default normal position is +z, which is directly south in plan view
 	//offset 90 degrees because wall surface must be perpendicular to normal direction
-	float surface_rotation = 270.0f - normal_rotation + 90.0f;
+	float surface_rotation = normal_rotation - 90.0f;
 	cout << "surface_rotation: " << surface_rotation << endl;
 	mat4 adjustment_rotation_matrix = glm::rotate(mat4(1.0f), surface_rotation * -1.0f, vec3(0.0f, 1.0f, 0.0f));
 
@@ -130,6 +130,39 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
+}
+
+bool display_wall::wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera)
+{
+	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
+
+	mat4 inverse_model_matrix = glm::inverse(wall_model_matrix);
+
+	ray.first = vec3(inverse_model_matrix * vec4(ray.first, 1.0f));
+	ray.second = vec3(inverse_model_matrix * vec4(ray.second, 1.0f));
+
+	vec3 origin = ray.first;
+	vec3 direction = ray.second - ray.first;
+
+	//cycle through each surface, testing ray intersection
+	for (auto i : wall_triangles)
+	{
+		if (i.size() != 3)
+		{
+			cout << "surface tested is missing vertices" << endl;
+			return false;
+		}
+
+		vec3 first_point(i.at(1));
+		vec3 second_point(i.at(0));
+		vec3 third_point(i.at(2));
+		vec3 result;
+
+		if (glm::intersectRayTriangle(origin, direction, first_point, second_point, third_point, result))
+			return true;
+	}
+
+	return false;
 }
 
 /*
