@@ -37,6 +37,7 @@ class player;
 class gallery;
 class display_wall;
 class loot_generator;
+class line;
 
 using std::vector;
 using std::list;

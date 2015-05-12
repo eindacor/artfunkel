@@ -833,47 +833,63 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
-				bool painting_was_selected = false;
+				//first float indicates scale of the ray from bary coordinates (result.z)
+				//the smaller the scale, the closer the object is. closest object indicates intended target
+				pair<float, shared_ptr<artwork> > artwork_selected;
+				pair<float, shared_ptr<display_wall> > wall_selected;
 
-				for (auto i : paintings_to_display)
+				wall_selected.second = test_gallery->checkWallClicks(keys, camera, wall_selected.first);
+				artwork_selected.second = test_gallery->checkArtworkClicks(keys, camera, artwork_selected.first);
+
+				cout << "artwork_selected distance: " << artwork_selected.first << endl;
+				cout << "wall_selected distance: " << wall_selected.first << endl;
+
+				//wall returned wasn't nullptr, and either no artwork was selected or the wall was closer
+				bool wall_was_selected = (wall_selected.second != nullptr && 
+					(artwork_selected.second == nullptr || artwork_selected.first > wall_selected.first));
+				bool artwork_was_selected = artwork_selected.second != nullptr && !wall_was_selected;
+
+				if (wall_selected.second == nullptr)
+					cout << "wall_selected.second is nullptr" << endl;
+
+				if (wall_was_selected)
 				{
-					if (paintingSelected(keys, camera, i.second))
+					cout << "wall was selected" << endl;
+					vec2 point_clicked = wall_selected.second->getClickPositionWallspace();
+					
+					if (paintings_to_display.size() > 0)
 					{
-						printArtwork(i.second);
-
-						title_text = text->getTextArray(i.second->getData()->getTitle(), context,
-							true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
-
-						switch (i.second->getData()->getRarity())
-						{
-						case COMMON: rarity_color = vec4(0.6f, 0.9f, 0.6f, 1.0f); break;
-						case UNCOMMON: rarity_color = vec4(0.6f, 0.6f, 0.9f, 1.0f); break;
-						case RARE: rarity_color = vec4(0.9f, 0.9f, 0.6f, 1.0f); break;
-						case LEGENDARY: rarity_color = vec4(1.0f, 0.75f, 0.6f, 1.0f); break;
-						case MASTERPIECE: rarity_color = vec4(0.6f, 0.9f, 0.9f, 1.0f); break;
-						}
-
-						rarity_text = text->getTextArray(stringFromRarity(i.second->getData()->getRarity()), context,
-							false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
-
-						string to_print = std::to_string(i.second->getData()->getDate().getYear()) + "\n" + i.second->getData()->getArtistName();
-						to_print += "\n$" + i.second->getValue().getNumberString(true, false, 2);
-
-						info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
-							true, rarity_text->getLowerLeft(), info_scale, text_box_width);
-
-						painting_was_selected = true;
-					}
+						shared_ptr<artwork> copy = paintings_to_display.at(0).second;
+						wall_selected.second->addPainting(point_clicked, *copy);
+					}				
 				}
 
-				if (title_text != nullptr)
-					title_text->draw(camera, context, "text", "text_color", "transparency_color");
-				if (info_text != nullptr)
-					info_text->draw(camera, context, "text", "text_color", "transparency_color");
-				if (rarity_text != nullptr)
-					rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+				if (artwork_was_selected)
+				{
+					shared_ptr<artwork> selected = artwork_selected.second;
+					title_text = text->getTextArray(selected->getData()->getTitle(), context,
+						true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
 
-				if (!painting_was_selected)
+					switch (selected->getData()->getRarity())
+					{
+					case COMMON: rarity_color = vec4(0.6f, 0.9f, 0.6f, 1.0f); break;
+					case UNCOMMON: rarity_color = vec4(0.6f, 0.6f, 0.9f, 1.0f); break;
+					case RARE: rarity_color = vec4(0.9f, 0.9f, 0.6f, 1.0f); break;
+					case LEGENDARY: rarity_color = vec4(1.0f, 0.75f, 0.6f, 1.0f); break;
+					case MASTERPIECE: rarity_color = vec4(0.6f, 0.9f, 0.9f, 1.0f); break;
+					}
+
+					rarity_text = text->getTextArray(stringFromRarity(selected->getData()->getRarity()), context,
+						false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
+
+					string to_print = std::to_string(selected->getData()->getDate().getYear()) + "\n" + selected->getData()->getArtistName();
+					to_print += "\n$" + selected->getValue().getNumberString(true, false, 2);
+
+					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
+						true, rarity_text->getLowerLeft(), info_scale, text_box_width);
+				}
+
+				else
 				{
 					title_text = nullptr;
 					info_text = nullptr;

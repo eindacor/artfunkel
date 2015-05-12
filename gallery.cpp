@@ -16,13 +16,10 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 	vector<vec3> anchor_triangle(wall_triangles.at(0));
 	vec3 anchor_point = anchor_triangle.at(0);
 	//TODO test to see if anchor_point * -1.0f works as well;
-	mat4 adjustment_position_matrix = glm::translate(mat4(1.0f), vec3(anchor_point.x * -1.0f, anchor_point.y * -1.0f, anchor_point.z * -1.0f));
+	mat4 adjustment_position_matrix = glm::translate(mat4(1.0f), anchor_point * -1.0f);
 
 	float normal_rotation = getNormalRotation(vec_vertices, normal_offset, stride);
-	//offset 270 since default normal position is +z, which is directly south in plan view
-	//offset 90 degrees because wall surface must be perpendicular to normal direction
 	float surface_rotation = normal_rotation - 90.0f;
-	cout << "surface_rotation: " << surface_rotation << endl;
 	mat4 adjustment_rotation_matrix = glm::rotate(mat4(1.0f), surface_rotation * -1.0f, vec3(0.0f, 1.0f, 0.0f));
 
 	//this matrix modifies the modeled geometry to 
@@ -114,8 +111,26 @@ bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 
 	return true;
 }
 
+void display_wall::addPainting(const vec2 &position, artwork to_add) 
+{
+	mat4 local_translation_matrix = glm::translate(mat4(1.0f), vec3(position.x, position.y, 0.0f));
+	to_add.setModelMatrix(wall_model_matrix * local_translation_matrix);
+	shared_ptr<artwork> to_add_ptr(new artwork(to_add));
+	wall_contents.push_back(pair<vec2, shared_ptr<artwork> >(position, to_add_ptr));
+
+	cout << "painting added" << endl;
+	printArtwork(to_add_ptr);
+	cout << "wall_contents: " << wall_contents.size() << endl;
+}
+
 void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
 {
+	for (auto i : lines)
+		i->draw(context, camera);
+
+	for (auto i : wall_contents)
+		i.second->draw(context, camera);
+
 	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
 	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
 	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
@@ -132,7 +147,7 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	glBindVertexArray(0);
 }
 
-bool display_wall::wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera)
+bool display_wall::wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
 {
 	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
 
@@ -153,54 +168,29 @@ bool display_wall::wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<o
 			return false;
 		}
 
-		vec3 first_point(i.at(1));
-		vec3 second_point(i.at(0));
-		vec3 third_point(i.at(2));
+		vec3 A(i.at(0));
+		vec3 B(i.at(1));
+		vec3 C(i.at(2));
 		vec3 result;
 
-		if (glm::intersectRayTriangle(origin, direction, first_point, second_point, third_point, result))
+		if (glm::intersectRayTriangle(origin, direction, A, B, C, result))
+		{
+			cout << "A: " << A.x << ", " << A.y << ", " << A.z << endl;
+			cout << "B: " << B.x << ", " << B.y << ", " << B.z << endl;
+			cout << "C: " << C.x << ", " << C.y << ", " << C.z << endl;
+
+			cout << "barycentric: " << result.x << ", " << result.y << ", " << 1.0f - result.x - result.y << endl;
+			
+			vec3 sum_result = (A * (1.0f - result.x - result.y)) + (B * result.x) + (C * result.y);
+			click_position = vec2(sum_result.x, sum_result.y);
+			cout << "cartesian: " << click_position.x << ", " << click_position.y << endl;
+			distance = result.z;
 			return true;
+		}
 	}
 
 	return false;
 }
-
-/*
-vec2 display_wall::getCursorLocationOnWall(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera) const
-{
-	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
-
-	mat4 inverse_wall_model_matrix = glm::inverse(wall_model_matrix);
-
-	ray.first = vec3(inverse_wall_model_matrix * vec4(ray.first, 1.0f));
-	ray.second = vec3(inverse_wall_model_matrix * vec4(ray.second, 1.0f));
-
-	vec3 origin = ray.first;
-	vec3 direction = ray.second - ray.first;
-
-	vector< vector<vec3> > select_surfaces = art->getSelectSurfaces();
-
-	//cycle through each surface, testing ray intersection
-	for (auto i : select_surfaces)
-	{
-		if (i.size() != 3)
-		{
-			cout << "surface tested is missing vertices" << endl;
-			return false;
-		}
-
-		vec3 first_point(i.at(1));
-		vec3 second_point(i.at(0));
-		vec3 third_point(i.at(2));
-		vec3 result;
-
-		if (glm::intersectRayTriangle(origin, direction, first_point, second_point, third_point, result))
-		{
-
-		}
-	}
-}
-*/
 
 gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, string material_path, 
 	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename)
@@ -253,4 +243,43 @@ void gallery::addPainting(int index, const shared_ptr<artwork> &work)
 	works_displayed[index]->moveRelative(glm::translate(mat4(1.0f), vec3(0.0f, y_offset, 0.0f)));
 	works_displayed[index]->moveRelative(work_positions[index]);
 	*/
+}
+
+shared_ptr<display_wall> gallery::checkWallClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
+{
+	pair<float, shared_ptr<display_wall> >wall_clicked(0.0f, nullptr);
+	float wall_distance = 0.0f;
+	for (auto i : display_walls)
+	{
+		if (i.second->wallClicked(keys, camera, wall_distance))
+		{
+			if (wall_clicked.second == nullptr || (wall_clicked.second != nullptr && wall_distance < wall_clicked.first))
+				wall_clicked = pair<float, shared_ptr<display_wall> >(wall_distance, i.second);
+		}
+	}
+
+	distance = wall_clicked.first;
+	return wall_clicked.second;
+}
+
+shared_ptr<artwork> gallery::checkArtworkClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
+{
+	pair<float, shared_ptr<artwork> >artwork_clicked(0.0f, nullptr);
+	float artwork_distance = 0.0f;
+	for (auto i : display_walls)
+	{
+		vector< pair<vec2, shared_ptr<artwork> > > wall_contents = i.second->getWallContents();
+		for (auto j : wall_contents)
+		{
+			//TODO make selected function part of artwork class
+			if (paintingSelected(keys, camera, j.second, artwork_distance))
+			{
+				if (artwork_clicked.second == nullptr || (artwork_clicked.second != nullptr && artwork_distance < artwork_clicked.first))
+					artwork_clicked = pair<float, shared_ptr<artwork> >(artwork_distance, j.second);
+			}
+		}
+	}
+
+	distance = artwork_clicked.first;
+	return artwork_clicked.second;
 }

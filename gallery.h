@@ -2,6 +2,8 @@
 #define GALLERY_H
 
 #include "header.h"
+#include "geometry.h"
+#include "utility_funcs.h"
 
 class display_wall
 {
@@ -14,11 +16,15 @@ public:
 
 	bool validPlacement(const shared_ptr<artwork> &placed, const vec2 &position);
 	mat4 getWallModelMatrix() const { return wall_model_matrix; }
-	bool wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera);
-	//vec2 getCursorLocationOnWall(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera) const;
+	bool display_wall::wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
+	vector< pair<vec2, shared_ptr<artwork> > > getWallContents() const { return wall_contents; }
 
-	void addPainting(const vec2 &position, const shared_ptr<artwork> &toAdd) { wall_contents.push_back(pair<vec2, shared_ptr<artwork> >(position, toAdd)); }
+	//shared_ptr not used to insure a unique instance of the painting is used for transformation
+	void addPainting(const vec2 &position, artwork toAdd);
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+
+	vec4 getClickPositionWorldspace() const { return wall_model_matrix * vec4(click_position.x, click_position.y, 0.0f, 1.0f); }
+	vec2 getClickPositionWallspace() const { return click_position; }
 
 private:
 	//wall_edges is used to determine whether a point is inside or outside the wall
@@ -34,6 +40,9 @@ private:
 	mat4 wall_model_matrix;
 
 	shared_ptr<jep::ogl_data> opengl_data;
+
+	//lines are for testing only
+	vector< shared_ptr<line> > lines;
 };
 
 class gallery
@@ -49,8 +58,13 @@ public:
 	{
 		for (auto i : display_walls)
 			i.second->draw(context, camera);
+
+		for (auto i : lines)
+			i->draw(context, camera);
 	}
 	
+	shared_ptr<display_wall> checkWallClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
+	shared_ptr<artwork> checkArtworkClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 
 private:
 	//int is the index of the specific position, mat4 is the position matrix
@@ -59,6 +73,8 @@ private:
 	map <int, shared_ptr<display_wall> > display_walls;
 	float width;
 	float height;
+	//lines are for testing only
+	vector< shared_ptr<line> > lines;
 
 	//vector<player> players_present;
 };
