@@ -860,7 +860,12 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					if (paintings_to_display.size() > 0)
 					{
 						shared_ptr<artwork> copy = paintings_to_display.at(0).second;
-						wall_selected.second->addPainting(point_clicked, *copy);
+
+						//TODO validPlacement not working
+						if (wall_selected.second->validPlacement(copy, point_clicked) || true)
+							wall_selected.second->addPainting(point_clicked, *copy);
+
+						else cout << "position not valid" << endl;
 					}				
 				}
 

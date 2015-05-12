@@ -55,6 +55,13 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 	wall_model_matrix = glm::inverse(adjustment_matrix);
 	wall_edges = getOuterEdges(wall_triangles);
 
+	for (auto i : wall_edges)
+	{
+		vec4 first(vec4(i.first, 1.0f));
+		vec4 second(vec4(i.second, 1.0f));
+		lines.push_back(shared_ptr<line>(new line(wall_model_matrix * first, wall_model_matrix * second, vec4(0.0f, 0.0f, 1.0f, 1.0f))));
+	}
+
 	//vec_vertices need to be modified before passing to GPU
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(
 		context,
@@ -88,6 +95,8 @@ bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 
 		//verifies paintings is within bounds of wall
 		if (!jep::pointInPolygon(wall_edges, i))
 			return false;
+
+		else cout << "point not within wall bounds: " << i.x << ", " << i.y << endl;
 
 		//verifies painting does not collide with other paintings
 		for (auto p : wall_contents)
