@@ -1,5 +1,6 @@
 #include "header.h"
 #include "artwork.h"
+#include "utility_funcs.h"
 
 artwork_data::artwork_data(int work_id,
 	string work_title,
@@ -223,4 +224,37 @@ void artwork::updateOverallDimensions()
 		select_surfaces.push_back(vector < vec3 > { left_bottom_back, left_bottom_front, right_bottom_front }); //upper left	
 		select_surfaces.push_back(vector < vec3 > { left_bottom_back, right_bottom_front, right_bottom_back }); //lower right
 	}
+}
+
+//modify 
+bool artwork::isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, const pair<vec3, vec3> &ray, float &scale) const
+{
+	mat4 inverse_model_matrix = glm::inverse(model_matrix);
+
+	vec3 origin = vec3(inverse_model_matrix * vec4(ray.first, 1.0f));
+	vec3 direction = vec3(inverse_model_matrix * vec4(ray.second, 1.0f)) - origin;
+
+	//cycle through each surface, testing ray intersection
+	for (auto i : select_surfaces)
+	{
+		if (i.size() != 3)
+		{
+			cout << "surface tested is missing vertices" << endl;
+			return false;
+		}
+
+		vec3 first_point(i.at(1));
+		vec3 second_point(i.at(0));
+		vec3 third_point(i.at(2));
+		vec3 result;
+
+		if (glm::intersectRayTriangle(origin, direction, first_point, second_point, third_point, result))
+		{
+			scale = result.z;
+			return true;
+		}
+	}
+
+	scale = 0.0f;
+	return false;
 }

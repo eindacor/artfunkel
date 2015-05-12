@@ -16,7 +16,8 @@ public:
 
 	bool validPlacement(const shared_ptr<artwork> &placed, const vec2 &position);
 	mat4 getWallModelMatrix() const { return wall_model_matrix; }
-	bool display_wall::wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
+	bool isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
+		const pair<vec3, vec3> &ray, float &scale);
 	vector< pair<vec2, shared_ptr<artwork> > > getWallContents() const { return wall_contents; }
 
 	//shared_ptr not used to insure a unique instance of the painting is used for transformation
@@ -48,21 +49,11 @@ private:
 class gallery
 {
 public:
-	//TODO modify constructors to take a model file, containing specific display points
 	gallery(const shared_ptr<ogl_context> &context, string model_path, string material_path,
 		string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename);
 	~gallery(){};
 
-	void addPainting(int index, const shared_ptr<artwork> &work);
-	void renderGallery(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
-	{
-		for (auto i : display_walls)
-			i.second->draw(context, camera);
-
-		for (auto i : lines)
-			i->draw(context, camera);
-	}
-	
+	void renderGallery(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;	
 	shared_ptr<display_wall> checkWallClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 	shared_ptr<artwork> checkArtworkClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 

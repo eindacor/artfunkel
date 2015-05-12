@@ -99,6 +99,9 @@ public:
 
 	void applyFrameTemplate(const shared_ptr<ogl_context> &context, const frame_model &frame_template);
 
+	bool isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
+		const pair<vec3, vec3> &ray, float &scale) const;
+
 private:
 	bignum value;
 	bool forgery;

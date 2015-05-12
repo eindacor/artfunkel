@@ -716,7 +716,6 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			if (alert_text != nullptr)
 				alert_text->draw(camera, context, "text", "text_color", "transparency_color");
 
-			//TODO fix so crate doesn't disappear when going to the main menu
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
 				menu_return = mainMenu(data_path, context, keys, text);

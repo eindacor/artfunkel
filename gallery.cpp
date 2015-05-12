@@ -2,27 +2,26 @@
 #include "artwork.h"
 #include "utility_funcs.h"
 
-//dislay walls first need their vertex data modified to be flat on the z-axis, so raytracing only needs to adjust on click, instead of 
-//transforming all surfaces per click
+//dislay walls first need their vertex data modified to be flat on the z-axis, so raytracing only needs to modify the ray created for click
+//detection, rather than matrix-translating all of the walls on-click
 display_wall::display_wall(const shared_ptr<ogl_context> &context, string texture_path, 
 	const vector<float> &vec_vertices, int geometry_offset, int normal_offset, int uv_offset, int stride)
 {
-	//TODO make all necessary adjustments to vec_vertices before extracting wall_triangles for the first time
-	wall_triangles = getTriangles(vec_vertices, geometry_offset, stride);
+	//TODO make data collection more robust for bad model files
+	//wall_triangles = getTriangles(vec_vertices, geometry_offset, stride);
 
-	if (wall_triangles.size() == 0)
+	if (vec_vertices.size() < 3)
 		throw;
 
-	vector<vec3> anchor_triangle(wall_triangles.at(0));
-	vec3 anchor_point = anchor_triangle.at(0);
-	//TODO test to see if anchor_point * -1.0f works as well;
+	vec3 anchor_point(vec_vertices.at(0), vec_vertices.at(1), vec_vertices.at(2));
+	//vec3 anchor_point = anchor_triangle.at(0);
 	mat4 adjustment_position_matrix = glm::translate(mat4(1.0f), anchor_point * -1.0f);
 
 	float normal_rotation = getNormalRotation(vec_vertices, normal_offset, stride);
 	float surface_rotation = normal_rotation - 90.0f;
 	mat4 adjustment_rotation_matrix = glm::rotate(mat4(1.0f), surface_rotation * -1.0f, vec3(0.0f, 1.0f, 0.0f));
 
-	//this matrix modifies the modeled geometry to 
+	//this matrix modifies the modeled geometry to be on the z-axis for easy click intersection detection
 	mat4 adjustment_matrix = adjustment_rotation_matrix * adjustment_position_matrix;
 
 	vector<float> modified_vec_vertices;
@@ -52,14 +51,16 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 	//for each vector of vec3's in wall_triangles
 	wall_triangles = getTriangles(modified_vec_vertices, geometry_offset, stride);
 
+	//wall model matrix is the inverse of the original adjustment, returning it to its proper location when drawn
 	wall_model_matrix = glm::inverse(adjustment_matrix);
 	wall_edges = getOuterEdges(wall_triangles);
 
+	//TODO remove lines once graphics are improved, for visual clarity only
 	for (auto i : wall_edges)
 	{
 		vec4 first(vec4(i.first, 1.0f));
 		vec4 second(vec4(i.second, 1.0f));
-		lines.push_back(shared_ptr<line>(new line(wall_model_matrix * first, wall_model_matrix * second, vec4(0.0f, 0.0f, 1.0f, 1.0f))));
+		lines.push_back(shared_ptr<line>(new line(wall_model_matrix * first, wall_model_matrix * second, vec4(0.0f, 0.0f, 0.0f, 1.0f))));
 	}
 
 	//vec_vertices need to be modified before passing to GPU
@@ -156,17 +157,13 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	glBindVertexArray(0);
 }
 
-bool display_wall::wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
+bool display_wall::isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
+	const pair<vec3, vec3> &ray, float &scale)
 {
-	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
-
 	mat4 inverse_model_matrix = glm::inverse(wall_model_matrix);
 
-	ray.first = vec3(inverse_model_matrix * vec4(ray.first, 1.0f));
-	ray.second = vec3(inverse_model_matrix * vec4(ray.second, 1.0f));
-
-	vec3 origin = ray.first;
-	vec3 direction = ray.second - ray.first;
+	vec3 origin = vec3(inverse_model_matrix * vec4(ray.first, 1.0f));
+	vec3 direction = vec3(inverse_model_matrix * vec4(ray.second, 1.0f)) - origin;
 
 	//cycle through each surface, testing ray intersection
 	for (auto i : wall_triangles)
@@ -184,20 +181,12 @@ bool display_wall::wallClicked(shared_ptr<key_handler> &keys, const shared_ptr<o
 
 		if (glm::intersectRayTriangle(origin, direction, A, B, C, result))
 		{
-			cout << "A: " << A.x << ", " << A.y << ", " << A.z << endl;
-			cout << "B: " << B.x << ", " << B.y << ", " << B.z << endl;
-			cout << "C: " << C.x << ", " << C.y << ", " << C.z << endl;
-
-			cout << "barycentric: " << result.x << ", " << result.y << ", " << 1.0f - result.x - result.y << endl;
-			
 			vec3 sum_result = (A * (1.0f - result.x - result.y)) + (B * result.x) + (C * result.y);
 			click_position = vec2(sum_result.x, sum_result.y);
-			cout << "cartesian: " << click_position.x << ", " << click_position.y << endl;
-			distance = result.z;
+			scale = result.z;
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -233,34 +222,24 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 	//TODO add code for floor model
 }
 
-void gallery::addPainting(int index, const shared_ptr<artwork> &work)
+void gallery::renderGallery(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
-	/*
-	//TODO check to verify painting position is not occupied
-	//creates a copy of the instance passed, so the translation matrix applied doesn't affect the original
-	works_displayed[index] = shared_ptr<artwork>(new artwork(*work));
+	for (auto i : display_walls)
+		i.second->draw(context, camera);
 
-	//center on eye level, unless painting is within .5 of floor
-	float eye_level = 1.65f;
-	float y_offset = 0.0f;
-	float min_distance_from_floor = .5f;
-	if ((works_displayed[index]->getData()->getHeight() * .0067f) + min_distance_from_floor > eye_level)
-		y_offset = (works_displayed[index]->getData()->getHeight() / 200.0f) + min_distance_from_floor;
-
-	else y_offset = eye_level - (works_displayed[index]->getData()->getHeight() / 600.0f);
-
-	works_displayed[index]->moveRelative(glm::translate(mat4(1.0f), vec3(0.0f, y_offset, 0.0f)));
-	works_displayed[index]->moveRelative(work_positions[index]);
-	*/
+	for (auto i : lines)
+		i->draw(context, camera);
 }
 
 shared_ptr<display_wall> gallery::checkWallClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
 {
+	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
+
 	pair<float, shared_ptr<display_wall> >wall_clicked(0.0f, nullptr);
 	float wall_distance = 0.0f;
 	for (auto i : display_walls)
 	{
-		if (i.second->wallClicked(keys, camera, wall_distance))
+		if (i.second->isClicked(keys, camera, ray, wall_distance))
 		{
 			if (wall_clicked.second == nullptr || (wall_clicked.second != nullptr && wall_distance < wall_clicked.first))
 				wall_clicked = pair<float, shared_ptr<display_wall> >(wall_distance, i.second);
@@ -273,6 +252,8 @@ shared_ptr<display_wall> gallery::checkWallClicks(shared_ptr<key_handler> &keys,
 
 shared_ptr<artwork> gallery::checkArtworkClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
 {
+	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
+
 	pair<float, shared_ptr<artwork> >artwork_clicked(0.0f, nullptr);
 	float artwork_distance = 0.0f;
 	for (auto i : display_walls)
@@ -280,8 +261,7 @@ shared_ptr<artwork> gallery::checkArtworkClicks(shared_ptr<key_handler> &keys, c
 		vector< pair<vec2, shared_ptr<artwork> > > wall_contents = i.second->getWallContents();
 		for (auto j : wall_contents)
 		{
-			//TODO make selected function part of artwork class
-			if (paintingSelected(keys, camera, j.second, artwork_distance))
+			if (j.second->isClicked(keys, camera, ray, artwork_distance))
 			{
 				if (artwork_clicked.second == nullptr || (artwork_clicked.second != nullptr && artwork_distance < artwork_clicked.first))
 					artwork_clicked = pair<float, shared_ptr<artwork> >(artwork_distance, j.second);
