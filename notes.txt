@@ -12,6 +12,7 @@
 		art historians -> automatically generate deals and auction invitations for player
 		preservationist -> reduced cost of restoring paintings, automatically preserve paintings
 		experts -> reduced cost of identifying forgeries
+		??? -> provides additional info for auction house
 		
 		
 ---------------------------forgeries---------------------------		

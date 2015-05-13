@@ -9,6 +9,9 @@ enum genre {
 };
 enum rarity { COMMON, UNCOMMON, RARE, LEGENDARY, MASTERPIECE, UNKNOWN_RARITY };
 enum sort_options { ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, TITLE, AREA, HEIGHT, WIDTH, RARITY, PAINTING_ID, NO_SORT };
+enum hud_element_type { ELEMENT_ARRAY, THUMBNAIL, TEXT_BOX, TEXT_FIELD, BUTTON_TOGGLE, BUTTON_PRESS, NO_TYPE };
+enum vertical_justification { V_TOP, V_MIDDLE, V_BOTTOM, V_STRETCH };
+enum horizontal_justification { H_LEFT, H_CENTER, H_RIGHT, H_STRETCH };
 
 #include <string>
 #include <vector>
@@ -38,7 +41,8 @@ class gallery;
 class display_wall;
 class loot_generator;
 class line;
-class hud_item;
+class hud_element;
+class hud;
 class artwork_thumbnail;
 
 using std::vector;
@@ -47,6 +51,7 @@ using std::string;
 using std::cout;
 using std::endl;
 using std::map;
+using std::multimap;
 using std::pair;
 
 using boost::shared_ptr;

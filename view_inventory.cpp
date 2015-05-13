@@ -375,3 +375,60 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	context->setBackgroundColor(original_background);
 	return menu_return;
 }
+
+int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
+	const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player, const shared_ptr<text_handler> &text)
+{
+	vec4 original_background = context->getBackgroundColor();
+	context->setBackgroundColor(vec4(0.5f, 0.3f, 0.0f, 1.0f));
+
+	int display_count = 10;
+
+	//remove inventory copy mechanic. use actual inventory container with active iterators
+	//add copies of the artwork instances to the local vector, so position can be manipulated
+	vector<shared_ptr<artwork> >inventory_copy = current_player->getInventoryCopy();
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.0f, -0.5f), 0.3f, 1.5f,
+		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
+
+	//add player's default frames to each
+	for (auto i : inventory_copy)
+	{
+		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
+
+		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 
+			artwork_thumbnails->getHeight() - 0.05f, artwork_thumbnails->getHeight() - 0.05f));
+
+		artwork_thumbnails->addElement(thumbnail);
+	}
+
+	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
+
+	glfwSetTime(0);
+	float render_fps = 60.0f;
+	bool finished = false;
+	int menu_return = 0;
+
+	while (!finished)
+	{
+		if (glfwGetTime() > 1.0f / render_fps)
+		{
+			glfwPollEvents();
+			context->clearBuffers();
+	
+			artwork_thumbnails->draw(context, camera);
+
+			context->swapBuffers();
+
+			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
+			{
+				menu_return = mainMenu(data_path, context, keys, text);
+				finished = (menu_return != 1);
+			}
+
+			glfwSetTime(0.0f);
+		}
+	}
+
+	context->setBackgroundColor(original_background);
+	return menu_return;
+}

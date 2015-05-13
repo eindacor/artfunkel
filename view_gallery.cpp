@@ -178,7 +178,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				for (auto i : thumbnails)
 				{
 					vec2 cursor_position = keys->getCursorPosition();
-					if (i->isSelected(keys, camera, cursor_position, painting_to_place))
+					if (i->isSelected(keys, cursor_position, painting_to_place))
 					{
 						new_selection = true;
 						break;
