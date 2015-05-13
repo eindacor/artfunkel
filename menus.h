@@ -3,6 +3,8 @@
 
 #include "header.h"
 
+enum select_mode {NOT_SET, PLACE_PAINTING};
+
 int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<text_handler> &text);
 
 int viewInventory(string data_path, const shared_ptr<ogl_context> &context,

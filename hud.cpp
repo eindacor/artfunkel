@@ -1,5 +1,20 @@
 #include "hud.h"
 
+hud_item::hud_item(const vec2 &item_centerpoint, float item_height, float item_width)
+{
+	height = item_height;
+	width = item_width;
+	centerpoint = item_centerpoint;
+
+	float half_height(height / 2.0f);
+	float half_width(width / 2.0f);
+
+	upper_left = vec2(centerpoint.x - half_width, centerpoint.y + half_height);
+	upper_right = vec2(centerpoint.x + half_width, centerpoint.y + half_height);
+	lower_left = vec2(centerpoint.x - half_width, centerpoint.y - half_height);
+	lower_right = vec2(centerpoint.x + half_width, centerpoint.y - half_height);
+}
+
 bool hud_item::itemSelected(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, const vec2 &cursor_position) const
 {
 	if (cursor_position.x < upper_left.x || cursor_position.x > upper_right.x ||

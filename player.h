@@ -14,35 +14,40 @@ public:
 	void setFrame(const shared_ptr<frame_model> &f) { default_frame = f; }
 	shared_ptr<frame_model> getDefaultFrame() const { return default_frame; }
 
-	map<int, shared_ptr<artwork> > getInventory() { return inventory; }
+	//TODO rework inventory system for placing paintings in gallery
+
+	//map<int, shared_ptr<artwork> > getInventory() { return inventory; }
 	//copied inventory is used when the position will be modified, such as menus
 	//returns a vector of pairs for sortability
-	vector<pair<int, shared_ptr<artwork> > > getInventoryCopy();
+	vector<shared_ptr<artwork> > getInventoryCopy();
 
-	map<int, shared_ptr<artwork> > getDisplayed() { return paintings_on_display; }
 	//returns a vector of pairs for sortability
-	vector<pair<int, shared_ptr<artwork> > > getDisplayedCopy();
+	vector<shared_ptr<artwork> > getDisplayedCopy();
+	vector<shared_ptr<artwork> > getNotDisplayedCopy();
 
 	bignum getCollectionValue() const { return collection_value; }
 
-	void addPaintingToDisplay(const pair<int, shared_ptr<artwork> > &toAdd);
-	void removePaintingFromDisplay(const pair<int, shared_ptr<artwork> > &toRemove);
+	void addPaintingToDisplay(const shared_ptr<artwork> &to_add);
+	void removePaintingFromDisplay(const shared_ptr<artwork> &to_remove);
 
-	bool isOnDisplay(int index);
+	bool player::isOnDisplay(const shared_ptr<artwork> &to_find) const;
 
-	bool alreadyOwned(int painting_index) const;
+	bool alreadyOwned(const shared_ptr<artwork> &to_find) const;
+	shared_ptr<gallery> getGallery(int n) const;
+	void addGallery(const shared_ptr<gallery> &to_add);
 
 private:
 	string name;
 	//key corresponds to painting ID
 	map<int, shared_ptr<artwork> > inventory;
 	shared_ptr<frame_model> default_frame;
-	map<int, shared_ptr<artwork> > paintings_on_display;
+	vector<shared_ptr<artwork> > paintings_on_display;
+	vector<shared_ptr<artwork> > paintings_not_on_display;
 
 	bignum currency;
 	bignum collection_value;
 
-	//map<int, gallery> active_galleries;
+	map<int, shared_ptr<gallery> > active_galleries;
 };
 
 #endif

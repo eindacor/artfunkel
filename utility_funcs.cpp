@@ -239,17 +239,17 @@ void addFrames(vector< shared_ptr<artwork> > &art_vec, shared_ptr<ogl_context> c
 }
 
 //TODO typdef vector of pairs
-vector<pair<int, shared_ptr<artwork> > >::iterator sortArtVec(vector<pair<int, shared_ptr<artwork> > > &art_vec, sort_options sort, bool ascending)
+vector< shared_ptr<artwork> >::iterator sortArtVec(vector< shared_ptr<artwork> > &art_vec, sort_options sort, bool ascending)
 {
 	switch (sort)
 	{
 	case ARTIST_NAME:
 		std::sort(art_vec.begin(), art_vec.end(), 
-			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
+			[&](shared_ptr<artwork> first_work, shared_ptr<artwork> second_work)
 		{
-			string first_work_name = first_work.second->getData()->getArtistName();
+			string first_work_name = first_work->getData()->getArtistName();
 			std::transform(first_work_name.begin(), first_work_name.end(), first_work_name.begin(), ::tolower);
-			string second_work_name = second_work.second->getData()->getArtistName();
+			string second_work_name = second_work->getData()->getArtistName();
 			std::transform(second_work_name.begin(), second_work_name.end(), second_work_name.begin(), ::tolower);
 			return (ascending ? first_work_name < second_work_name : first_work_name > second_work_name);
 		});
@@ -257,20 +257,20 @@ vector<pair<int, shared_ptr<artwork> > >::iterator sortArtVec(vector<pair<int, s
 
 	case VALUE:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
+			[&](shared_ptr<artwork> first_work, shared_ptr<artwork> second_work)
 		{ 
-			return (ascending ? first_work.second->getValue() < second_work.second->getValue() :
-								first_work.second->getValue() > second_work.second->getValue());
+			return (ascending ? first_work->getValue() < second_work->getValue() :
+								first_work->getValue() > second_work->getValue());
 		});
 		break;
 
 	case TITLE:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
+			[&](shared_ptr<artwork> first_work, shared_ptr<artwork> second_work)
 		{
-			string first_work_title = first_work.second->getData()->getTitle();
+			string first_work_title = first_work->getData()->getTitle();
 			std::transform(first_work_title.begin(), first_work_title.end(), first_work_title.begin(), ::tolower);
-			string second_work_title = second_work.second->getData()->getTitle();
+			string second_work_title = second_work->getData()->getTitle();
 			std::transform(second_work_title.begin(), second_work_title.end(), second_work_title.begin(), ::tolower);
 			return (ascending ? first_work_title < second_work_title : first_work_title > second_work_title);
 		});
@@ -278,19 +278,19 @@ vector<pair<int, shared_ptr<artwork> > >::iterator sortArtVec(vector<pair<int, s
 
 	case RARITY:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
+			[&](shared_ptr<artwork> first_work, shared_ptr<artwork> second_work)
 		{
-			return (ascending ? first_work.second->getData()->getRarity() < second_work.second->getData()->getRarity() :
-				first_work.second->getData()->getRarity() > second_work.second->getData()->getRarity());
+			return (ascending ? first_work->getData()->getRarity() < second_work->getData()->getRarity() :
+				first_work->getData()->getRarity() > second_work->getData()->getRarity());
 		});
 		break;
 
 	case AREA:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
+			[&](shared_ptr<artwork> first_work, shared_ptr<artwork> second_work)
 		{
-			float first_work_area = first_work.second->getData()->getHeight() * first_work.second->getData()->getWidth();
-			float second_work_area = second_work.second->getData()->getHeight() * second_work.second->getData()->getWidth();
+			float first_work_area = first_work->getData()->getHeight() * first_work->getData()->getWidth();
+			float second_work_area = second_work->getData()->getHeight() * second_work->getData()->getWidth();
 			return (ascending ? first_work_area < second_work_area :
 				first_work_area > second_work_area);
 		});
@@ -298,10 +298,10 @@ vector<pair<int, shared_ptr<artwork> > >::iterator sortArtVec(vector<pair<int, s
 
 	case DATE:
 		std::sort(art_vec.begin(), art_vec.end(),
-			[&](pair<int, shared_ptr<artwork> > first_work, pair<int, shared_ptr<artwork> > second_work)
+			[&](shared_ptr<artwork> first_work, shared_ptr<artwork> second_work)
 		{
-			return (ascending ? first_work.second->getData()->getDate() < second_work.second->getData()->getDate() :
-				first_work.second->getData()->getDate() > second_work.second->getData()->getDate());
+			return (ascending ? first_work->getData()->getDate() < second_work->getData()->getDate() :
+				first_work->getData()->getDate() > second_work->getData()->getDate());
 		});
 		break;
 
@@ -336,7 +336,7 @@ mat4 calcImageScale(const shared_ptr<artwork> &target, float width_max, float he
 
 //TODO create thumbnail_table class to handle thumbnails, include adding/removing
 //manipulates paintings to be viewed as thumbnails returns iterator to next starting point of the sequence
-map<int, mat4> getThumbnailMatrixMap(const shared_ptr<ogl_context> &context, const vector<pair<int, shared_ptr<artwork> > > &art_vec,
+map<int, mat4> getThumbnailMatrixMap(const shared_ptr<ogl_context> &context, const vector<shared_ptr<artwork> > &art_vec,
 	float margin_size, float cell_size, float cell_padding_factor)
 {
 	map<int, mat4> matrix_map;
@@ -361,7 +361,7 @@ map<int, mat4> getThumbnailMatrixMap(const shared_ptr<ogl_context> &context, con
 	{
 		//TODO reduce confusion of scaling funciton not taking aspect-ratio-modified size
 		//must take cell size since aspect ratio is not accounted for in scaling
-		mat4 scale = calcImageScale(i.second, cell_size - (2 * cell_padding), max_painting_height);
+		mat4 scale = calcImageScale(i, cell_size - (2 * cell_padding), max_painting_height);
 
 		float x_offset = initial_x_offset + (item_counter * cell_width);
 		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset, y_translate * -1.0f, 0.0f));
@@ -373,7 +373,24 @@ map<int, mat4> getThumbnailMatrixMap(const shared_ptr<ogl_context> &context, con
 	return matrix_map;
 }
 
-map<int, mat4> getHighlightMatrixMap(const shared_ptr<ogl_context> &context, const vector<pair<int, shared_ptr<artwork> > > &art_vec,
+vector<vec2> getThumbnailLocations(const shared_ptr<ogl_context> &context, int thumbnail_count, float bottom_margin, float thumbnail_height)
+{
+	vector<vec2> centerpoints;
+
+	float cell_width = 2.0f / (float)thumbnail_count;
+	float y_offset = (1.0f - bottom_margin - (thumbnail_height / 2.0f)) * -1.0f;
+	float initial_x_offset = -1.0f + (cell_width / 2.0f);
+
+	for (int i = 0; i < thumbnail_count; i++)
+	{
+		float x_offset = initial_x_offset + ((float)i * cell_width);
+		centerpoints.push_back(vec2(x_offset, y_offset));
+	}
+
+	return centerpoints;
+}
+
+map<int, mat4> getHighlightMatrixMap(const shared_ptr<ogl_context> &context, const vector<shared_ptr<artwork> > &art_vec,
 	const vec2 &screen_position, float cell_size)
 {
 	map<int, mat4> matrix_map;
@@ -391,7 +408,7 @@ map<int, mat4> getHighlightMatrixMap(const shared_ptr<ogl_context> &context, con
 	{
 		//TODO reduce confusion of scaling funciton not taking aspect-ratio-modified size
 		//must take cell size since aspect ratio is not accounted for in scaling
-		mat4 scale = calcImageScale(i.second, cell_size, max_painting_height);
+		mat4 scale = calcImageScale(i, cell_size, max_painting_height);
 		mat4 translation = glm::translate(mat4(1.0f), vec3(x_offset, y_translate, 0.0f));
 		mat4 position_matrix = translation * scale;
 
@@ -401,12 +418,12 @@ map<int, mat4> getHighlightMatrixMap(const shared_ptr<ogl_context> &context, con
 	return matrix_map;
 }
 
-vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkFirst(
-	vector<pair<int, shared_ptr<artwork> > >::const_iterator first,
-	const vector<pair<int, shared_ptr<artwork> > > &art_vec, int chunk_size, bool forward)
+vector< shared_ptr<artwork> >::const_iterator findChunkFirst(
+	vector< shared_ptr<artwork> >::const_iterator first,
+	vector< shared_ptr<artwork> > &art_vec, int chunk_size, bool forward)
 {
-	int distance_to_end = std::distance(first, art_vec.end());
-	int distance_to_begin = std::distance(art_vec.begin(), first);
+	int distance_to_end = std::distance(first, art_vec.cend());
+	int distance_to_begin = std::distance(art_vec.cbegin(), first);
 
 	switch (forward)
 	{
@@ -430,9 +447,9 @@ vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkFirst(
 	}
 }
 
-vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkLast(
-	vector<pair<int, shared_ptr<artwork> > >::const_iterator first,
-	const vector<pair<int, shared_ptr<artwork> > > &art_vec, int chunk_size)
+vector< shared_ptr<artwork> >::const_iterator findChunkLast(
+	vector< shared_ptr<artwork> >::const_iterator first,
+	const vector< shared_ptr<artwork> > &art_vec, int chunk_size)
 {
 	int distance_to_end = std::distance(first, art_vec.end());
 	if (distance_to_end <= chunk_size)
@@ -441,9 +458,9 @@ vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkLast(
 	return first + (chunk_size - 1);
 }
 
-vector<pair<int, shared_ptr<artwork> > >::const_iterator findChunkEnd(
-	vector<pair<int, shared_ptr<artwork> > >::const_iterator first,
-	const vector<pair<int, shared_ptr<artwork> > > &art_vec, int chunk_size)
+vector< shared_ptr<artwork> >::const_iterator findChunkEnd(
+	vector< shared_ptr<artwork> >::const_iterator first,
+	const vector< shared_ptr<artwork> > &art_vec, int chunk_size)
 {
 	int distance_to_end = std::distance(first, art_vec.end());
 	if (distance_to_end <= chunk_size)

@@ -38,6 +38,8 @@ class gallery;
 class display_wall;
 class loot_generator;
 class line;
+class hud_item;
+class artwork_thumbnail;
 
 using std::vector;
 using std::list;

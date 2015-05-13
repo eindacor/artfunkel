@@ -7,7 +7,7 @@
 class hud_item
 {
 public:
-	hud_item(const vec2 centerpoint, float item_height, float item_width) : height(item_height), width(item_width) {};
+	hud_item(const vec2 &item_centerpoint, float item_height, float item_width);
 	~hud_item(){};
 
 	virtual bool itemSelected(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, const vec2 &cursor_position) const;
@@ -36,18 +36,26 @@ public:
 		float screen_height, float screen_width, float padding = 0.0f)
 		: hud_item(centerpoint, screen_height, screen_width)
 	{
-		thumbnail_padding = padding;  setStored(context);
 		stored = art;
+		thumbnail_padding = padding;  
+		setStored(context);		
 	}
 	~artwork_thumbnail(){};
 
 	void setStored(const shared_ptr<ogl_context> &context);
+	shared_ptr<artwork> getStored() const { return stored; }
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const { 
 		stored->draw2D(context, camera, model_matrix); }
 
 	virtual bool isSelected(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, const vec2 &cursor_position, shared_ptr<artwork> &selected) const
 	{
-		if (itemSelected(keys, camera, cursor_position)) selected = stored;
+		if (itemSelected(keys, camera, cursor_position))
+		{
+			selected = stored;
+			return true;
+		}
+
+		else return false;
 	}
 
 private:
@@ -91,5 +99,7 @@ private:
 
 };
 */
+
+//TODO add HUD element container class, where elements can be assigned names for click detection
 
 #endif

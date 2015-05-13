@@ -26,7 +26,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Value Scale,Height (cm),Width (cm),Imag
 24,Leonardo da Vinci,Vitruvian Man,1490????,SKETCH,LEGENDARY,Ink,0.85,34,26,vinci_vitruvian.bmp,no
 25,Claude Monet,"Impression, Sunrise",1872????,IMPRESSIONISM,MASTERPIECE,Oil,0.65,48,63,monet_impression.bmp,no
 26,Claude Monet,Le Bassin Aux Nympheas,1919????,IMPRESSIONISM,LEGENDARY,Oil,0.65,100.4,201,monet_bassin.bmp,no
-27,Claude Monet,San Giorgio Maggiore at Dusk,1912????,IMPRESSIONISM,RARE,Oil,0.65,65.2,92.4,monet_san.bmp,no
+27,Claude Monet,San Giorgio Maggiore at Dusk,1912????,IMPRESSIONISM,LEGENDARY,Oil,0.65,65.2,92.4,monet_san.bmp,no
 28,Claude Monet,Bain a la Grenouillere,1869????,IMPRESSIONISM,LEGENDARY,Oil,0.65,75,100,monet_bain.bmp,no
 29,Claude Monet,Garden at Sainte-Adresse,1867????,SCENE,LEGENDARY,Oil,0.65,98,130,monet_garden.bmp,no
 30,Henri Matisse,Dance,1910????,MODERNISM,RARE,Oil,0.55,260,390,matisse_dance.bmp,no
@@ -62,8 +62,8 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Value Scale,Height (cm),Width (cm),Imag
 60,Gustav Klimt,The Maiden,1913????,ABSTRACT,RARE,Oil,0.95,190,200,klimt_maiden.bmp,no
 61,Gustav Klimt,The Three Ages of Woman,1905????,ABSTRACT,RARE,Oil,0.9,180,180,klimt_three.bmp,no
 62,Gustav Klimt,Death and Life,1916????,ABSTRACT,RARE,Oil,0.9,178,198,klimt_death.bmp,no
-63,Paul Cezanne,The Large Bathers,1905????,POST-IMPRESSIONISM,LEGENDARY,Oil,0.85,210,251,cezanne_large.bmp,no
-64,Paul Cezanne,Still Life with Apples,1898????,POST-IMPRESSIONISM,RARE,Oil,0.85,69,93,cezanne_still.bmp,no
+63,Paul Cezanne,The Large Bathers,1905????,POST-IMPRESSIONISM,RARE,Oil,0.85,210,251,cezanne_large.bmp,no
+64,Paul Cezanne,Still Life with Apples,1898????,POST-IMPRESSIONISM,LEGENDARY,Oil,0.85,69,93,cezanne_still.bmp,no
 65,Paul Cezanne,Chateau Noir,1904????,POST-IMPRESSIONISM,LEGENDARY,Oil,0.85,74,93,cezanne_chateau.bmp,no
 66,Paul Cezanne,The Basket of Apples,1893????,POST-IMPRESSIONISM,LEGENDARY,Oil,0.85,65,80,cezanne_basket.bmp,no
 67,Paul Cezanne,The Boy in the Red Vest,1890????,POST-IMPRESSIONISM,RARE,Oil,0.95,81,64,cezanne_boy.bmp,no

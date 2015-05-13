@@ -127,10 +127,6 @@ void display_wall::addPainting(const vec2 &position, artwork to_add)
 	to_add.setModelMatrix(wall_model_matrix * local_translation_matrix);
 	shared_ptr<artwork> to_add_ptr(new artwork(to_add));
 	wall_contents.push_back(pair<vec2, shared_ptr<artwork> >(position, to_add_ptr));
-
-	cout << "painting added" << endl;
-	printArtwork(to_add_ptr);
-	cout << "wall_contents: " << wall_contents.size() << endl;
 }
 
 void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
