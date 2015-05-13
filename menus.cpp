@@ -6,6 +6,7 @@
 #include "utility_funcs.h"
 #include "menus.h"
 #include "gallery.h"
+#include "hud.h"
 
 int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<text_handler> &text)
 {
@@ -744,9 +745,9 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	shared_ptr<gallery> test_gallery(new gallery(
 		context, data_path + "model_data\\",
 		data_path + "model_data\\",
-		"test_gallery.obj",
+		"test_gallery_02.obj",
 		"test_filler.obj",
-		"test_gallery.mtl",
+		"test_gallery_02.mtl",
 		"test_filler.mtl"));
 	//GALLERY TEST CODE
 
@@ -756,6 +757,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	
 	for (auto i : paintings_to_display)
 		i.second->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
+
+	artwork_thumbnail thumbnail_test(context, camera);
 
 	glfwSetTime(0);
 	float render_fps = 60.0f;
