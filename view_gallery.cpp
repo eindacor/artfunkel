@@ -126,6 +126,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	shared_ptr<static_text> rarity_text(nullptr);
 	shared_ptr<static_text> info_text(nullptr);
 	shared_ptr<artwork> painting_to_place(nullptr);
+	pair<float, shared_ptr<artwork> > artwork_selected(0.0f, nullptr);
+	pair<float, shared_ptr<display_wall> > wall_selected(0.0f, nullptr);
 
 	while (!finished)
 	{
@@ -187,8 +189,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				{
 					//first float indicates scale of the ray from bary coordinates (result.z)
 					//the smaller the scale, the closer the object is. closest object indicates intended target
-					pair<float, shared_ptr<artwork> > artwork_selected;
-					pair<float, shared_ptr<display_wall> > wall_selected;
+					//pair<float, shared_ptr<artwork> > artwork_selected;
+					//pair<float, shared_ptr<display_wall> > wall_selected;
 
 					wall_selected.second = current_gallery->checkWallClicks(keys, camera, wall_selected.first);
 					artwork_selected.second = current_gallery->checkArtworkClicks(keys, camera, artwork_selected.first);
@@ -206,7 +208,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 						if (wall_selected.second->validPlacement(painting_to_place, point_clicked) || true)
 						{ 
 							//TODO find a way to combine these to ensure players paintings are never added without updating player
-							wall_selected.second->addPainting(point_clicked, *painting_to_place);
+							wall_selected.second->addArtwork(point_clicked, *painting_to_place);
 							current_player->addPaintingToDisplay(painting_to_place);
 
 							not_displayed_copy.clear();
@@ -276,7 +278,6 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 							true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 
 						//remove from display
-
 						painting_to_place = nullptr;
 					}
 
@@ -285,6 +286,49 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 						title_text = nullptr;
 						info_text = nullptr;
 						rarity_text = nullptr;
+					}
+				}
+			}
+
+			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_BACKSPACE, false)) && artwork_selected.second != nullptr)
+			{
+				current_player->removePaintingFromDisplay(artwork_selected.second);
+				current_player->getGallery(0)->removeArtwork(artwork_selected.second);
+				artwork_selected = pair<float, shared_ptr<artwork> >(0.0f, nullptr);
+
+				not_displayed_copy.clear();
+				not_displayed_copy = current_player->getNotDisplayedCopy();
+				paintings_to_display.clear();
+				thumbnails.clear();
+
+				if (not_displayed_copy.size() > 0)
+				{
+					//add player's default frames to each
+					for (auto i : not_displayed_copy)
+						i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
+
+					//take a chunk of the inventory paintings, using first, last, end iterators. update this vectore to go through pages of inventory
+					chunk_first = not_displayed_copy.begin();
+					chunk_last = findChunkLast(chunk_first, not_displayed_copy, display_count);
+					chunk_end = findChunkEnd(chunk_first, not_displayed_copy, display_count);
+
+					paintings_to_display.reserve(display_count);
+					paintings_to_display.insert(paintings_to_display.begin(), chunk_first, chunk_end);
+
+					thumbnail_locations = getThumbnailLocations(context, paintings_to_display.size(), thumbnail_bottom_margin, thumbnail_height);
+
+					for (int i = 0; i < paintings_to_display.size(); i++)
+					{
+						vec2 centerpoint = thumbnail_locations.at(i);
+						shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(
+							paintings_to_display.at(i),
+							context,
+							centerpoint,
+							thumbnail_height,
+							thumbnail_width,
+							thumbnail_padding));
+
+						thumbnails.push_back(thumbnail);
 					}
 				}
 			}

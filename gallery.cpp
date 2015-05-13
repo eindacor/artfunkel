@@ -121,12 +121,34 @@ bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 
 	return true;
 }
 
-void display_wall::addPainting(const vec2 &position, artwork to_add) 
+void display_wall::addArtwork(const vec2 &position, artwork to_add) 
 {
 	mat4 local_translation_matrix = glm::translate(mat4(1.0f), vec3(position.x, position.y, 0.0f));
 	to_add.setModelMatrix(wall_model_matrix * local_translation_matrix);
 	shared_ptr<artwork> to_add_ptr(new artwork(to_add));
 	wall_contents.push_back(pair<vec2, shared_ptr<artwork> >(position, to_add_ptr));
+}
+
+bool display_wall::removeArtwork(const shared_ptr<artwork> &to_remove)
+{
+	vector< pair<vec2, shared_ptr<artwork> > >::iterator found = wall_contents.end();
+	for (vector< pair<vec2, shared_ptr<artwork> > >::iterator it = wall_contents.begin(); it != wall_contents.end(); it++)
+	{
+		if ((*it).second->getData()->getID() == to_remove->getData()->getID())
+		{
+			found = it;
+			break;
+		}
+	}
+
+	if (found == wall_contents.end())
+		return false;
+
+	else
+	{
+		wall_contents.erase(found);
+		return true;
+	}
 }
 
 void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
@@ -267,4 +289,13 @@ shared_ptr<artwork> gallery::checkArtworkClicks(shared_ptr<key_handler> &keys, c
 
 	distance = artwork_clicked.first;
 	return artwork_clicked.second;
+}
+
+void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
+{
+	for (auto i : display_walls)
+	{
+		if (i.second->removeArtwork(to_remove))
+			return;
+	}
 }

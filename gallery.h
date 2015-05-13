@@ -21,7 +21,10 @@ public:
 	vector< pair<vec2, shared_ptr<artwork> > > getWallContents() const { return wall_contents; }
 
 	//shared_ptr not used to insure a unique instance of the painting is used for transformation
-	void addPainting(const vec2 &position, artwork toAdd);
+	//TODO change to addArtwork
+	void addArtwork(const vec2 &position, artwork toAdd);
+	//returns true if a work was removed
+	bool removeArtwork(const shared_ptr<artwork> &to_remove);
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
 
 	vec4 getClickPositionWorldspace() const { return wall_model_matrix * vec4(click_position.x, click_position.y, 0.0f, 1.0f); }
@@ -56,6 +59,7 @@ public:
 	void renderGallery(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;	
 	shared_ptr<display_wall> checkWallClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 	shared_ptr<artwork> checkArtworkClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
+	void removeArtwork(const shared_ptr<artwork> &toRemove);
 
 private:
 	//int is the index of the specific position, mat4 is the position matrix
