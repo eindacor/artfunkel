@@ -8,7 +8,7 @@
 class hud_element
 {
 public:
-	hud_element(const vec2 &item_centerpoint, float item_height, float item_width, hud_element_type type);
+	hud_element(const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type);
 	~hud_element(){};
 
 	virtual bool itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position) const;
@@ -18,13 +18,19 @@ public:
 	vec2 getLowerLeft() const { return lower_left; }
 	vec2 getLowerRight() const { return lower_right; }
 	vec2 getCenterpoint() const { return centerpoint; }
-	virtual void setX(float x_offset) { centerpoint.x = x_offset; setLines(); }
-	virtual void setY(float y_offset) { centerpoint.y = y_offset; setLines(); }
+	virtual void setX(float x_offset) { centerpoint.x = x_offset; updatePoints(); }
+	virtual void setY(float y_offset) { centerpoint.y = y_offset; updatePoints(); }
 	mat4 getTranslationMatrix() const { return glm::translate(mat4(1.0f), vec3(centerpoint.x, centerpoint.y, 0.0f)); }
 	float getHeight() const { return height; }
 	float getWidth() const { return width; }
+
+	bool isHovered() const { return currently_hovering; }
+	bool isSelected() const { return currently_hovering; }
+	void setHovered(bool set) { currently_hovering = set; }
+	void setSelected(bool set) { currently_selected = set; }
+
 	hud_element_type getType() const { return element_type; }
-	void setLines();
+	void updatePoints();
 
 	void drawLines(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const {
 		for (auto i : lines)
@@ -34,95 +40,58 @@ public:
 	virtual shared_ptr<hud_element> getSelectedWithinArray(
 		shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) 
 	{
+		type = NO_TYPE;
 		return nullptr;
 	}
 
+	//TODO templatize for future elements
+	virtual shared_ptr<artwork> getStoredArt() const { return nullptr; }
+	virtual shared_ptr<artwork> getStoredText() const { return nullptr; }
+
 private:
+
 	//below are the binding points for click detection
 	vec2 upper_left, upper_right, lower_left, lower_right;
 	float height, width;
 	vec2 centerpoint;
 	hud_element_type element_type;
 	vector< shared_ptr<line> > lines;
+
+	bool currently_hovering = false;
+	bool currently_selected = false;
 };
 
 //TODO create dynamic hud_element class that stores multiple hud_elements and spaces them equally, similar to the way text wrap works
 class dynamic_hud_array : public hud_element
 {
 public:
+	//TODO swap width with height in constructor
 	dynamic_hud_array(const shared_ptr<ogl_context> &ogl_con, const vec2 centerpoint,
-		float on_screen_height, float on_screen_width, pair<horizontal_justification, vertical_justification> j, float padding = 0.0f)
-		: hud_element(centerpoint, on_screen_height, on_screen_width, ELEMENT_ARRAY)
+		float on_screen_width, float on_screen_height, pair<horizontal_justification, vertical_justification> j, float padding = 0.0f)
+		: hud_element(centerpoint, on_screen_width, on_screen_height, ELEMENT_ARRAY)
 	{
 		context = ogl_con;
 		justification = j;
 		array_padding = padding;
-		
-		float half_height(on_screen_height / 2.0f);
-		float half_width(on_screen_width / 2.0f);
-
-		shared_ptr<line> top(new line(
-			vec4(-1.0f, centerpoint.y + half_height, 0.0f, 1.0f),
-			vec4(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f, 1.0f),
-			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-
-		shared_ptr<line> bottom(new line(
-			vec4(centerpoint.x - half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-			vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-
-		shared_ptr<line> left(new line(
-			vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
-			vec4(centerpoint.x - half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-
-		shared_ptr<line> right(new line(
-			vec4(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f, 1.0f),
-			vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-
-		shared_ptr<line> diagonal(new line(
-			vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
-			vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-
-		shared_ptr<line> middle(new line(
-			vec4(centerpoint.x, centerpoint.y + half_height, 0.0f, 1.0f),
-			vec4(centerpoint.x, centerpoint.y - half_height, 0.0f, 1.0f),
-			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-
-		shared_ptr<line> center(new line(
-			vec4(centerpoint.x - half_width, centerpoint.y, 0.0f, 1.0f),
-			vec4(centerpoint.x + half_width, centerpoint.y, 0.0f, 1.0f),
-			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
-
-		lines.push_back(top);
-		lines.push_back(bottom);
-		lines.push_back(left);
-		lines.push_back(right);
-		lines.push_back(diagonal);
-		lines.push_back(middle);
-		lines.push_back(center);
 	}
 	~dynamic_hud_array(){};
+
 	//TODO add methods for adding specific hud elements
 	void addElement(const shared_ptr<hud_element> &to_add);
 	void addElements(const vector< shared_ptr<hud_element> > &element_vec);
 	void setElementPositions();
-	void clearElements() { array_elements.clear(); }
-	//TODO update stub
+	void clearElements() { array_elements.clear(); visible_lines.clear(); }
+	//getSelectedWithinArray is design to recurse if it detects nested arrays
 	virtual shared_ptr<hud_element> getSelectedWithinArray(
-		shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) {
-		return nullptr;
-	}
+		shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) const;
 
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;
+	void setLines();
 
 private:
 	//used during spacing of array
 	void setXForLine(vector< shared_ptr<hud_element> > &line_contents, float initial_x_offset);
-	void setYForLine(vector< shared_ptr<hud_element> > &line_contents, float initial_y_offset,
-		int line_number, const map<int, vec2> &line_dimensions);
+	void setYForLine(vector< shared_ptr<hud_element> > &line_contents, float y_offset);
 
 	//TODO add iterators taht denote "pages" for paging in menus
 	vector< shared_ptr<hud_element> > array_elements;
@@ -142,8 +111,8 @@ public:
 		const shared_ptr<ogl_context> &context, 
 		const vec2 centerpoint, 
 		const vec2 on_screen_dimensions,
-		float padding = 0.0f)
-		: hud_element(centerpoint, on_screen_dimensions.y, on_screen_dimensions.x, THUMBNAIL)
+		float padding)
+		: hud_element(centerpoint, on_screen_dimensions.x, on_screen_dimensions.y, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;  
@@ -155,8 +124,8 @@ public:
 		const shared_ptr<ogl_context> &context,
 		const vec2 centerpoint,
 		float square_height, 
-		float padding = 0.0f)
-		: hud_element(centerpoint, square_height, square_height / context->getAspectRatio(), THUMBNAIL)
+		float padding)
+		: hud_element(centerpoint, square_height / context->getAspectRatio(), square_height, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
@@ -167,8 +136,8 @@ public:
 	artwork_thumbnail(const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context,
 		const vec2 on_screen_dimensions, 
-		float padding = 0.0f)
-		: hud_element(vec2(0.0f, 0.0f), on_screen_dimensions.y, on_screen_dimensions.x, THUMBNAIL)
+		float padding)
+		: hud_element(vec2(0.0f, 0.0f), on_screen_dimensions.x, on_screen_dimensions.y, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
@@ -180,17 +149,15 @@ public:
 		const shared_ptr<ogl_context> &context,
 		float on_screen_height, 
 		float padding = 0.0f)
-		: hud_element(vec2(0.0f, 0.0f), on_screen_height, on_screen_height / context->getAspectRatio(), THUMBNAIL)
+		: hud_element(vec2(0.0f, 0.0f), on_screen_height / context->getAspectRatio(), on_screen_height, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
 		updateScale(context);
 	}
-
 	~artwork_thumbnail(){};
 
 	void updateScale(const shared_ptr<ogl_context> &context) { scale_matrix = calcScaleMatrix(context); }
-	shared_ptr<artwork> getStored() const { return stored; }
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const{
 		mat4 aspect_matrix = glm::scale(mat4(1.0f), vec3(1.0f / context->getAspectRatio(), 1.0f, 1.0f));
 		stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix * aspect_matrix);
@@ -201,11 +168,14 @@ public:
 		if (itemSelected(keys, cursor_position))
 		{
 			selected = stored;
+			cout << stored->getData()->getTitle() << " selected" << endl;
 			return true;
 		}
 
 		else return false;
 	}
+
+	virtual shared_ptr<artwork> getStoredArt() const { return stored; }
 
 private:
 	mat4 calcScaleMatrix(const shared_ptr<ogl_context> &context) const;

@@ -379,26 +379,24 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 }
 
 int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
-	const shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player, const shared_ptr<text_handler> &text)
+	shared_ptr<key_handler> &keys, const shared_ptr<player> &current_player, const shared_ptr<text_handler> &text)
 {
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.3f, 0.0f, 1.0f));
 
 	int display_count = 10;
 
-	//remove inventory copy mechanic. use actual inventory container with active iterators
+	//TODO remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> >inventory_copy = current_player->getInventoryCopy();
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.0f, -0.0f), 2.0f, 2.0f,
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.85f, -0.0f), 0.3f, 2.0f ,
 		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
 
 	//add player's default frames to each
 	for (auto i : inventory_copy)
 	{
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
-
-		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
-
+		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.3f, 0.3f), 0.01f));
 		artwork_thumbnails->addElement(thumbnail);
 	}
 
@@ -424,6 +422,18 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 			{
 				menu_return = mainMenu(data_path, context, keys, text);
 				finished = (menu_return != 1);
+			}
+
+			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
+			{
+				vec2 cursor_position = keys->getCursorPosition();
+				hud_element_type selected_type;
+				string identifier;
+				shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
+				cout << "selected: " << selected << endl;
+
+				if (selected_type == THUMBNAIL)
+					printArtwork(selected->getStoredArt());
 			}
 
 			glfwSetTime(0.0f);

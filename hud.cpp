@@ -1,9 +1,9 @@
 #include "hud.h"
 
-hud_element::hud_element(const vec2 &item_centerpoint, float item_height, float item_width, hud_element_type type)
+hud_element::hud_element(const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type)
 {
-	height = item_height;
-	width = item_width;
+	height = on_screen_height;
+	width = on_screen_width;
 	centerpoint = item_centerpoint;
 
 	float half_height(height / 2.0f);
@@ -17,50 +17,53 @@ hud_element::hud_element(const vec2 &item_centerpoint, float item_height, float 
 	element_type = type;
 }
 
-void hud_element::setLines()
+void hud_element::updatePoints()
 {
-	lines.clear();
-
 	float half_height(height / 2.0f);
 	float half_width(width / 2.0f);
 
-	cout << "height: " << height << endl;
-	cout << "width: " << width << endl;
+	upper_left = vec2(centerpoint.x - half_width, centerpoint.y + half_height);
+	upper_right = vec2(centerpoint.x + half_width, centerpoint.y + half_height);
+	lower_left = vec2(centerpoint.x - half_width, centerpoint.y - half_height);
+	lower_right = vec2(centerpoint.x + half_width, centerpoint.y - half_height);
+
+	lines.clear();
+	vec4 line_color(0.5f, 0.5f, 0.5f, 0.5f);
 
 	shared_ptr<line> top(new line(
 		vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
 		vec4(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+		line_color));
 
 	shared_ptr<line> bottom(new line(
 		vec4(centerpoint.x - half_width, centerpoint.y - half_height, 0.0f, 1.0f),
 		vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+		line_color));
 
 	shared_ptr<line> left(new line(
 		vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
 		vec4(centerpoint.x - half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+		line_color));
 
 	shared_ptr<line> right(new line(
 		vec4(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f, 1.0f),
 		vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+		line_color));
 
 	shared_ptr<line> diagonal(new line(
 		vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
 		vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+		line_color));
 
 	shared_ptr<line> middle(new line(
 		vec4(centerpoint.x, centerpoint.y + half_height, 0.0f, 1.0f),
 		vec4(centerpoint.x, centerpoint.y - half_height, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+		line_color));
 
 	shared_ptr<line> center(new line(
 		vec4(centerpoint.x - half_width, centerpoint.y, 0.0f, 1.0f),
 		vec4(centerpoint.x + half_width, centerpoint.y, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+		line_color));
 
 	lines.push_back(top);
 	lines.push_back(bottom);
@@ -160,25 +163,16 @@ void dynamic_hud_array::setXForLine(vector< shared_ptr<hud_element> > &line_cont
 	for (auto element : line_contents)
 	{
 		individual_x_offset = (element->getWidth() / 2.0f) + previous_x_offset;
-		cout << "individual_x_offset: " << individual_x_offset << endl;
 		previous_x_offset = individual_x_offset + (element->getWidth() / 2.0f);
 		individual_x_offset += initial_x_offset;
 		element->setX(individual_x_offset);
 	}
 }
 
-void dynamic_hud_array::setYForLine(vector< shared_ptr<hud_element> > &line_contents, float initial_y_offset, 
-	int line_number, const map<int, vec2> &line_dimensions)
+void dynamic_hud_array::setYForLine(vector< shared_ptr<hud_element> > &line_contents, float y_offset)
 {
-	float line_y_offset = 0.0f;
-	
-	for (int i = 0; i < line_number; i++)
-		line_y_offset -= line_dimensions.at(i).y;
-
-	line_y_offset -= (line_dimensions.at(line_number).y / 2.0f);
-
 	for (auto element : line_contents)
-		element->setY(line_y_offset);
+		element->setY(y_offset);
 }
 
 void dynamic_hud_array::addElement(const shared_ptr<hud_element> &to_add)
@@ -270,8 +264,10 @@ void dynamic_hud_array::setElementPositions()
 	float initial_x_offset = 0.0f;
 	float initial_y_offset = 0.0f;
 
+	float distance_from_top = 0.0f;
+	float y_offset = 0.0f;
 	for (auto element_vec : visible_lines)
-	{
+	{	
 		vector< shared_ptr<hud_element> > line_contents = element_vec.second;
 		int line_number = element_vec.first;
 		vec2 dimensions = line_dimensions.at(element_vec.first);
@@ -286,8 +282,6 @@ void dynamic_hud_array::setElementPositions()
 		case H_CENTER:
 			//dimensions refers to the actual dimensions of the line contents, which is <- getWidth(), the overall binding width of the array
 			initial_x_offset = getCenterpoint().x - (dimensions.x / 2.0f);
-			cout << "initial_x_offset: " << initial_x_offset << endl;
-			cout << "getCenterpoint(): " << getCenterpoint().x << ", " << getCenterpoint().y << endl;
 			setXForLine(line_contents, initial_x_offset);
 			break;
 
@@ -302,28 +296,56 @@ void dynamic_hud_array::setElementPositions()
 			break;
 		}
 	
+		//for each case, find the top-most point, then use distance from top/height of line to come down incrementally
 		switch (justification.second)
 		{
 		case V_TOP:
-			initial_y_offset = getCenterpoint().y + (getHeight() / 2.0f);
-			setYForLine(line_contents, initial_y_offset, line_number, line_dimensions);
+			y_offset = getCenterpoint().y + (getHeight() / 2.0f) - (distance_from_top + (dimensions.y / 2.0f));
+			setYForLine(line_contents, y_offset);
 			break;
 
 		case V_MIDDLE:
-			initial_y_offset = getCenterpoint().y + (total_height / 2.0f);
-			setYForLine(line_contents, initial_y_offset, line_number, line_dimensions);
+			y_offset = getCenterpoint().y + (total_height / 2.0f) - (distance_from_top + (dimensions.y / 2.0f));
+			setYForLine(line_contents, y_offset);
 			break;
 
 		case V_BOTTOM:
-			initial_y_offset = getCenterpoint().y - (getHeight() / 2.0f) + total_height;
-			setYForLine(line_contents, initial_y_offset, line_number, line_dimensions);
+			y_offset = getCenterpoint().y - (getHeight() / 2.0f) + total_height - (distance_from_top + (dimensions.y / 2.0f));
+			setYForLine(line_contents, y_offset);
 			break;
 
 		case V_STRETCH:
 		default:
 			break;
-		}		
+		}
+
+		//actively keep track of how far the lines are from the top of the total_height value, in order to set the y offset
+		distance_from_top += dimensions.y;
 	}
+}
+
+shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
+	shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) const
+{
+	for (auto i : visible_lines) {
+		for (auto j : i.second) {
+			if (j->itemSelected(keys, cursor_position))
+			{
+				if (j->getType() == ELEMENT_ARRAY)
+					j->getSelectedWithinArray(keys, cursor_position, type, identifier);
+
+				else
+				{
+					type = j->getType();
+					return j;
+				}
+			}
+		}
+	}
+
+	identifier = "";
+	type = NO_TYPE;
+	return nullptr;
 }
 
 void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
@@ -339,4 +361,57 @@ void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const share
 
 	for (auto i : lines)
 		i->draw(context, camera, true);
+}
+
+void dynamic_hud_array::setLines()
+{
+	lines.clear();
+
+	float half_height(getHeight() / 2.0f);
+	float half_width(getHeight() / 2.0f);
+
+	vec4 line_color(0.5f, 0.5f, 0.5f, 1.0f);
+
+	shared_ptr<line> top(new line(
+		vec4(-1.0f, getCenterpoint().y + half_height, 0.0f, 1.0f),
+		vec4(getCenterpoint().x + half_width, getCenterpoint().y + half_height, 0.0f, 1.0f),
+		line_color));
+
+	shared_ptr<line> bottom(new line(
+		vec4(getCenterpoint().x - half_width, getCenterpoint().y - half_height, 0.0f, 1.0f),
+		vec4(getCenterpoint().x + half_width, getCenterpoint().y - half_height, 0.0f, 1.0f),
+		line_color));
+
+	shared_ptr<line> left(new line(
+		vec4(getCenterpoint().x - half_width, getCenterpoint().y + half_height, 0.0f, 1.0f),
+		vec4(getCenterpoint().x - half_width, getCenterpoint().y - half_height, 0.0f, 1.0f),
+		line_color));
+
+	shared_ptr<line> right(new line(
+		vec4(getCenterpoint().x + half_width, getCenterpoint().y + half_height, 0.0f, 1.0f),
+		vec4(getCenterpoint().x + half_width, getCenterpoint().y - half_height, 0.0f, 1.0f),
+		line_color));
+
+	shared_ptr<line> diagonal(new line(
+		vec4(getCenterpoint().x - half_width, getCenterpoint().y + half_height, 0.0f, 1.0f),
+		vec4(getCenterpoint().x + half_width, getCenterpoint().y - half_height, 0.0f, 1.0f),
+		line_color));
+
+	shared_ptr<line> middle(new line(
+		vec4(getCenterpoint().x, getCenterpoint().y + half_height, 0.0f, 1.0f),
+		vec4(getCenterpoint().x, getCenterpoint().y - half_height, 0.0f, 1.0f),
+		line_color));
+
+	shared_ptr<line> center(new line(
+		vec4(getCenterpoint().x - half_width, getCenterpoint().y, 0.0f, 1.0f),
+		vec4(getCenterpoint().x + half_width, getCenterpoint().y, 0.0f, 1.0f),
+		line_color));
+
+	lines.push_back(top);
+	lines.push_back(bottom);
+	lines.push_back(left);
+	lines.push_back(right);
+	lines.push_back(diagonal);
+	lines.push_back(middle);
+	lines.push_back(center);
 }
