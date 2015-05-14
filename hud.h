@@ -46,12 +46,46 @@ class dynamic_hud_array : public hud_element
 {
 public:
 	dynamic_hud_array(const shared_ptr<ogl_context> &ogl_con, const vec2 centerpoint,
-		float screen_height, float screen_width, pair<horizontal_justification, vertical_justification> j, float padding = 0.0f)
-		: hud_element(centerpoint, screen_height, screen_width, ELEMENT_ARRAY)
+		float on_screen_height, float on_screen_width, pair<horizontal_justification, vertical_justification> j, float padding = 0.0f)
+		: hud_element(centerpoint, on_screen_height, on_screen_width, ELEMENT_ARRAY)
 	{
 		context = ogl_con;
 		justification = j;
 		array_padding = padding;
+		
+		float half_height(on_screen_height / 2.0f);
+		float half_width(on_screen_width / 2.0f);
+
+		shared_ptr<line> top(new line(
+			vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
+			vec4(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f, 1.0f),
+			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+
+		shared_ptr<line> bottom(new line(
+			vec4(centerpoint.x - half_width, centerpoint.y - half_height, 0.0f, 1.0f),
+			vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
+			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+
+		shared_ptr<line> left(new line(
+			vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
+			vec4(centerpoint.x - half_width, centerpoint.y - half_height, 0.0f, 1.0f),
+			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+
+		shared_ptr<line> right(new line(
+			vec4(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f, 1.0f),
+			vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
+			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+
+		shared_ptr<line> diagonal(new line(
+			vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
+			vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
+			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+
+		lines.push_back(top);
+		lines.push_back(bottom);
+		lines.push_back(left);
+		lines.push_back(right);
+		lines.push_back(diagonal);
 	}
 	~dynamic_hud_array(){};
 	//TODO add methods for adding specific hud elements
@@ -78,6 +112,7 @@ private:
 	map <int, vector<shared_ptr<hud_element> > >visible_lines;
 	float array_padding;
 	pair<horizontal_justification, vertical_justification> justification;
+	vector< shared_ptr<line> > lines;
 
 	shared_ptr<ogl_context> context;
 };
@@ -88,12 +123,12 @@ public:
 	artwork_thumbnail(const shared_ptr<artwork> &art, 
 		const shared_ptr<ogl_context> &context, 
 		const vec2 centerpoint, 
-		float screen_height, float screen_width, float padding = 0.0f)
-		: hud_element(centerpoint, screen_height, screen_width, THUMBNAIL)
+		float on_screen_height, float on_screen_width, float padding = 0.0f)
+		: hud_element(centerpoint, on_screen_height, on_screen_width, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;  
-		setStored(context);		
+		updateScale(context);
 	}
 	artwork_thumbnail(const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context,
@@ -102,15 +137,16 @@ public:
 	{
 		stored = art;
 		thumbnail_padding = padding;
-		setStored(context);
+		updateScale(context);
 	}
 
 	~artwork_thumbnail(){};
 
-	void setStored(const shared_ptr<ogl_context> &context);
+	void updateScale(const shared_ptr<ogl_context> &context) { scale_matrix = calcScaleMatrix(context); }
 	shared_ptr<artwork> getStored() const { return stored; }
-	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const { 
-		stored->draw2D(context, camera, scale_matrix * getTranslationMatrix()); }
+	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const{
+		stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix);
+	}
 
 	virtual bool isSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, shared_ptr<artwork> &selected) const
 	{

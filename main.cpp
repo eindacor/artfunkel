@@ -24,8 +24,8 @@ int main(int argc, char* argv[])
 
 	else
 	{
-		data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
-		//data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
+		//data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
+		data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
 	}
 	
 	string paintings_path = data_path + "paintings.csv";
@@ -46,7 +46,6 @@ int main(int argc, char* argv[])
 	shared_ptr<player> current_player(new player("Test Player", loot, context, data_path));
 
 	int menu_return = mainMenu(data_path, context, keys, text);
-
 
 	//TODO possibly give context a text handler
 	while (menu_return != 4 && menu_return != 3)

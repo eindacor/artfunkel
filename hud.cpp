@@ -27,16 +27,10 @@ bool hud_element::itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor
 	else return true;
 }
 
-void artwork_thumbnail::setStored(const shared_ptr<ogl_context> &context)
-{
-	mat4 scale_matrix = calcScaleMatrix(context);
-}
-
 mat4 artwork_thumbnail::calcScaleMatrix(const shared_ptr<ogl_context> &context) const
 {
 	//x dimensionsthroughout are modified for aspect ratio stretching
 	float actual_padding_x = thumbnail_padding * context->getAspectRatio();
-
 	float max_dimension_x = (getWidth() * context->getAspectRatio()) - (2.0f * actual_padding_x);
 	float max_dimension_y = getHeight() - (2.0f * thumbnail_padding);
 
@@ -152,43 +146,13 @@ void dynamic_hud_array::setElementPositions()
 	float height_max = getHeight();
 
 	visible_lines.clear();
+	//total width and height of individual lines
 	map< int, vec2 > line_dimensions;
 
-	float current_line_width = 0.0f;
-	float current_line_height = 0.0f;
-	float total_height = 0.0f;
-	int line_counter = 0;
 	vector<shared_ptr<hud_element> > current_line;
-	for (auto i : array_elements)
+	for (vector< shared_ptr<hud_element> >::iterator it = array_elements.begin(); it != array_elements.end(); it++)
 	{
-		fix this code
-		bool add_line = true;
-		if (current_line_width + i->getWidth() <= width_max)
-		{
-			if (i->getHeight() > current_line_height)
-				current_line_height = i->getHeight();
-
-			current_line.push_back(i);
-			current_line_width += i->getWidth();
-			continue;
-
-			//if line would exceed max height, do not add and end the line-generating loop
-			if (current_line_height + total_height > height_max)
-				break;
-
-			
-		}
-
-		visible_lines.insert(pair<int, vector<shared_ptr<hud_element> > >(line_counter, current_line));
-		line_dimensions.insert(pair<int, vec2 >(line_counter, vec2(current_line_width, current_line_height)));
-		line_counter++;
-		total_height += current_line_height;
-		current_line.clear();
-			
-		//add element to new line
-		current_line.push_back(i);
-		current_line_height = i->getHeight();
-		current_line_width = i->getWidth();
+		
 	}
 
 	float initial_x_offset = 0.0f;
@@ -210,13 +174,16 @@ void dynamic_hud_array::setElementPositions()
 		case H_CENTER:
 			//dimensions refers to the actual dimensions of the line contents, which is <- getWidth(), the overall binding width of the array
 			initial_x_offset = getCenterpoint().x - (dimensions.x / 2.0f);
+			cout << "initial_x_offset: " << initial_x_offset << endl;
 			setXForLine(line_contents, initial_x_offset);
 			break;
+
 		case H_RIGHT:
 			//dimensions refers to the actual dimensions of the line contents, which is <- getWidth(), the overall binding width of the array
 			initial_x_offset = getCenterpoint().x + (getWidth() / 2.0f) - dimensions.x;
 			setXForLine(line_contents, initial_x_offset);
 			break;
+
 		case H_STRETCH:
 		default:
 			break;
@@ -251,9 +218,9 @@ void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const share
 	for (auto i : visible_lines)
 	{
 		for (auto j : i.second)
-		{
-			cout << "element drawn" << endl;
 			j->draw(context, camera);
-		}
 	}
+
+	for (auto i : lines)
+		i->draw(context, camera, true);
 }

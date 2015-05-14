@@ -396,7 +396,7 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 
-			artwork_thumbnails->getHeight() - 0.05f, artwork_thumbnails->getHeight() - 0.05f));
+			artwork_thumbnails->getHeight(), artwork_thumbnails->getHeight() + 0.1f));
 
 		artwork_thumbnails->addElement(thumbnail);
 	}
