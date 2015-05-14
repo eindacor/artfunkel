@@ -18,13 +18,18 @@ public:
 	vec2 getLowerLeft() const { return lower_left; }
 	vec2 getLowerRight() const { return lower_right; }
 	vec2 getCenterpoint() const { return centerpoint; }
-	virtual void setX(float x_offset) { centerpoint.x = x_offset; setTranslationMatrix(); }
-	virtual void setY(float y_offset) { centerpoint.y = y_offset; setTranslationMatrix(); }
-	void setTranslationMatrix() { translation_matrix = glm::translate(mat4(1.0f), vec3(centerpoint.x, centerpoint.y, 0.0f)); }
-	mat4 getTranslationMatrix() const { return translation_matrix; }
+	virtual void setX(float x_offset) { centerpoint.x = x_offset; setLines(); }
+	virtual void setY(float y_offset) { centerpoint.y = y_offset; setLines(); }
+	mat4 getTranslationMatrix() const { return glm::translate(mat4(1.0f), vec3(centerpoint.x, centerpoint.y, 0.0f)); }
 	float getHeight() const { return height; }
 	float getWidth() const { return width; }
 	hud_element_type getType() const { return element_type; }
+	void setLines();
+
+	void drawLines(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const {
+		for (auto i : lines)
+			i->draw(context, camera, true);
+	}
 
 	virtual shared_ptr<hud_element> getSelectedWithinArray(
 		shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) 
@@ -38,7 +43,7 @@ private:
 	float height, width;
 	vec2 centerpoint;
 	hud_element_type element_type;
-	mat4 translation_matrix;
+	vector< shared_ptr<line> > lines;
 };
 
 //TODO create dynamic hud_element class that stores multiple hud_elements and spaces them equally, similar to the way text wrap works
@@ -57,7 +62,7 @@ public:
 		float half_width(on_screen_width / 2.0f);
 
 		shared_ptr<line> top(new line(
-			vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
+			vec4(-1.0f, centerpoint.y + half_height, 0.0f, 1.0f),
 			vec4(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f, 1.0f),
 			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
 
@@ -81,11 +86,23 @@ public:
 			vec4(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f, 1.0f),
 			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
 
+		shared_ptr<line> middle(new line(
+			vec4(centerpoint.x, centerpoint.y + half_height, 0.0f, 1.0f),
+			vec4(centerpoint.x, centerpoint.y - half_height, 0.0f, 1.0f),
+			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+
+		shared_ptr<line> center(new line(
+			vec4(centerpoint.x - half_width, centerpoint.y, 0.0f, 1.0f),
+			vec4(centerpoint.x + half_width, centerpoint.y, 0.0f, 1.0f),
+			vec4(0.0f, 0.0f, 0.0f, 1.0f)));
+
 		lines.push_back(top);
 		lines.push_back(bottom);
 		lines.push_back(left);
 		lines.push_back(right);
 		lines.push_back(diagonal);
+		lines.push_back(middle);
+		lines.push_back(center);
 	}
 	~dynamic_hud_array(){};
 	//TODO add methods for adding specific hud elements
@@ -146,6 +163,11 @@ public:
 	shared_ptr<artwork> getStored() const { return stored; }
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const{
 		stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix);
+		vec4 first(0.0f, 0.0f, 0.0f, 1.0f);
+		vec4 second = getTranslationMatrix() * scale_matrix * first;
+		vec4 color(0.0f, 0.0f, 1.0f, 1.0f);
+		line offset(first, second, color);
+		offset.draw(context, camera, true);
 	}
 
 	virtual bool isSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, shared_ptr<artwork> &selected) const

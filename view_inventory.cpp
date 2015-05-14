@@ -387,7 +387,7 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	//remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> >inventory_copy = current_player->getInventoryCopy();
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.0f, -0.5f), 0.3f, 1.5f,
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.0f, -0.0f), 2.0f, 2.0f,
 		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
 
 	//add player's default frames to each
@@ -395,8 +395,7 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	{
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 
-		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 
-			artwork_thumbnails->getHeight(), artwork_thumbnails->getHeight() + 0.1f));
+		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.3f));
 
 		artwork_thumbnails->addElement(thumbnail);
 	}
