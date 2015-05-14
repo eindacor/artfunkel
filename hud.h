@@ -137,20 +137,50 @@ private:
 class artwork_thumbnail : public hud_element
 {
 public:
+	//dimensions & position
 	artwork_thumbnail(const shared_ptr<artwork> &art, 
 		const shared_ptr<ogl_context> &context, 
 		const vec2 centerpoint, 
-		float on_screen_height, float on_screen_width, float padding = 0.0f)
-		: hud_element(centerpoint, on_screen_height, on_screen_width, THUMBNAIL)
+		const vec2 on_screen_dimensions,
+		float padding = 0.0f)
+		: hud_element(centerpoint, on_screen_dimensions.y, on_screen_dimensions.x, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;  
 		updateScale(context);
 	}
+
+	//square & position
 	artwork_thumbnail(const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context,
-		float on_screen_height, float on_screen_width, float padding = 0.0f)
-		: hud_element(vec2(0.0f, 0.0f), on_screen_height, on_screen_width, THUMBNAIL)
+		const vec2 centerpoint,
+		float square_height, 
+		float padding = 0.0f)
+		: hud_element(centerpoint, square_height, square_height / context->getAspectRatio(), THUMBNAIL)
+	{
+		stored = art;
+		thumbnail_padding = padding;
+		updateScale(context);
+	}
+
+	//dimensions & no position
+	artwork_thumbnail(const shared_ptr<artwork> &art,
+		const shared_ptr<ogl_context> &context,
+		const vec2 on_screen_dimensions, 
+		float padding = 0.0f)
+		: hud_element(vec2(0.0f, 0.0f), on_screen_dimensions.y, on_screen_dimensions.x, THUMBNAIL)
+	{
+		stored = art;
+		thumbnail_padding = padding;
+		updateScale(context);
+	}
+
+	//square & no position
+	artwork_thumbnail(const shared_ptr<artwork> &art,
+		const shared_ptr<ogl_context> &context,
+		float on_screen_height, 
+		float padding = 0.0f)
+		: hud_element(vec2(0.0f, 0.0f), on_screen_height, on_screen_height / context->getAspectRatio(), THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
@@ -162,12 +192,8 @@ public:
 	void updateScale(const shared_ptr<ogl_context> &context) { scale_matrix = calcScaleMatrix(context); }
 	shared_ptr<artwork> getStored() const { return stored; }
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const{
-		stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix);
-		vec4 first(0.0f, 0.0f, 0.0f, 1.0f);
-		vec4 second = getTranslationMatrix() * scale_matrix * first;
-		vec4 color(0.0f, 0.0f, 1.0f, 1.0f);
-		line offset(first, second, color);
-		offset.draw(context, camera, true);
+		mat4 aspect_matrix = glm::scale(mat4(1.0f), vec3(1.0f / context->getAspectRatio(), 1.0f, 1.0f));
+		stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix * aspect_matrix);
 	}
 
 	virtual bool isSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, shared_ptr<artwork> &selected) const

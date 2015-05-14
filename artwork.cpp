@@ -120,17 +120,15 @@ void artwork::draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_
 
 void artwork::draw2D(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam, const mat4 &position_matrix) const
 {
+	mat4 aspect_matrix = glm::scale(mat4(1.0f), vec3((1.0f / ogl_con->getAspectRatio(), 1.0f, 1.0f)));
+
 	mat4 frame_offset(glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f)));
 	if (p_frame != nullptr)
-	{
 		p_frame->draw(ogl_con, position_matrix, ogl_cam, true);
-		float z_offset = p_frame->getPaintingDistanceToWall();
-		frame_offset = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, z_offset));
-	}
 
 	if (data->getSurface() == nullptr)
 		data->loadData(ogl_con, ogl_cam);
-	data->getSurface()->draw(ogl_con, position_matrix * frame_offset, ogl_cam, true);
+	data->getSurface()->draw(ogl_con, position_matrix, ogl_cam, true);
 }
 
 const artwork& artwork::operator = (const artwork &other)

@@ -6,30 +6,6 @@
 #include "hud.h"
 #include "utility_funcs.h"
 
-vector<shared_ptr<line> > originDisplay()
-{
-	vector<shared_ptr<line> > lines;
-
-	lines.push_back(shared_ptr<line>(new line(
-		vec4(1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(-1.0f, 0.0f, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)
-		)));
-
-	lines.push_back(shared_ptr<line>(new line(
-		vec4(0.0f, 1.0f, 0.0f, 1.0f),
-		vec4(0.0f, -1.0f, 0.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)
-		)));
-
-	lines.push_back(shared_ptr<line>(new line(
-		vec4(0.0f, 0.0f, 1.0f, 1.0f),
-		vec4(0.0f, 0.0f, -1.0f, 1.0f),
-		vec4(0.0f, 0.0f, 0.0f, 1.0f)
-		)));
-
-	return lines;
-}
 
 int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys,
 	const shared_ptr<player> &current_player, const shared_ptr<text_handler> &text)
@@ -92,8 +68,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				paintings_to_display.at(i),
 				context,
 				centerpoint,
-				thumbnail_height,
-				thumbnail_width,
+				vec2(thumbnail_height, thumbnail_width),
 				thumbnail_padding));
 
 			thumbnails.push_back(thumbnail);
@@ -105,8 +80,6 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 	bool finished = false;
 	int menu_return = 0;
-
-	vector<shared_ptr<line> > lines = originDisplay();
 
 	//TODO replace all text code with HUD elements
 	//identify positions for text
@@ -137,8 +110,6 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			context->clearBuffers();
 
 			camera->updateCamera();
-			for (auto i : lines)
-				i->draw(context, camera);
 
 			current_gallery->renderGallery(context, camera);
 
@@ -239,8 +210,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 										paintings_to_display.at(i),
 										context,
 										centerpoint,
-										thumbnail_height,
-										thumbnail_width,
+										vec2(thumbnail_height, thumbnail_width),
 										thumbnail_padding));
 
 									thumbnails.push_back(thumbnail);
@@ -324,8 +294,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 							paintings_to_display.at(i),
 							context,
 							centerpoint,
-							thumbnail_height,
-							thumbnail_width,
+							vec2(thumbnail_height, thumbnail_width),
 							thumbnail_padding));
 
 						thumbnails.push_back(thumbnail);

@@ -170,6 +170,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			{
 				int index = std::distance(paintings_to_display.cbegin(), it);
 
+				/*
 				if (current_selection != it)
 					(*it)->draw2D(context, camera, thumbnail_matrix_index.at(index));
 
@@ -202,6 +203,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
 				}
+				*/
 			}
 			glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 
@@ -395,7 +397,7 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	{
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 
-		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.3f));
+		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
 
 		artwork_thumbnails->addElement(thumbnail);
 	}

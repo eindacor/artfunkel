@@ -24,6 +24,9 @@ void hud_element::setLines()
 	float half_height(height / 2.0f);
 	float half_width(width / 2.0f);
 
+	cout << "height: " << height << endl;
+	cout << "width: " << width << endl;
+
 	shared_ptr<line> top(new line(
 		vec4(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f, 1.0f),
 		vec4(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f, 1.0f),
@@ -80,8 +83,8 @@ bool hud_element::itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor
 mat4 artwork_thumbnail::calcScaleMatrix(const shared_ptr<ogl_context> &context) const
 {
 	//x dimensionsthroughout are modified for aspect ratio stretching
-	float actual_padding_x = thumbnail_padding;// / context->getAspectRatio();
-	float max_dimension_x = getWidth() - (2.0f * actual_padding_x);
+	float actual_padding_x = thumbnail_padding / context->getAspectRatio();
+	float max_dimension_x = (getWidth() - (2.0f * actual_padding_x)) * context->getAspectRatio();
 	float max_dimension_y = getHeight() - (2.0f * thumbnail_padding);
 
 	float scale_for_x = max_dimension_x / stored->getOverallDimensions().x;
@@ -192,7 +195,7 @@ void dynamic_hud_array::addElements(const vector< shared_ptr<hud_element> > &ele
 
 void dynamic_hud_array::setElementPositions()
 {
-	float width_max = getWidth() * context->getAspectRatio();
+	float width_max = getWidth();
 	float height_max = getHeight();
 
 	visible_lines.clear();
