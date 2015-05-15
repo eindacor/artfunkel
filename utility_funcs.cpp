@@ -664,3 +664,11 @@ void fullBrightness(const shared_ptr<ogl_context> &context, const shared_ptr<ogl
 	glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 }
 
+template <typename T>
+auto renderFunction(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, const shared_ptr<T> &passed) -> decltype(shared_ptr<T>)
+{
+
+
+}
+
+
