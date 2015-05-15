@@ -348,6 +348,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 	{
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
+		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);
 	}
 
@@ -424,6 +425,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 					for (auto i : not_displayed_copy)
 					{
 						shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
+						thumbnail->setDrawSelected(highlight, fullBrightness);
 						artwork_thumbnails->addElement(thumbnail);
 					}
 				}
@@ -436,7 +438,6 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				hud_element_type selected_type;
 				string identifier;
 				shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
-				cout << "selected: " << selected << endl;
 
 				if (selected_type == THUMBNAIL)
 				{
@@ -498,6 +499,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 							{
 								i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 								shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
+								thumbnail->setDrawSelected(highlight, fullBrightness);
 								artwork_thumbnails->addElement(thumbnail);
 							}
 						}
@@ -544,7 +546,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				}
 			}
 
-			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_BACKSPACE, false)) && artwork_selected.second != nullptr)
+			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_DELETE, false)) && artwork_selected.second != nullptr)
 			{
 				current_player->removePaintingFromDisplay(artwork_selected.second);
 				current_player->getGallery(0)->removeArtwork(artwork_selected.second);
@@ -556,8 +558,13 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				{
 					i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
+					thumbnail->setDrawSelected(highlight, fullBrightness);
 					artwork_thumbnails->addElement(thumbnail);
 				}
+
+				title_text = nullptr;
+				info_text = nullptr;
+				rarity_text = nullptr;
 			}
 
 			context->swapBuffers();

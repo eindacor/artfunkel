@@ -14,6 +14,14 @@ hud_element::hud_element(const vec2 &item_centerpoint, float on_screen_width, fl
 	lower_left = vec2(centerpoint.x - half_width, centerpoint.y - half_height);
 	lower_right = vec2(centerpoint.x + half_width, centerpoint.y - half_height);
 
+	preDrawSelected = nullptr; 
+	postDrawSelected = nullptr;
+	preDrawNotSelected = nullptr; 
+	postDrawNotSelected = nullptr;
+
+	currently_selected = false;
+	currently_hovered = false;
+
 	element_type = type;
 }
 
@@ -74,13 +82,15 @@ void hud_element::updatePoints()
 	lines.push_back(center);
 }
 
-bool hud_element::itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position) const
+bool hud_element::itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position)
 {
 	if (cursor_position.x < upper_left.x || cursor_position.x > upper_right.x ||
 		cursor_position.y < lower_left.y || cursor_position.y > upper_left.y)
-		return false;
+		currently_selected = false;
 
-	else return true;
+	else currently_selected = true;
+
+	return currently_selected;
 }
 
 mat4 artwork_thumbnail::calcScaleMatrix(const shared_ptr<ogl_context> &context) const
@@ -97,6 +107,30 @@ mat4 artwork_thumbnail::calcScaleMatrix(const shared_ptr<ogl_context> &context) 
 		glm::scale(mat4(1.0f), vec3(scale_for_x, scale_for_x, 1.0f)) :
 		glm::scale(mat4(1.0f), vec3(scale_for_y, scale_for_y, 1.0f))
 		);
+}
+
+void artwork_thumbnail::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
+{
+	if (isCurrentlySelected() && preDrawSelected != nullptr)
+		preDrawSelected(context, camera);
+
+	mat4 aspect_matrix = glm::scale(mat4(1.0f), vec3(1.0f / context->getAspectRatio(), 1.0f, 1.0f));
+	stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix * aspect_matrix);
+
+	if (isCurrentlySelected() && postDrawSelected != nullptr)
+		postDrawSelected(context, camera);
+}
+
+bool artwork_thumbnail::isSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, shared_ptr<artwork> &selected)
+{
+	if (itemSelected(keys, cursor_position))
+	{
+		selected = stored;
+		cout << stored->getData()->getTitle() << " selected" << endl;
+		return true;
+	}
+
+	else return false;
 }
 
 bool hud::addElement(string identifier, const shared_ptr<hud_element> &to_add)
@@ -327,6 +361,7 @@ void dynamic_hud_array::setElementPositions()
 shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 	shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) const
 {
+	shared_ptr<hud_element> found = nullptr;
 	for (auto i : visible_lines) {
 		for (auto j : i.second) {
 			if (j->itemSelected(keys, cursor_position))
@@ -337,15 +372,16 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 				else
 				{
 					type = j->getType();
-					return j;
+					found = j;
 				}
 			}
 		}
 	}
 
 	identifier = "";
-	type = NO_TYPE;
-	return nullptr;
+	if (found == nullptr)
+		type = NO_TYPE;
+	return found;
 }
 
 void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const

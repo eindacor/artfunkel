@@ -392,13 +392,17 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.85f, -0.0f), 0.3f, 2.0f ,
 		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
 
+	//TODO equip dynamic array with function that generates thumbnails from artwork
 	//add player's default frames to each
 	for (auto i : inventory_copy)
 	{
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.3f, 0.3f), 0.01f));
+		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);
 	}
+
+	shared_ptr<artwork_thumbnail> highlight = nullptr;
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
@@ -416,6 +420,9 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	
 			artwork_thumbnails->draw(context, camera);
 
+			if (highlight != nullptr)
+				highlight->draw(context, camera);
+
 			context->swapBuffers();
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
@@ -430,10 +437,11 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 				hud_element_type selected_type;
 				string identifier;
 				shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
-				cout << "selected: " << selected << endl;
 
 				if (selected_type == THUMBNAIL)
-					printArtwork(selected->getStoredArt());
+					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), context, vec2(-0.15f, 0.15f), vec2(1.7f, 1.7f), 0.1f));
+
+				else highlight = nullptr;
 			}
 
 			glfwSetTime(0.0f);

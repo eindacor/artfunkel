@@ -654,3 +654,13 @@ float getNormalRotation(const vector<float> &vec_vertices, int normal_offset, in
 	return normal_angle;
 }
 
+void highlight(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
+{
+	glUniform1f(context->getShaderGLint("dim_factor"), 1.5f);
+}
+
+void fullBrightness(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
+{
+	glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
+}
+

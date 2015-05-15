@@ -11,8 +11,9 @@ public:
 	hud_element(const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type);
 	~hud_element(){};
 
-	virtual bool itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position) const;
+	virtual bool itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position);
 	virtual void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const = 0;
+
 	vec2 getUpperLeft() const { return upper_left; }
 	vec2 getUpperRight() const { return upper_right; }
 	vec2 getLowerLeft() const { return lower_left; }
@@ -24,10 +25,10 @@ public:
 	float getHeight() const { return height; }
 	float getWidth() const { return width; }
 
-	bool isHovered() const { return currently_hovering; }
-	bool isSelected() const { return currently_hovering; }
-	void setHovered(bool set) { currently_hovering = set; }
-	void setSelected(bool set) { currently_selected = set; }
+	bool isCurrentlyHovered() const { return currently_hovered; }
+	bool isCurrentlySelected() const { return currently_selected; }
+	void setCurrentlyHovered(bool set) { currently_hovered = set; }
+	void setCurrentlySelected(bool set) { currently_selected = set; }
 
 	hud_element_type getType() const { return element_type; }
 	void updatePoints();
@@ -48,6 +49,24 @@ public:
 	virtual shared_ptr<artwork> getStoredArt() const { return nullptr; }
 	virtual shared_ptr<artwork> getStoredText() const { return nullptr; }
 
+	void setDrawSelected(void(*preDS)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera), 
+		void(*postDS)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)) {
+		preDrawSelected = preDS; postDrawSelected = postDS;
+	}
+	void setDrawNotSelected(void(*preDNS)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera),
+		void(*postDNS)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)) {
+		preDrawNotSelected = preDNS; postDrawNotSelected = postDNS;
+	}
+	void clearDrawSelected() { preDrawSelected = nullptr; postDrawSelected = nullptr; }
+	void clearDrawNotSelected() { preDrawNotSelected = nullptr; postDrawNotSelected = nullptr; }
+
+	void(*preDrawSelected)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+	void(*postDrawSelected)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+	void(*preDrawNotSelected)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+	void(*postDrawNotSelected)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+	void(*preDrawHovered)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+	void(*postDrawHovered)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+
 private:
 
 	//below are the binding points for click detection
@@ -57,10 +76,12 @@ private:
 	hud_element_type element_type;
 	vector< shared_ptr<line> > lines;
 
-	bool currently_hovering = false;
-	bool currently_selected = false;
+	bool currently_hovered;
+	bool currently_selected;
+	bool currently_not_selected;
 };
 
+//TODO create first and last getters, change to a thumbnail-specific class
 //TODO create dynamic hud_element class that stores multiple hud_elements and spaces them equally, similar to the way text wrap works
 class dynamic_hud_array : public hud_element
 {
@@ -158,22 +179,8 @@ public:
 	~artwork_thumbnail(){};
 
 	void updateScale(const shared_ptr<ogl_context> &context) { scale_matrix = calcScaleMatrix(context); }
-	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const{
-		mat4 aspect_matrix = glm::scale(mat4(1.0f), vec3(1.0f / context->getAspectRatio(), 1.0f, 1.0f));
-		stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix * aspect_matrix);
-	}
-
-	virtual bool isSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, shared_ptr<artwork> &selected) const
-	{
-		if (itemSelected(keys, cursor_position))
-		{
-			selected = stored;
-			cout << stored->getData()->getTitle() << " selected" << endl;
-			return true;
-		}
-
-		else return false;
-	}
+	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;
+	virtual bool isSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, shared_ptr<artwork> &selected);
 
 	virtual shared_ptr<artwork> getStoredArt() const { return stored; }
 

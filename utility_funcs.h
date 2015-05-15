@@ -38,4 +38,8 @@ vector< vector<vec3> > getTriangles(const vector<float> &vec_vertices, int offse
 vector< pair<vec3, vec3> > getOuterEdges(const vector< vector<vec3> > &triangles);
 float getNormalRotation(const vector<float> &vec_vertices, int normal_offset, int stride);
 
+//pre and post render effects
+void highlight(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+void fullBrightness(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+
 #endif
