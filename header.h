@@ -41,6 +41,8 @@ class gallery;
 class display_wall;
 class loot_generator;
 class line;
+class rectangle;
+class image;
 class hud_element;
 class hud;
 class artwork_thumbnail;

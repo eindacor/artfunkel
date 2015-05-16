@@ -69,7 +69,7 @@ public:
 	void moveSecondRelative(mat4 translation) { p2 = translation * p2; }
 	void moveSecondAbsolute(vec4 new_point) { p2 = new_point; }
 
-	void draw(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam, bool absolute = false) const;
+	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute = false) const;
 
 private:
 	vec4 p1;
@@ -78,6 +78,35 @@ private:
 	shared_ptr<GLuint> VBO;
 	shared_ptr<GLuint> VAO;
 	vec4 color;
+};
+
+class rectangle
+{
+public:
+	rectangle(vec2 centerpoint, vec2 dimensions, vec4 c);
+	~rectangle();
+
+	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute = false) const;
+	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, const mat4 &model_matrix, bool absolute = false) const;
+
+private:
+	vector<float> vec_vertices;
+	shared_ptr<GLuint> VBO;
+	shared_ptr<GLuint> VAO;
+	vec4 color;
+};
+
+class image
+{
+public:
+	image(vec2 centerpoint, vec2 dimensions, const shared_ptr<ogl_context> &context, const char* texture_path);
+	~image(){};
+
+	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute = false) const;
+	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, const mat4 &model_matrix, bool absolute = false) const;
+
+private:
+	shared_ptr<jep::ogl_data> opengl_data;
 };
 
 #endif

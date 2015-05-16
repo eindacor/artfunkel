@@ -392,6 +392,8 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.85f, -0.0f), 0.3f, 2.0f ,
 		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
 
+	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
+
 	//TODO equip dynamic array with function that generates thumbnails from artwork
 	//add player's default frames to each
 	for (auto i : inventory_copy)

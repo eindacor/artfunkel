@@ -67,6 +67,16 @@ public:
 	void(*preDrawHovered)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
 	void(*postDrawHovered)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
 
+	void setBackgroundImage(const shared_ptr<ogl_context> &context, const char* image_path);
+	void setBackgroundColor(vec4 color);
+	void setBackgroundImage(const shared_ptr<image> &bi) { background_image = bi; }
+	void setBackgroundRec(const shared_ptr<rectangle> &br) { background_rec = br; }
+
+	void clearBackgroundImage() { background_image = nullptr; }
+	void clearBackgroundColor() { background_rec = nullptr; }
+
+	void drawBackground(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;
+
 private:
 
 	//below are the binding points for click detection
@@ -75,6 +85,9 @@ private:
 	vec2 centerpoint;
 	hud_element_type element_type;
 	vector< shared_ptr<line> > lines;
+
+	shared_ptr<rectangle> background_rec;
+	shared_ptr<image> background_image;
 
 	bool currently_hovered;
 	bool currently_selected;

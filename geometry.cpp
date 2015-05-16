@@ -46,6 +46,7 @@ void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &
 	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
 
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
+	glUniform1i(context->getShaderGLint("absolute_position"), false);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 }
@@ -270,6 +271,7 @@ void frame_model::draw(const shared_ptr<ogl_context> &context, const mat4 &model
 
 	//glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, matte_opengl_data->getVertexCount());
+	glUniform1i(context->getShaderGLint("absolute_position"), false);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 }
@@ -320,7 +322,156 @@ void line::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_cam
 	glDisableVertexAttribArray(0);
 
 	glUniform1i(context->getShaderGLint("color_override"), false);
+	glUniform1i(context->getShaderGLint("absolute_position"), false);
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+rectangle::rectangle(vec2 centerpoint, vec2 dimensions, vec4 c)
+{
+	float half_width = dimensions.x / 2.0f;
+	float half_height = dimensions.y / 2.0f;
+
+	vec2 upper_left(centerpoint.x - half_width, centerpoint.y + half_height);
+	vec2 upper_right(centerpoint.x + half_width, centerpoint.y + half_height);
+	vec2 lower_left(centerpoint.x - half_width, centerpoint.y - half_height);
+	vec2 lower_right(centerpoint.x + half_width, centerpoint.y - half_height);
+
+	vec_vertices = vector < float > {
+		lower_left.x, lower_left.y, 0.0f,
+		upper_left.x, upper_left.y, 0.0f,
+		upper_right.x, upper_right.y, 0.0f,
+		lower_left.x, lower_left.y, 0.0f,
+		upper_right.x, upper_right.y, 0.0f,
+		lower_right.x, lower_right.y, 0.0f
+	};
+
+	color = c;
+
+	VAO = shared_ptr<GLuint>(new GLuint);
+	VBO = shared_ptr<GLuint>(new GLuint);
+
+	glGenVertexArrays(1, VAO.get());
+	glBindVertexArray(*VAO);
+	glGenBuffers(1, VBO.get());
+	glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+
+	glBufferData(GL_ARRAY_BUFFER, vec_vertices.size() * sizeof(float), &vec_vertices[0], GL_STATIC_DRAW);
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glDisableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+}
+
+rectangle::~rectangle()
+{
+	glDeleteVertexArrays(1, VAO.get());
+	glDeleteBuffers(1, VAO.get());
+}
+
+void rectangle::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute) const
+{
+	glBindVertexArray(*VAO);
+	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
+
+	glUniform1i(context->getShaderGLint("color_override"), true);
+	glUniform4f(context->getShaderGLint("override_color"), color.x, color.y, color.z, color.w);
+
+	camera->setMVP(context, glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f)), (absolute ? (render_type)2 : (render_type)0));
+
+	glEnableVertexAttribArray(0);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisableVertexAttribArray(0);
+
+	glUniform1i(context->getShaderGLint("color_override"), false);
+	glUniform1i(context->getShaderGLint("absolute_position"), false);
+
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+void rectangle::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, const mat4 &model_matrix, bool absolute) const
+{
+	glBindVertexArray(*VAO);
+	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
+
+	glUniform1i(context->getShaderGLint("color_override"), true);
+	glUniform4f(context->getShaderGLint("override_color"), color.x, color.y, color.z, color.w);
+
+	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
+
+	glEnableVertexAttribArray(0);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDisableVertexAttribArray(0);
+
+	glUniform1i(context->getShaderGLint("color_override"), false);
+	glUniform1i(context->getShaderGLint("absolute_position"), false);
+
+	glBindVertexArray(0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+image::image(vec2 centerpoint, vec2 dimensions, const shared_ptr<ogl_context> &context, const char* texture_path)
+{
+	float half_width = dimensions.x / 2.0f;
+	float half_height = dimensions.y / 2.0f;
+
+	vec3 upper_left(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f);
+	vec3 upper_right(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f);
+	vec3 lower_left(centerpoint.x - half_width, centerpoint.y - half_height, 0.0f);
+	vec3 lower_right(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f);
+
+	vector<float> vec_vertices {
+		lower_left.x, lower_left.y, 0.0f,
+		0.0f, 0.0f,
+		upper_left.x, upper_left.y, 0.0f,
+		0.0f, 1.0f,
+		upper_right.x, upper_right.y, 0.0f,
+		1.0f, 1.0f,
+		lower_left.x, lower_left.y, 0.0f,
+		0.0f, 0.0f,
+		upper_right.x, upper_right.y, 0.0f,
+		1.0f, 1.0f,
+		lower_right.x, lower_right.y, 0.0f,
+		1.0f, 0.0f
+	};
+
+	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+}
+
+void image::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute) const
+{
+	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
+	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
+	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
+
+	glBindVertexArray(*temp_vao);
+	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+
+	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
+	camera->setMVP(context, mat4(1.0f), (absolute ? (render_type)2 : (render_type)0));
+
+	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+}
+
+void image::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, const mat4 &model_matrix, bool absolute) const
+{
+	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
+	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
+	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
+
+	glBindVertexArray(*temp_vao);
+	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+
+	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
+	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
+
+	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
 }

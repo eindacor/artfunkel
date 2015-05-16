@@ -22,6 +22,9 @@ hud_element::hud_element(const vec2 &item_centerpoint, float on_screen_width, fl
 	currently_selected = false;
 	currently_hovered = false;
 
+	background_rec = nullptr;
+	background_image = nullptr;
+
 	element_type = type;
 }
 
@@ -93,6 +96,25 @@ bool hud_element::itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor
 	return currently_selected;
 }
 
+void hud_element::setBackgroundImage(const shared_ptr<ogl_context> &context, const char* image_path)
+{
+	background_image = shared_ptr<image>(new image(vec2(0.0f, 0.0f), vec2(width, height), context, image_path));
+}
+
+void hud_element::setBackgroundColor(vec4 color)
+{
+	background_rec = shared_ptr<rectangle>(new rectangle(vec2(0.0f, 0.0f), vec2(width, height), color));
+}
+
+void hud_element::drawBackground(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
+{
+	if (background_rec != nullptr)
+		background_rec->draw(context, camera, glm::translate(mat4(1.0f), vec3(centerpoint.x, centerpoint.y, 0.0f)), true);
+
+	if (background_image != nullptr)
+		background_image->draw(context, camera, glm::translate(mat4(1.0f), vec3(centerpoint.x, centerpoint.y, 0.0f)), true);
+}
+
 mat4 artwork_thumbnail::calcScaleMatrix(const shared_ptr<ogl_context> &context) const
 {
 	//x dimensionsthroughout are modified for aspect ratio stretching
@@ -111,6 +133,7 @@ mat4 artwork_thumbnail::calcScaleMatrix(const shared_ptr<ogl_context> &context) 
 
 void artwork_thumbnail::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
+	drawBackground(context, camera);
 	if (isCurrentlySelected() && preDrawSelected != nullptr)
 		preDrawSelected(context, camera);
 
@@ -364,6 +387,7 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 	shared_ptr<hud_element> found = nullptr;
 	for (auto i : visible_lines) {
 		for (auto j : i.second) {
+			j->clearBackgroundColor();
 			if (j->itemSelected(keys, cursor_position))
 			{
 				if (j->getType() == ELEMENT_ARRAY)
@@ -373,6 +397,7 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 				{
 					type = j->getType();
 					found = j;
+					found->setBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.5f));
 				}
 			}
 		}
@@ -381,22 +406,27 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 	identifier = "";
 	if (found == nullptr)
 		type = NO_TYPE;
+
 	return found;
 }
 
 void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
+	glDisable(GL_DEPTH_TEST);
+	drawBackground(context, camera);
 	for (auto i : visible_lines)
 	{
 		for (auto j : i.second)
 		{
 			j->draw(context, camera);
-			j->drawLines(context, camera);
+			//j->drawLines(context, camera);
 		}
 	}
 
 	for (auto i : lines)
 		i->draw(context, camera, true);
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 void dynamic_hud_array::setLines()
