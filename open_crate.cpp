@@ -106,7 +106,8 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					(*it)->draw2D(context, camera, highlight_matrix_index.at(index));
 
 					title_text = text->getTextArray((*it)->getData()->getTitle(), context,
-						true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
+						true, title_color, transparent_color, "text", "text_color", "transparency_color",
+						true, title_screen_position, title_scale, text_box_width);
 
 					switch ((*it)->getData()->getRarity())
 					{
@@ -118,12 +119,14 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 					}
 
 					rarity_text = text->getTextArray(stringFromRarity((*it)->getData()->getRarity()), context,
-						false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
+						false, rarity_color, transparent_color, "text", "text_color", "transparency_color",
+						true, title_text->getLowerLeft(), info_scale, text_box_width);
 
 					string to_print = std::to_string((*it)->getData()->getDate().getYear()) + "\n" + (*it)->getData()->getArtistName();
 					to_print += "\n$" + (*it)->getValue().getNumberString(true, false, 2);
 
 					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
+						"text", "text_color", "transparency_color",
 						true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 
 					glUniform1f(context->getShaderGLint("dim_factor"), 0.5f);
@@ -147,6 +150,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				}
 
 				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
+					"text", "text_color", "transparency_color",
 					true, info_text->getLowerLeft() - vec2(0.0f, alert_buffer), alert_scale, text_box_width);
 			}
 
@@ -167,6 +171,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 				}
 
 				alert_text = text->getTextArray("All paintings have been added to your inventory", context, false, alert_color, transparent_color,
+					"text", "text_color", "transparency_color",
 					true, info_text->getLowerLeft() - vec2(0.0f, alert_buffer), alert_scale, text_box_width);
 
 				cout << "Collection value: $" << current_player->getCollectionValue().getNumberString(true, false, 2) << endl;
@@ -248,13 +253,13 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, const sh
 			}
 
 			if (title_text != nullptr)
-				title_text->draw(camera, context, "text", "text_color", "transparency_color");
+				title_text->draw(camera, context);
 			if (rarity_text != nullptr)
-				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+				rarity_text->draw(camera, context);
 			if (info_text != nullptr)
-				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+				info_text->draw(camera, context);
 			if (alert_text != nullptr)
-				alert_text->draw(camera, context, "text", "text_color", "transparency_color");
+				alert_text->draw(camera, context);
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
@@ -358,6 +363,7 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 				}
 
 				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
+					"text", "text_color", "transparency_color",
 					true, vec2(-0.75f, -0.75f), alert_scale, text_box_width);
 			}
 
@@ -370,6 +376,7 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 				}
 
 				alert_text = text->getTextArray("All paintings have been added to your inventory", context, false, alert_color, transparent_color,
+					"text", "text_color", "transparency_color",
 					true, vec2(-0.75f, -0.75f), alert_scale, text_box_width);
 			}
 
@@ -387,13 +394,13 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 			}
 
 			if (title_text != nullptr)
-				title_text->draw(camera, context, "text", "text_color", "transparency_color");
+				title_text->draw(camera, context);
 			if (rarity_text != nullptr)
-				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+				rarity_text->draw(camera, context);
 			if (info_text != nullptr)
-				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+				info_text->draw(camera, context);
 			if (alert_text != nullptr)
-				alert_text->draw(camera, context, "text", "text_color", "transparency_color");
+				alert_text->draw(camera, context);
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{

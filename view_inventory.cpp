@@ -223,7 +223,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					break;
 				}
 
-				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
+				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color, "text", "text_color", "transparency_color", 
 					true, info_text->getLowerLeft() - vec2(0.0f, alert_buffer), alert_scale, text_box_width);
 
 			}
@@ -354,13 +354,13 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			}
 
 			if (title_text != nullptr)
-				title_text->draw(camera, context, "text", "text_color", "transparency_color");
+				title_text->draw(camera, context);
 			if (info_text != nullptr)
-				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+				info_text->draw(camera, context);
 			if (rarity_text != nullptr)
-				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+				rarity_text->draw(camera, context);
 			if (alert_text != nullptr)
-				alert_text->draw(camera, context, "text", "text_color", "transparency_color");
+				alert_text->draw(camera, context);
 
 			context->swapBuffers();
 

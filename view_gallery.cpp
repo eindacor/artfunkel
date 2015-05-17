@@ -130,11 +130,11 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
 
 			if (title_text != nullptr)
-				title_text->draw(camera, context, "text", "text_color", "transparency_color");
+				title_text->draw(camera, context);
 			if (info_text != nullptr)
-				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+				info_text->draw(camera, context);
 			if (rarity_text != nullptr)
-				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+				rarity_text->draw(camera, context);
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
@@ -227,7 +227,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					{
 						shared_ptr<artwork> selected = artwork_selected.second;
 						title_text = text->getTextArray(selected->getData()->getTitle(), context,
-							true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
+							true, title_color, transparent_color, "text", "text_color", "transparency_color",
+							true, title_screen_position, title_scale, text_box_width);
 
 						switch (selected->getData()->getRarity())
 						{
@@ -239,12 +240,13 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 						}
 
 						rarity_text = text->getTextArray(stringFromRarity(selected->getData()->getRarity()), context,
-							false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
+							false, rarity_color, transparent_color, "text", "text_color", "transparency_color", 
+							true, title_text->getLowerLeft(), info_scale, text_box_width);
 
 						string to_print = std::to_string(selected->getData()->getDate().getYear()) + "\n" + selected->getData()->getArtistName();
 						to_print += "\n$" + selected->getValue().getNumberString(true, false, 2);
 
-						info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
+						info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, "text", "text_color", "transparency_color",
 							true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 
 						//remove from display
@@ -400,11 +402,11 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				artwork_thumbnails->draw(context, camera);
 
 			if (title_text != nullptr)
-				title_text->draw(camera, context, "text", "text_color", "transparency_color");
+				title_text->draw(camera, context);
 			if (info_text != nullptr)
-				info_text->draw(camera, context, "text", "text_color", "transparency_color");
+				info_text->draw(camera, context);
 			if (rarity_text != nullptr)
-				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
+				rarity_text->draw(camera, context);
 
 			if (keys->checkPress(GLFW_KEY_I, false))
 			{
@@ -446,7 +448,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 					printArtwork(selected->getStoredArt());
 
 					title_text = text->getTextArray(painting_to_place->getData()->getTitle(), context,
-						true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
+						true, title_color, transparent_color, "text", "text_color", "transparency_color", true, title_screen_position, title_scale, text_box_width);
 
 					switch (painting_to_place->getData()->getRarity())
 					{
@@ -458,12 +460,12 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 					}
 
 					rarity_text = text->getTextArray(stringFromRarity(painting_to_place->getData()->getRarity()), context,
-						false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
+						false, rarity_color, transparent_color, "text", "text_color", "transparency_color", true, title_text->getLowerLeft(), info_scale, text_box_width);
 
 					string to_print = std::to_string(painting_to_place->getData()->getDate().getYear()) + "\n" + painting_to_place->getData()->getArtistName();
 					to_print += "\n$" + painting_to_place->getValue().getNumberString(true, false, 2);
 
-					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
+					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, "text", "text_color", "transparency_color",
 						true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 				}
 
@@ -510,7 +512,8 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 					{
 						shared_ptr<artwork> selected = artwork_selected.second;
 						title_text = text->getTextArray(selected->getData()->getTitle(), context,
-							true, title_color, transparent_color, true, title_screen_position, title_scale, text_box_width);
+							true, title_color, transparent_color, "text", "text_color", "transparency_color",
+							true, title_screen_position, title_scale, text_box_width);
 
 						switch (selected->getData()->getRarity())
 						{
@@ -522,12 +525,14 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 						}
 
 						rarity_text = text->getTextArray(stringFromRarity(selected->getData()->getRarity()), context,
-							false, rarity_color, transparent_color, true, title_text->getLowerLeft(), info_scale, text_box_width);
+							false, rarity_color, transparent_color, "text", "text_color", "transparency_color", 
+							true, title_text->getLowerLeft(), info_scale, text_box_width);
 
 						string to_print = std::to_string(selected->getData()->getDate().getYear()) + "\n" + selected->getData()->getArtistName();
 						to_print += "\n$" + selected->getValue().getNumberString(true, false, 2);
 
 						info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
+							"text", "text_color", "transparency_color",
 							true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 
 						//remove from display

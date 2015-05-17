@@ -212,17 +212,26 @@ private:
 	float thumbnail_padding;
 };
 
-/*
+
 class text_box : public hud_element
 {
 public:
-	text_box(){};
+	text_box(std::string s, const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &th,  vec2 centerpoint, vec2 on_screen_dimensions, bool italics, glm::vec4 color, glm::vec4 trans_color,
+		bool transparent, float scale, float padding = 0.0f) :
+		hud_element(centerpoint, on_screen_dimensions.x, on_screen_dimensions.y, TEXT_BOX)
+	{
+		float x_padding = padding / context->getAspectRatio();
+		vec2 text_position(getUpperLeft().x + x_padding, getUpperLeft().y - padding);
+		//stored = th->getTextArray(s, context, italics, color, trans_color, transparent, text_position, scale, getWidth() - (2.0f * x_padding), getHeight() - 2.0f * padding);
+	}
 	~text_box(){};
 
 private:
-
+	shared_ptr<static_text> stored;
 
 };
+
+/*
 
 class button : public hud_element
 {
