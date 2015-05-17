@@ -113,7 +113,10 @@ public:
 	//TODO add methods for adding specific hud elements
 	void addElement(const shared_ptr<hud_element> &to_add);
 	void addElements(const vector< shared_ptr<hud_element> > &element_vec);
-	void setElementPositions();
+	void setPageData();
+	bool setVisible(int page_number);
+	void pageUp() { setVisible(current_page + 1); }
+	void pageDown() { setVisible(current_page - 1); }
 	void clearElements() { array_elements.clear(); visible_lines.clear(); }
 	//getSelectedWithinArray is design to recurse if it detects nested arrays
 	virtual shared_ptr<hud_element> getSelectedWithinArray(
@@ -135,6 +138,11 @@ private:
 	vector< shared_ptr<line> > lines;
 
 	shared_ptr<ogl_context> context;
+
+	int current_page;
+
+	//int is page number (zero-indexed), iterator is first element of each page
+	map<int, vector< shared_ptr<hud_element> >::iterator > page_map;
 };
 
 class artwork_thumbnail : public hud_element

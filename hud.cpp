@@ -235,20 +235,81 @@ void dynamic_hud_array::setYForLine(vector< shared_ptr<hud_element> > &line_cont
 void dynamic_hud_array::addElement(const shared_ptr<hud_element> &to_add)
 {
 	array_elements.push_back(to_add);
-	setElementPositions();
+	setPageData();
 }
 
 void dynamic_hud_array::addElements(const vector< shared_ptr<hud_element> > &element_vec)
 {
 	array_elements.insert(array_elements.end(), element_vec.begin(), element_vec.end());
-	setElementPositions();
+	setPageData();
 }
 
-void dynamic_hud_array::setElementPositions()
+//this method cycles through all of the array elements and identifiers the "lines" to be displayed and their corresponding heights.
+//then the page markers are determined from the height data and the binding height of the elment
+void dynamic_hud_array::setPageData()
 {
-	float width_max = getWidth();
-	float height_max = getHeight();
+	visible_lines.clear();
 
+	float line_width_max = getWidth();
+	float page_height_max = getHeight();
+
+	//vector of pairs containing iterators and floats
+	vector< pair<vector< shared_ptr<hud_element> >::iterator, float> >line_heights;
+	float current_line_width = 0.0f;
+	float current_line_height = 0.0f;
+	bool new_line = true;
+	vector< shared_ptr<hud_element> >::iterator current_line_first = array_elements.begin();
+	for (vector< shared_ptr<hud_element> >::iterator it = array_elements.begin(); it != array_elements.end(); it++)
+	{
+		if (current_line_width + (*it)->getWidth() > line_width_max)
+		{
+			line_heights.push_back(pair< vector< shared_ptr<hud_element> >::iterator, float>(current_line_first, current_line_height));
+			current_line_height = (*it)->getHeight();
+			current_line_width = (*it)->getWidth();
+			current_line_first = it;
+		}
+
+		else
+		{
+			current_line_width += (*it)->getWidth();
+
+			if ((*it)->getHeight() > current_line_height)
+				current_line_height = (*it)->getHeight();
+		}
+
+		if (it == array_elements.end() - 1)
+			line_heights.push_back(pair< vector< shared_ptr<hud_element> >::iterator, float>(current_line_first, current_line_height));
+	}
+
+	float current_page_height = 0.0f;
+	int page_counter = 0;
+	for (int i = 0; i < line_heights.size(); i++)
+	{
+		pair<vector< shared_ptr<hud_element> >::iterator, float> line_data = line_heights.at(i);
+		if (current_page_height + line_data.second > page_height_max || i == 0)
+		{
+			page_map[page_counter] = line_data.first;
+			current_page_height = line_data.second;
+			page_counter++;
+		}
+
+		else current_page_height += line_data.second;
+	}
+
+	setVisible(0);
+}
+
+bool dynamic_hud_array::setVisible(int page_number)
+{
+	if (page_number < 0 || page_map.find(page_number) == page_map.end())
+		return false;
+
+	current_page = page_number;
+
+	vector< shared_ptr<hud_element> >::iterator start = page_map.at(page_number);
+	vector< shared_ptr<hud_element> >::iterator end = (page_map.find(page_number + 1) == page_map.end() ? array_elements.end() : page_map.at(page_number + 1));
+
+	float width_max = getWidth();
 	visible_lines.clear();
 	//total width and height of individual lines
 	map< int, vec2 > line_dimensions;
@@ -256,44 +317,26 @@ void dynamic_hud_array::setElementPositions()
 	vector<shared_ptr<hud_element> > current_line;
 	float current_line_width = 0.0f;
 	float current_line_height = 0.0f;
-	float total_height = 0.0f;
 	int line_count = 0;
-	for (vector< shared_ptr<hud_element> >::iterator it = array_elements.begin(); it != array_elements.end(); it++)
+	float total_height = 0.0f;
+	for (vector< shared_ptr<hud_element> >::iterator it = start; it != end; it++)
 	{
 		if (current_line_width + (*it)->getWidth() > width_max)
 		{
 			//submit current line, check new value
-			visible_lines.insert(pair<int, vector<shared_ptr<hud_element> > >(line_count, current_line));
-			line_dimensions.insert(pair<int, vec2>(line_count, vec2(current_line_width, current_line_height)));
-			total_height += current_line_height;
-			line_count++;
-			current_line.clear();
-
-			//max_height check
-			if (total_height + (*it)->getHeight() > height_max)
-				break;
-
-			//add element to line
-			else
+			if (current_line.size() > 0)
 			{
-				current_line_width = (*it)->getWidth();
-				current_line_height = (*it)->getHeight();
-				current_line.push_back(*it);
-				
-				//if it's the last of the array, add current line
-				if (it == array_elements.end() - 1)
-				{
-					visible_lines.insert(pair<int, vector<shared_ptr<hud_element> > >(line_count, current_line));
-					line_dimensions.insert(pair<int, vec2>(line_count, vec2(current_line_width, current_line_height)));
-					total_height += current_line_height;
-					break;
-				}
+				visible_lines.insert(pair<int, vector<shared_ptr<hud_element> > >(line_count, current_line));
+				line_dimensions.insert(pair<int, vec2>(line_count, vec2(current_line_width, current_line_height)));
+				total_height += current_line_height;
+				line_count++;
+				current_line.clear();
 			}
-		}
 
-		//max height check
-		else if (total_height + (*it)->getHeight() > height_max)
-			break;
+			current_line_width = (*it)->getWidth();
+			current_line_height = (*it)->getHeight();
+			current_line.push_back(*it);
+		}
 
 		//add element to line
 		else
@@ -305,26 +348,22 @@ void dynamic_hud_array::setElementPositions()
 			//adjust height
 			if ((*it)->getHeight() > current_line_height)
 				current_line_height = (*it)->getHeight();
+		}
 
-
-			//if it's the last of the array, add current line
-			if (it == array_elements.end() - 1)
-			{
-				visible_lines.insert(pair<int, vector<shared_ptr<hud_element> > >(line_count, current_line));
-				line_dimensions.insert(pair<int, vec2>(line_count, vec2(current_line_width, current_line_height)));
-				total_height += current_line_height;
-				break;
-			}
+		//if it's the last of the array, add current line
+		if (it == end - 1)
+		{
+			visible_lines.insert(pair<int, vector<shared_ptr<hud_element> > >(line_count, current_line));
+			line_dimensions.insert(pair<int, vec2>(line_count, vec2(current_line_width, current_line_height)));
+			total_height += current_line_height;
 		}
 	}
 
 	float initial_x_offset = 0.0f;
-	float initial_y_offset = 0.0f;
-
 	float distance_from_top = 0.0f;
 	float y_offset = 0.0f;
 	for (auto element_vec : visible_lines)
-	{	
+	{
 		vector< shared_ptr<hud_element> > line_contents = element_vec.second;
 		int line_number = element_vec.first;
 		vec2 dimensions = line_dimensions.at(element_vec.first);
@@ -352,7 +391,7 @@ void dynamic_hud_array::setElementPositions()
 		default:
 			break;
 		}
-	
+
 		//for each case, find the top-most point, then use distance from top/height of line to come down incrementally
 		switch (justification.second)
 		{
@@ -379,7 +418,10 @@ void dynamic_hud_array::setElementPositions()
 		//actively keep track of how far the lines are from the top of the total_height value, in order to set the y offset
 		distance_from_top += dimensions.y;
 	}
+
+	return true;
 }
+
 
 shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 	shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) const

@@ -473,9 +473,6 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				{
 					//first float indicates scale of the ray from bary coordinates (result.z)
 					//the smaller the scale, the closer the object is. closest object indicates intended target
-					//pair<float, shared_ptr<artwork> > artwork_selected;
-					//pair<float, shared_ptr<display_wall> > wall_selected;
-
 					wall_selected.second = current_gallery->checkWallClicks(keys, camera, wall_selected.first);
 					artwork_selected.second = current_gallery->checkArtworkClicks(keys, camera, artwork_selected.first);
 
@@ -564,6 +561,24 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 					artwork_thumbnails->addElement(thumbnail);
 				}
 
+				title_text = nullptr;
+				info_text = nullptr;
+				rarity_text = nullptr;
+			}
+
+			if (keys->checkPress(GLFW_KEY_COMMA, false) && inventory_displayed)
+			{
+				artwork_thumbnails->pageDown();
+				painting_to_place = nullptr;
+				title_text = nullptr;
+				info_text = nullptr;
+				rarity_text = nullptr;
+			}
+
+			if (keys->checkPress(GLFW_KEY_PERIOD, false) && inventory_displayed)
+			{
+				artwork_thumbnails->pageUp();
+				painting_to_place = nullptr;
 				title_text = nullptr;
 				info_text = nullptr;
 				rarity_text = nullptr;
