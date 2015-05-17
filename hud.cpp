@@ -249,6 +249,7 @@ void dynamic_hud_array::addElements(const vector< shared_ptr<hud_element> > &ele
 void dynamic_hud_array::setPageData()
 {
 	visible_lines.clear();
+	page_map.clear();
 
 	float line_width_max = getWidth();
 	float page_height_max = getHeight();

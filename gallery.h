@@ -16,7 +16,7 @@ public:
 
 	bool validPlacement(const shared_ptr<artwork> &placed, const vec2 &position);
 	mat4 getWallModelMatrix() const { return wall_model_matrix; }
-	bool isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
+	bool cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
 		const pair<vec3, vec3> &ray, float &scale);
 	vector< pair<vec2, shared_ptr<artwork> > > getWallContents() const { return wall_contents; }
 
@@ -27,8 +27,8 @@ public:
 	bool removeArtwork(const shared_ptr<artwork> &to_remove);
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
 
-	vec4 getClickPositionWorldspace() const { return wall_model_matrix * vec4(click_position.x, click_position.y, 0.0f, 1.0f); }
-	vec2 getClickPositionWallspace() const { return click_position; }
+	vec4 getCursorPositionWorldspace() const { return wall_model_matrix * vec4(cursor_position.x, cursor_position.y, 0.0f, 1.0f); }
+	vec2 getCursorPositionWallspace() const { return cursor_position; }
 
 private:
 	//wall_edges is used to determine whether a point is inside or outside the wall
@@ -37,7 +37,7 @@ private:
 	vector< vector<vec3> > wall_triangles;
 	//wall_origin is used to determine translation offset of paintings
 	vec2 wall_origin;
-	vec2 click_position;
+	vec2 cursor_position;
 	//vec2 indicates position on wall, which is NOT directly related to the model matrix. model matrix of painting is identified separately
 	//and incorporates the wall_model_matrix. position vector is stored separately for artwork collision purposes
 	vector< pair<vec2, shared_ptr<artwork> > >wall_contents;
@@ -57,8 +57,8 @@ public:
 	~gallery(){};
 
 	void renderGallery(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;	
-	shared_ptr<display_wall> checkWallClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
-	shared_ptr<artwork> checkArtworkClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
+	shared_ptr<display_wall> getClosestWallUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
+	shared_ptr<artwork> getClosestArtworkUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 	void removeArtwork(const shared_ptr<artwork> &toRemove);
 
 private:

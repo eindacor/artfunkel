@@ -88,6 +88,7 @@ public:
 
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute = false) const;
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, const mat4 &model_matrix, bool absolute = false) const;
+	void setColor(vec4 c) { color = c; }
 
 private:
 	vector<float> vec_vertices;

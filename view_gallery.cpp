@@ -163,8 +163,8 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					//pair<float, shared_ptr<artwork> > artwork_selected;
 					//pair<float, shared_ptr<display_wall> > wall_selected;
 
-					wall_selected.second = current_gallery->checkWallClicks(keys, camera, wall_selected.first);
-					artwork_selected.second = current_gallery->checkArtworkClicks(keys, camera, artwork_selected.first);
+					wall_selected.second = current_gallery->getClosestWallUnderCursor(keys, camera, wall_selected.first);
+					artwork_selected.second = current_gallery->getClosestArtworkUnderCursor(keys, camera, artwork_selected.first);
 
 					//wall returned wasn't nullptr, and either no artwork was selected or the wall was closer
 					bool wall_was_selected = (wall_selected.second != nullptr &&
@@ -173,7 +173,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 					if (wall_was_selected && painting_to_place != nullptr)
 					{
-						vec2 point_clicked = wall_selected.second->getClickPositionWallspace();
+						vec2 point_clicked = wall_selected.second->getCursorPositionWallspace();
 
 						//TODO validPlacement not working
 						if (wall_selected.second->validPlacement(painting_to_place, point_clicked) || true)
@@ -383,6 +383,8 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 
 	bool inventory_displayed = true;
 
+	shared_ptr<rectangle> placement_preview = nullptr;
+
 	while (!finished)
 	{
 		if (glfwGetTime() > 1.0f / render_fps)
@@ -403,13 +405,6 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				info_text->draw(camera, context, "text", "text_color", "transparency_color");
 			if (rarity_text != nullptr)
 				rarity_text->draw(camera, context, "text", "text_color", "transparency_color");
-
-			if (keys->checkPress(GLFW_KEY_ESCAPE))
-			{
-				menu_return = mainMenu(data_path, context, keys, text);
-				if (menu_return != 0)
-					finished = true;
-			}
 
 			if (keys->checkPress(GLFW_KEY_I, false))
 			{
@@ -444,6 +439,9 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				if (selected_type == THUMBNAIL)
 				{
 					painting_to_place = selected->getStoredArt();
+					vec2 painting_dimensions = vec2(painting_to_place->getOverallDimensions().x, painting_to_place->getOverallDimensions().y);
+					placement_preview = shared_ptr<rectangle>(new rectangle(vec2(0.0f, 0.0f), painting_dimensions, vec4(1.0f, 1.0f, 0.0f, 0.5f)));
+
 					new_selection = true;
 					printArtwork(selected->getStoredArt());
 
@@ -473,8 +471,8 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				{
 					//first float indicates scale of the ray from bary coordinates (result.z)
 					//the smaller the scale, the closer the object is. closest object indicates intended target
-					wall_selected.second = current_gallery->checkWallClicks(keys, camera, wall_selected.first);
-					artwork_selected.second = current_gallery->checkArtworkClicks(keys, camera, artwork_selected.first);
+					wall_selected.second = current_gallery->getClosestWallUnderCursor(keys, camera, wall_selected.first);
+					artwork_selected.second = current_gallery->getClosestArtworkUnderCursor(keys, camera, artwork_selected.first);
 
 					//wall returned wasn't nullptr, and either no artwork was selected or the wall was closer
 					bool wall_was_selected = (wall_selected.second != nullptr &&
@@ -483,10 +481,9 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 
 					if (wall_was_selected && painting_to_place != nullptr)
 					{
-						vec2 point_clicked = wall_selected.second->getClickPositionWallspace();
+						vec2 point_clicked = wall_selected.second->getCursorPositionWallspace();
 
-						//TODO validPlacement not working
-						if (wall_selected.second->validPlacement(painting_to_place, point_clicked) || true)
+						if (wall_selected.second->validPlacement(painting_to_place, point_clicked))
 						{
 							//TODO find a way to combine these to ensure players paintings are never added without updating player
 							wall_selected.second->addArtwork(point_clicked, *painting_to_place);
@@ -506,6 +503,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 						else cout << "position not valid" << endl;
 
 						painting_to_place = nullptr;
+						placement_preview = nullptr;
 					}
 
 					if (artwork_was_selected)
@@ -534,6 +532,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 
 						//remove from display
 						painting_to_place = nullptr;
+						placement_preview = nullptr;
 					}
 
 					else
@@ -542,6 +541,27 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 						info_text = nullptr;
 						rarity_text = nullptr;
 					}
+				}
+			}
+
+			if (painting_to_place != nullptr)
+			{
+				float distance;
+				shared_ptr<display_wall> wall_hovered = current_gallery->getClosestWallUnderCursor(keys, camera, distance);
+				if (wall_hovered != nullptr)
+				{
+					vec2 position_on_wall = wall_hovered->getCursorPositionWallspace();
+					mat4 wall_position_matrix(glm::translate(mat4(1.0f), vec3(position_on_wall.x, position_on_wall.y, 0.0f)));
+					mat4 rectangle_matrix = wall_hovered->getWallModelMatrix() * wall_position_matrix;
+
+					if (wall_hovered->validPlacement(painting_to_place, position_on_wall))
+						placement_preview->setColor(vec4(0.0f, 1.0f, 0.0f, 0.5f));
+
+					else placement_preview->setColor(vec4(1.0f, 0.0f, 0.0f, 0.5f));
+
+					glDisable(GL_DEPTH_TEST);
+					placement_preview->draw(context, camera, rectangle_matrix, false);
+					glEnable(GL_DEPTH_TEST);
 				}
 			}
 
@@ -582,6 +602,13 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				title_text = nullptr;
 				info_text = nullptr;
 				rarity_text = nullptr;
+			}
+
+			if (keys->checkPress(GLFW_KEY_ESCAPE))
+			{
+				menu_return = mainMenu(data_path, context, keys, text);
+				if (menu_return != 0)
+					finished = true;
 			}
 
 			context->swapBuffers();

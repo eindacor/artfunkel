@@ -85,19 +85,19 @@ bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 
 	float half_height(height / 2.0f);
 
 	vector<vec2> placed_points_to_check{
-		vec2(half_width * -1.0f, half_height) + position,			//upper left
-		vec2(half_width, half_height) + position, 					//upper right
-		vec2(half_width * -1.0f, half_height * -1.0f) + position,	//lower left	
-		vec2(half_width, half_height * -1.0f) + position			//lower right
+		vec2(position.x - half_width, position.y + half_height),		//upper left
+		vec2(position.x + half_width, position.y + half_height), 		//upper right
+		vec2(position.x - half_width, position.y - half_height),		//lower left	
+		vec2(position.x + half_width, position.y - half_height)			//lower right
 	};
 
+	//TODO verify that painting edges don't intersect, in addition to four corners not being within other paintings
 	for (auto i : placed_points_to_check)
 	{
+		//break;
 		//verifies paintings is within bounds of wall
 		if (!jep::pointInPolygon(wall_edges, i))
 			return false;
-
-		else cout << "point not within wall bounds: " << i.x << ", " << i.y << endl;
 
 		//verifies painting does not collide with other paintings
 		for (auto p : wall_contents)
@@ -105,12 +105,13 @@ bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 
 			vec3 other_dimensions = p.second->getOverallDimensions();
 			float other_half_width = other_dimensions.x / 2.0f;
 			float other_half_height = other_dimensions.y / 2.0f;
+			vec2 other_centerpoint = p.first;
 
 			vector<vec2> other_bounding_points{
-				vec2(other_half_width * -1.0f, other_half_height) + p.first,			//upper left
-				vec2(other_half_width, other_half_height) + p.first, 					//upper right
-				vec2(other_half_width * -1.0f, other_half_height * -1.0f) + p.first,	//lower left	
-				vec2(other_half_width, other_half_height * -1.0f) + p.first				//lower right
+				vec2(other_centerpoint.x - other_half_width, other_centerpoint.y + other_half_height),		//upper left
+				vec2(other_centerpoint.x + other_half_width, other_centerpoint.y + other_half_height), 		//upper right
+				vec2(other_centerpoint.x - other_half_width, other_centerpoint.y - other_half_height),		//lower left	
+				vec2(other_centerpoint.x + other_half_width, other_centerpoint.y - other_half_height)		//lower right
 			};
 
 			if (jep::pointInPolygon(other_bounding_points, i))
@@ -175,7 +176,7 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	glBindVertexArray(0);
 }
 
-bool display_wall::isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
+bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
 	const pair<vec3, vec3> &ray, float &scale)
 {
 	mat4 inverse_model_matrix = glm::inverse(wall_model_matrix);
@@ -200,7 +201,7 @@ bool display_wall::isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl
 		if (glm::intersectRayTriangle(origin, direction, A, B, C, result))
 		{
 			vec3 sum_result = (A * (1.0f - result.x - result.y)) + (B * result.x) + (C * result.y);
-			click_position = vec2(sum_result.x, sum_result.y);
+			cursor_position = vec2(sum_result.x, sum_result.y);
 			scale = result.z;
 			return true;
 		}
@@ -249,7 +250,7 @@ void gallery::renderGallery(const shared_ptr<ogl_context> &context, const shared
 		i->draw(context, camera);
 }
 
-shared_ptr<display_wall> gallery::checkWallClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
+shared_ptr<display_wall> gallery::getClosestWallUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
 {
 	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
 
@@ -257,7 +258,7 @@ shared_ptr<display_wall> gallery::checkWallClicks(shared_ptr<key_handler> &keys,
 	float wall_distance = 0.0f;
 	for (auto i : display_walls)
 	{
-		if (i.second->isClicked(keys, camera, ray, wall_distance))
+		if (i.second->cursorTouches(keys, camera, ray, wall_distance))
 		{
 			if (wall_clicked.second == nullptr || (wall_clicked.second != nullptr && wall_distance < wall_clicked.first))
 				wall_clicked = pair<float, shared_ptr<display_wall> >(wall_distance, i.second);
@@ -268,7 +269,7 @@ shared_ptr<display_wall> gallery::checkWallClicks(shared_ptr<key_handler> &keys,
 	return wall_clicked.second;
 }
 
-shared_ptr<artwork> gallery::checkArtworkClicks(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
+shared_ptr<artwork> gallery::getClosestArtworkUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)
 {
 	pair<vec3, vec3> ray(getRayFromCursorPosition(keys, camera));
 
