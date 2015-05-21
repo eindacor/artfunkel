@@ -75,6 +75,75 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 		uv_offset));
 }
 
+display_wall::display_wall(const shared_ptr<ogl_context> &context, string texture_path,
+	const vector<float> &vec_vertices, const vector<unsigned int> &vertex_indices, int geometry_offset, int normal_offset, int uv_offset, int stride)
+{
+	//TODO make data collection more robust for bad model files
+	if (vec_vertices.size() < 3)
+		throw;
+
+	vec3 anchor_point(vec_vertices.at(0), vec_vertices.at(1), vec_vertices.at(2));
+
+	mat4 adjustment_position_matrix = glm::translate(mat4(1.0f), anchor_point * -1.0f);
+
+	float normal_rotation = getNormalRotation(vec_vertices, normal_offset, stride);
+	float surface_rotation = normal_rotation - 90.0f;
+	mat4 adjustment_rotation_matrix = glm::rotate(mat4(1.0f), surface_rotation * -1.0f, vec3(0.0f, 1.0f, 0.0f));
+
+	//this matrix modifies the modeled geometry to be on the z-axis for easy click intersection detection
+	mat4 adjustment_matrix = adjustment_rotation_matrix * adjustment_position_matrix;
+
+	vector<float> modified_vec_vertices;
+	vector<float> point_found;
+	int stride_count = stride / sizeof(float);
+	int offset_count = uv_offset / sizeof(float);
+	for (int i = 0; i < vec_vertices.size(); i++)
+	{
+		int local_index = i % stride_count;
+		//skip if local index is before or after target range
+		if (local_index >= 3)
+			modified_vec_vertices.push_back(vec_vertices.at(i));
+
+		else point_found.push_back(vec_vertices.at(i));
+
+		if (point_found.size() == 3)
+		{
+			vec4 point_from_original(point_found.at(0), point_found.at(1), point_found.at(2), 1.0f);
+			vec3 adjusted_point = vec3(adjustment_matrix * point_from_original);
+			modified_vec_vertices.push_back(adjusted_point.x);
+			modified_vec_vertices.push_back(adjusted_point.y);
+			modified_vec_vertices.push_back(adjusted_point.z);
+			point_found.clear();
+		}
+	}
+
+	//for each vector of vec3's in wall_triangles
+	wall_triangles = getTriangles(modified_vec_vertices, geometry_offset, stride);
+
+	//wall model matrix is the inverse of the original adjustment, returning it to its proper location when drawn
+	wall_model_matrix = glm::inverse(adjustment_matrix);
+	wall_edges = getOuterEdges(wall_triangles);
+
+	//TODO remove lines once graphics are improved, for visual clarity only
+	for (auto i : wall_edges)
+	{
+		vec4 first(vec4(i.first, 1.0f));
+		vec4 second(vec4(i.second, 1.0f));
+		lines.push_back(shared_ptr<line>(new line(wall_model_matrix * first, wall_model_matrix * second, vec4(0.0f, 0.0f, 0.0f, 1.0f))));
+	}
+
+	//vec_vertices need to be modified before passing to GPU
+	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(
+		context,
+		texture_path.c_str(),
+		GL_STATIC_DRAW,
+		modified_vec_vertices,
+		3,
+		2,
+		stride,
+		uv_offset));
+}
+
 bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 &position)
 {
 	vec3 dimensions(placed->getOverallDimensions());

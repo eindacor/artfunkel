@@ -12,6 +12,8 @@ public:
 	//first point is used as the wall origin, which is used to determing the painting location matrix
 	display_wall(const shared_ptr<ogl_context> &context, string texture_path,
 		const vector<float> &vec_vertices, int geometry_offset, int normal_offset, int uv_offset, int stride);
+	display_wall(const shared_ptr<ogl_context> &context, string texture_path,
+		const vector<float> &vec_vertices, const vector<unsigned int> &vertex_indices, int geometry_offset, int normal_offset, int uv_offset, int stride);
 	~display_wall(){}
 
 	bool validPlacement(const shared_ptr<artwork> &placed, const vec2 &position);
