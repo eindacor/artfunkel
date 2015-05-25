@@ -77,11 +77,11 @@ void art_db::printArtwork(const artwork_data &target) const
 void art_db::printCounts() const
 {
 	cout << "Genre summary: " << endl;
-	for (auto i : genre_counts)
+	for (const auto &i : genre_counts)
 		cout << "\t" << stringFromGenre(i.first) << ": " << i.second << endl;
 
 	cout << "Rarity summary: " << endl;
-	for (auto i : rarity_counts)
+	for (const auto &i : rarity_counts)
 		cout << "\t" << stringFromRarity(i.first) << ": " << i.second << endl;
 }
 

@@ -57,7 +57,7 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 	wall_edges = getOuterEdges(wall_triangles);
 
 	//TODO remove lines once graphics are improved, for visual clarity only
-	for (auto i : wall_edges)
+	for (const auto &i : wall_edges)
 	{
 		vec4 first(vec4(i.first, 1.0f));
 		vec4 second(vec4(i.second, 1.0f));
@@ -79,10 +79,6 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, string texture_path)
 {
 	vector<float> vec_vertices = mesh.getInterleaveData();
-	int geometry_offset = 0;
-	int normal_offset = mesh.getInterleaveVNOffset();
-	int uv_offset = mesh.getInterleaveVTOffset();
-	int stride = mesh.getInterleaveStride();
 
 	//TODO make data collection more robust for bad model files
 
@@ -92,28 +88,29 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mes
 	vec3 anchor_point(vec_vertices.at(0), vec_vertices.at(1), vec_vertices.at(2));
 	mat4 adjustment_position_matrix = glm::translate(mat4(1.0f), anchor_point * -1.0f);
 
-	float normal_rotation = getNormalRotation(vec_vertices, normal_offset, stride);
+	float normal_rotation = getNormalRotation(vec_vertices, mesh.getInterleaveVNOffset(), mesh.getInterleaveStride());
 	float surface_rotation = normal_rotation - 90.0f;
 	mat4 adjustment_rotation_matrix = glm::rotate(mat4(1.0f), surface_rotation * -1.0f, vec3(0.0f, 1.0f, 0.0f));
 
-	//mesh.modifyPosition(adjustment_position_matrix);
-	//mesh.rotate(adjustment_rotation_matrix);
+	mesh.modifyPosition(adjustment_position_matrix);
+	mesh.rotate(adjustment_rotation_matrix);
 
 	//this matrix modifies the modeled geometry to be on the z-axis for easy click intersection detection
 	mat4 adjustment_matrix = adjustment_rotation_matrix * adjustment_position_matrix;
 
 	vector<unsigned int> vertex_indices;
-	vector<float> modified_vec_vertices = mesh.getIndexedInterleaveData(vertex_indices);
+	vector<float> modified_vec_vertices =  mesh.getIndexedVertexData(vertex_indices);
 	
 	//for each vector of vec3's in wall_triangles
 	wall_triangles = mesh.getMeshTrianglesVec3();
 
 	//wall model matrix is the inverse of the original adjustment, returning it to its proper location when drawn
 	wall_model_matrix = glm::inverse(adjustment_matrix);
+	//wall_model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
 	wall_edges = mesh.getMeshEdgesVec3();
 
 	//TODO remove lines once graphics are improved, for visual clarity only
-	for (auto i : wall_edges)
+	for (const auto &i : wall_edges)
 	{
 		vec4 first(vec4(i.first, 1.0f));
 		vec4 second(vec4(i.second, 1.0f));
@@ -125,12 +122,15 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mes
 		context,
 		texture_path.c_str(),
 		GL_STATIC_DRAW,
-		modified_vec_vertices,
 		vertex_indices,
-		3,
-		2,
-		stride,
-		uv_offset));
+		modified_vec_vertices,
+		mesh.getVSize(),
+		mesh.getVTSize(),
+		mesh.getVNSize(),
+		mesh.getInterleaveVTOffset(),
+		mesh.getInterleaveVNOffset(),
+		mesh.getInterleaveStride()
+		));
 }
 
 bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 &position)
@@ -150,7 +150,7 @@ bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 
 	};
 
 	//TODO verify that painting edges don't intersect, in addition to four corners not being within other paintings
-	for (auto i : placed_points_to_check)
+	for (const auto &i : placed_points_to_check)
 	{
 		//break;
 		//verifies paintings is within bounds of wall
@@ -158,7 +158,7 @@ bool display_wall::validPlacement(const shared_ptr<artwork> &placed, const vec2 
 			return false;
 
 		//verifies painting does not collide with other paintings
-		for (auto p : wall_contents)
+		for (const auto &p : wall_contents)
 		{
 			vec3 other_dimensions = p.second->getOverallDimensions();
 			float other_half_width = other_dimensions.x / 2.0f;
@@ -210,13 +210,12 @@ bool display_wall::removeArtwork(const shared_ptr<artwork> &to_remove)
 	}
 }
 
-/*
 void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
 {
-	for (auto i : lines)
+	for (const auto &i : lines)
 		i->draw(context, camera);
 
-	for (auto i : wall_contents)
+	for (const auto &i : wall_contents)
 		i.second->draw(context, camera);
 
 	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
@@ -237,31 +236,6 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
 }
-*/
-
-void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
-{
-	for (auto i : lines)
-		i->draw(context, camera);
-
-	for (auto i : wall_contents)
-		i.second->draw(context, camera);
-
-	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
-	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
-	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
-
-	glBindVertexArray(*temp_vao);
-	glBindTexture(GL_TEXTURE_2D, *temp_tex);
-
-	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
-	//wall_model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
-	camera->setMVP(context, wall_model_matrix, (render_type)0);
-
-	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindVertexArray(0);
-}
 
 bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
 	const pair<vec3, vec3> &ray, float &scale)
@@ -272,7 +246,7 @@ bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr
 	vec3 direction = vec3(inverse_model_matrix * vec4(ray.second, 1.0f)) - origin;
 
 	//cycle through each surface, testing ray intersection
-	for (auto i : wall_triangles)
+	for (const auto &i : wall_triangles)
 	{
 		if (i.size() != 3)
 		{
@@ -308,47 +282,38 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 	map<string, material_data> display_wall_materials = generateMaterials(display_material_path.c_str());
 
 	int display_wall_counter = 0;
-	/*
-	for (auto i : display_wall_meshes)
+	
+	for (const auto &i : display_wall_meshes)
 	{
 		string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
 		shared_ptr<display_wall> new_wall(new display_wall(context, i, full_texture_path));
 		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
 	}
-	*/
 
-	for (auto i : display_wall_meshes)
+	int lines_x = 10;
+	int lines_z = 10;
+	float line_spacing = 4.0f;
+	float x_start = ((float)lines_x * line_spacing) / -2.0f;
+	float z_start = ((float)lines_z * line_spacing) / -2.0f;
+	for (int i = 0; i <= lines_x; i++)
 	{
-		string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
-
-		vector<float> interleave_data = i.getInterleaveData();
-		cout << "interleave Data: " << endl;
-		for (auto j : interleave_data)
-			cout << j << endl;
-
-		vector<unsigned int> index_data;
-		vector<float> indexed_interleave_data = i.getIndexedInterleaveData(index_data);
-		cout << "indexed interleave Data: " << endl;
-		for (auto j : indexed_interleave_data)
-			cout << j << endl;
-
-		cout << "index data: " << endl;
-		for (auto j : index_data)
-			cout << j << endl;
-
-		shared_ptr<display_wall> new_wall(new display_wall(
-			context,
-			full_texture_path,
-			i.getInterleaveData(),
-			0,
-			i.getInterleaveVNOffset(),
-			i.getInterleaveVTOffset(),
-			i.getInterleaveStride()));
-
-		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
+		float z_end = z_start * -1.0f;
+		vec4 start(((float)i * line_spacing) + x_start, 0.0f, z_start, 1.0f);
+		vec4 end(((float)i * line_spacing) + x_start, 0.0f, z_end, 1.0f);
+		lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
 	}
 
+	for (int i = 0; i <= lines_z; i++)
+	{
+		float x_end = x_start * -1.0f;
+		vec4 start(x_start, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
+		vec4 end(x_end, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
+		lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+	}
 
+	vec4 origin_start(0.0f, 1.0f, 0.0f, 1.0f);
+	vec4 origin_end(0.0f, -1.0f, 0.0f, 1.0f);
+	lines.push_back(shared_ptr<line>(new line(origin_start, origin_end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
 
 	//TODO add code for filler geometry
 	//TODO add code for floor model
@@ -356,10 +321,10 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 
 void gallery::renderGallery(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
-	for (auto i : display_walls)
+	for (const auto &i : display_walls)
 		i.second->draw(context, camera);
 
-	for (auto i : lines)
+	for (const auto &i : lines)
 		i->draw(context, camera);
 }
 
@@ -369,7 +334,7 @@ shared_ptr<display_wall> gallery::getClosestWallUnderCursor(shared_ptr<key_handl
 
 	pair<float, shared_ptr<display_wall> >wall_clicked(0.0f, nullptr);
 	float wall_distance = 0.0f;
-	for (auto i : display_walls)
+	for (const auto &i : display_walls)
 	{
 		if (i.second->cursorTouches(keys, camera, ray, wall_distance))
 		{
@@ -388,10 +353,10 @@ shared_ptr<artwork> gallery::getClosestArtworkUnderCursor(shared_ptr<key_handler
 
 	pair<float, shared_ptr<artwork> >artwork_clicked(0.0f, nullptr);
 	float artwork_distance = 0.0f;
-	for (auto i : display_walls)
+	for (const auto &i : display_walls)
 	{
 		vector< pair<vec2, shared_ptr<artwork> > > wall_contents = i.second->getWallContents();
-		for (auto j : wall_contents)
+		for (const auto &j : wall_contents)
 		{
 			if (j.second->isClicked(keys, camera, ray, artwork_distance))
 			{
@@ -407,7 +372,7 @@ shared_ptr<artwork> gallery::getClosestArtworkUnderCursor(shared_ptr<key_handler
 
 void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
 {
-	for (auto i : display_walls)
+	for (const auto &i : display_walls)
 	{
 		if (i.second->removeArtwork(to_remove))
 			return;

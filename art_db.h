@@ -15,8 +15,8 @@ public:
 	void printArtist(shared_ptr<artist> artist_ptr) const;
 	void printArtwork(const artwork_data &artwork_ptr) const;
 
-	void printAllArtists() const { for (auto i : artists) printArtist(i.second); }
-	void printAllArtwork() const { for (auto i : artworks) printArtwork(*(i.second)); }
+	void printAllArtists() const { for (const auto &i : artists) printArtist(i.second); }
+	void printAllArtwork() const { for (const auto &i : artworks) printArtwork(*(i.second)); }
 	void printCounts() const;
 
 	list < shared_ptr<artwork_data> > getWorksByGenre(genre g, bool match = true) const;

@@ -178,7 +178,7 @@ shared_ptr<hud_element> hud::getElement(string identifier) const
 void hud::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
 	glDisable(GL_DEPTH_TEST);
-	for (auto i : element_map)
+	for (const auto &i : element_map)
 		i.second->draw(context, camera);
 
 	glEnable(GL_DEPTH_TEST);
@@ -187,7 +187,7 @@ void hud::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_came
 shared_ptr<hud_element> hud::getSelected(shared_ptr<key_handler> &keys, hud_element_type &type, string &identifier) const
 {
 	vec2 cursor_position = keys->getCursorPosition();
-	for (auto i : element_map)
+	for (const auto &i : element_map)
 	{
 		if (i.second->itemSelected(keys, cursor_position))
 		{
@@ -217,7 +217,7 @@ void dynamic_hud_array::setXForLine(vector< shared_ptr<hud_element> > &line_cont
 {
 	float individual_x_offset = 0.0f;
 	float previous_x_offset = 0.0f;
-	for (auto element : line_contents)
+	for (const auto &element : line_contents)
 	{
 		individual_x_offset = (element->getWidth() / 2.0f) + previous_x_offset;
 		previous_x_offset = individual_x_offset + (element->getWidth() / 2.0f);
@@ -228,7 +228,7 @@ void dynamic_hud_array::setXForLine(vector< shared_ptr<hud_element> > &line_cont
 
 void dynamic_hud_array::setYForLine(vector< shared_ptr<hud_element> > &line_contents, float y_offset)
 {
-	for (auto element : line_contents)
+	for (const auto &element : line_contents)
 		element->setY(y_offset);
 }
 
@@ -363,7 +363,7 @@ bool dynamic_hud_array::setVisible(int page_number)
 	float initial_x_offset = 0.0f;
 	float distance_from_top = 0.0f;
 	float y_offset = 0.0f;
-	for (auto element_vec : visible_lines)
+	for (const auto &element_vec : visible_lines)
 	{
 		vector< shared_ptr<hud_element> > line_contents = element_vec.second;
 		int line_number = element_vec.first;
@@ -428,8 +428,8 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 	shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) const
 {
 	shared_ptr<hud_element> found = nullptr;
-	for (auto i : visible_lines) {
-		for (auto j : i.second) {
+	for (const auto &i : visible_lines) {
+		for (const auto &j : i.second) {
 			j->clearBackgroundColor();
 			if (j->itemSelected(keys, cursor_position))
 			{
@@ -457,16 +457,16 @@ void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const share
 {
 	glDisable(GL_DEPTH_TEST);
 	drawBackground(context, camera);
-	for (auto i : visible_lines)
+	for (const auto &i : visible_lines)
 	{
-		for (auto j : i.second)
+		for (const auto &j : i.second)
 		{
 			j->draw(context, camera);
 			//j->drawLines(context, camera);
 		}
 	}
 
-	for (auto i : lines)
+	for (const auto &i : lines)
 		i->draw(context, camera, true);
 
 	glEnable(GL_DEPTH_TEST);

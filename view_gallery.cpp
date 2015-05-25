@@ -21,9 +21,9 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 		current_player->addGallery(shared_ptr<gallery>(new gallery(
 			context, data_path + "model_data\\",
 			data_path + "model_data\\",
-			"carpets.obj",
+			"gallery_template_01_display.obj",
 			"test_filler.obj",
-			"carpets.mtl",
+			"gallery_template_01_display.mtl",
 			"test_filler.mtl")));
 	}
 
@@ -38,7 +38,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
 
 	//add player's default frames to each
-	for (auto i : not_displayed_copy)
+	for (const auto &i : not_displayed_copy)
 	{
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
@@ -111,7 +111,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				{
 					inventory_displayed = true;
 					artwork_thumbnails->clearElements();
-					for (auto i : not_displayed_copy)
+					for (const auto &i : not_displayed_copy)
 					{
 						shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
 						thumbnail->setDrawSelected(highlight, fullBrightness);
@@ -183,7 +183,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 
 							not_displayed_copy = current_player->getNotDisplayedCopy();
 							artwork_thumbnails->clearElements();
-							for (auto i : not_displayed_copy)
+							for (const auto &i : not_displayed_copy)
 							{
 								i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 								shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
@@ -268,7 +268,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 
 				not_displayed_copy = current_player->getNotDisplayedCopy();
 				artwork_thumbnails->clearElements();
-				for (auto i : not_displayed_copy)
+				for (const auto &i : not_displayed_copy)
 				{
 					i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));

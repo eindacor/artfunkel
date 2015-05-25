@@ -82,11 +82,11 @@ vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, float m
 void loot_generator::printGenerated(vector<shared_ptr<artwork> > &art_vec, const map<rarity, unsigned> &rarity_map) const
 {
 	int rarity_sumtotal = 0;
-	for (auto i : rarity_map)
+	for (const auto &i : rarity_map)
 		rarity_sumtotal += i.second;
 
 	cout << "Drop chance: " << endl;
-	for (auto i : rarity_map)
+	for (const auto &i : rarity_map)
 		cout << "\t" << stringFromRarity(i.first) << ": " << 100.0f * ((float)i.second / (float)rarity_sumtotal) << "%" << endl;
 
 	map<rarity, unsigned> frequency_results{
@@ -96,14 +96,14 @@ void loot_generator::printGenerated(vector<shared_ptr<artwork> > &art_vec, const
 		pair<rarity, int>(LEGENDARY, 0),
 		pair<rarity, int>(MASTERPIECE, 0)
 	};
-	for (auto i : art_vec)
+	for (const auto &i : art_vec)
 		frequency_results[i->getData()->getRarity()]++;
 
 	cout << "Frequency results..." << endl;
-	for (auto i : frequency_results)
+	for (const auto &i : frequency_results)
 		cout << "\t" << stringFromRarity(i.first) << ": " << i.second << endl;
 
 	cout << "Crate Contents: " << endl;
-	for (auto i : art_vec)
+	for (const auto &i : art_vec)
 		printArtwork(i);
 }

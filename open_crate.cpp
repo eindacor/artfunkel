@@ -24,7 +24,7 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
 
-	for (auto i : crate_contents)
+	for (const auto &i : crate_contents)
 	{
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.3f, 0.3f), 0.01f));
@@ -100,7 +100,7 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 
 			if (keys->checkPress(GLFW_KEY_A, false))
 			{
-				for (auto i : crate_contents)
+				for (const auto &i : crate_contents)
 				{
 					if (!current_player->alreadyOwned(i))
 						current_player->addWorkToInventory(i);

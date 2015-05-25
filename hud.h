@@ -34,7 +34,7 @@ public:
 	void updatePoints();
 
 	void drawLines(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const {
-		for (auto i : lines)
+		for (const auto &i : lines)
 			i->draw(context, camera, true);
 	}
 

@@ -24,7 +24,7 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 
 	//TODO equip dynamic array with function that generates thumbnails from artwork
 	//add player's default frames to each
-	for (auto i : inventory_copy)
+	for (const auto &i : inventory_copy)
 	{
 		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.3f, 0.3f), 0.01f));

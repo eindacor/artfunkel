@@ -189,7 +189,7 @@ void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float spa
 	float previous_width = 0.0f;
 	int display_count = 0;
 
-	for (auto i : art_vec)
+	for (const auto &i : art_vec)
 	{
 		//center on eye level, unless painting is within .5 of floor
 		float y_offset = 0.0f;
@@ -215,7 +215,7 @@ void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float spa
 void addFrames(vector< shared_ptr<artwork> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path)
 {
 	string matte_texture = data_path + "model_data\\white_matte.bmp";
-	for (auto i : art_vec)
+	for (const auto &i : art_vec)
 	{
 		string frame_material_image_name;
 		switch (jep::intRoll(0, 4))
@@ -357,7 +357,7 @@ map<int, mat4> getThumbnailMatrixMap(const shared_ptr<ogl_context> &context, con
 	float initial_x_offset = (total_width / -2.0f) + (cell_width / 2.0f);
 
 	int item_counter = 0;
-	for (auto i : art_vec)
+	for (const auto &i : art_vec)
 	{
 		//TODO reduce confusion of scaling funciton not taking aspect-ratio-modified size
 		//must take cell size since aspect ratio is not accounted for in scaling
@@ -404,7 +404,7 @@ map<int, mat4> getHighlightMatrixMap(const shared_ptr<ogl_context> &context, con
 	float x_offset = screen_position.x;
 
 	int item_counter = 0;
-	for (auto i : art_vec)
+	for (const auto &i : art_vec)
 	{
 		//TODO reduce confusion of scaling funciton not taking aspect-ratio-modified size
 		//must take cell size since aspect ratio is not accounted for in scaling
@@ -508,7 +508,7 @@ bool paintingSelected(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera
 	vector< vector<vec3> > select_surfaces = art->getSelectSurfaces();
 	
 	//cycle through each surface, testing ray intersection
-	for (auto i : select_surfaces)
+	for (const auto &i : select_surfaces)
 	{
 		if (i.size() != 3)
 		{
@@ -623,7 +623,7 @@ vector< pair<vec3, vec3> > getOuterEdges(const vector< vector<vec3> > &triangles
 	int edge_counter = 0;
 
 	//for each side of each triangle
-	for (auto i : triangles)
+	for (const auto &i : triangles)
 	{
 		pair<vec3, vec3> edge1(i.at(0), i.at(1));
 		pair<vec3, vec3> edge2(i.at(1), i.at(2));
@@ -637,7 +637,7 @@ vector< pair<vec3, vec3> > getOuterEdges(const vector< vector<vec3> > &triangles
 	vector<int> unique_edges;
 	vector<int> shared_edges;
 
-	for (auto i : edges)
+	for (const auto &i : edges)
 	{
 		if (std::find(shared_edges.begin(), shared_edges.end(), i.first) != shared_edges.end())
 			continue;
@@ -646,7 +646,7 @@ vector< pair<vec3, vec3> > getOuterEdges(const vector< vector<vec3> > &triangles
 
 		bool unique = true;
 
-		for (auto j : edges)
+		for (const auto &j : edges)
 		{
 			//skip if the edge has already been confirmed as unique or shared
 			if (std::find(shared_edges.begin(), shared_edges.end(), j.first) != shared_edges.end())
@@ -674,7 +674,7 @@ vector< pair<vec3, vec3> > getOuterEdges(const vector< vector<vec3> > &triangles
 
 	vector< pair<vec3, vec3> > outer_edges;
 
-	for (auto i : unique_edges)
+	for (const auto &i : unique_edges)
 		outer_edges.push_back(edges.at(i));
 
 	return outer_edges;

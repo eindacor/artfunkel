@@ -233,7 +233,7 @@ bool artwork::isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_came
 	vec3 direction = vec3(inverse_model_matrix * vec4(ray.second, 1.0f)) - origin;
 
 	//cycle through each surface, testing ray intersection
-	for (auto i : select_surfaces)
+	for (const auto &i : select_surfaces)
 	{
 		if (i.size() != 3)
 		{
