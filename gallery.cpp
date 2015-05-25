@@ -4,7 +4,8 @@
 
 //dislay walls first need their vertex data modified to be flat on the z-axis, so raytracing only needs to modify the ray created for click
 //detection, rather than matrix-translating all of the walls on-click
-display_wall::display_wall(const shared_ptr<ogl_context> &context, string texture_path, 
+
+display_wall::display_wall(const shared_ptr<ogl_context> &context, string texture_path,
 	const vector<float> &vec_vertices, int geometry_offset, int normal_offset, int uv_offset, int stride)
 {
 	//TODO make data collection more robust for bad model files
@@ -66,63 +67,50 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 	//vec_vertices need to be modified before passing to GPU
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(
 		context,
-		texture_path.c_str(), 
-		GL_STATIC_DRAW, 
+		texture_path.c_str(),
+		GL_STATIC_DRAW,
 		modified_vec_vertices,
-		3, 
-		2, 
-		stride, 
+		3,
+		2,
+		stride,
 		uv_offset));
 }
 
-display_wall::display_wall(const shared_ptr<ogl_context> &context, string texture_path,
-	const vector<float> &vec_vertices, const vector<unsigned int> &vertex_indices, int geometry_offset, int normal_offset, int uv_offset, int stride)
+display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, string texture_path)
 {
+	vector<float> vec_vertices = mesh.getInterleaveData();
+	int geometry_offset = 0;
+	int normal_offset = mesh.getInterleaveVNOffset();
+	int uv_offset = mesh.getInterleaveVTOffset();
+	int stride = mesh.getInterleaveStride();
+
 	//TODO make data collection more robust for bad model files
+
 	if (vec_vertices.size() < 3)
 		throw;
 
 	vec3 anchor_point(vec_vertices.at(0), vec_vertices.at(1), vec_vertices.at(2));
-
 	mat4 adjustment_position_matrix = glm::translate(mat4(1.0f), anchor_point * -1.0f);
 
 	float normal_rotation = getNormalRotation(vec_vertices, normal_offset, stride);
 	float surface_rotation = normal_rotation - 90.0f;
 	mat4 adjustment_rotation_matrix = glm::rotate(mat4(1.0f), surface_rotation * -1.0f, vec3(0.0f, 1.0f, 0.0f));
 
+	//mesh.modifyPosition(adjustment_position_matrix);
+	//mesh.rotate(adjustment_rotation_matrix);
+
 	//this matrix modifies the modeled geometry to be on the z-axis for easy click intersection detection
 	mat4 adjustment_matrix = adjustment_rotation_matrix * adjustment_position_matrix;
 
-	vector<float> modified_vec_vertices;
-	vector<float> point_found;
-	int stride_count = stride / sizeof(float);
-	int offset_count = uv_offset / sizeof(float);
-	for (int i = 0; i < vec_vertices.size(); i++)
-	{
-		int local_index = i % stride_count;
-		//skip if local index is before or after target range
-		if (local_index >= 3)
-			modified_vec_vertices.push_back(vec_vertices.at(i));
-
-		else point_found.push_back(vec_vertices.at(i));
-
-		if (point_found.size() == 3)
-		{
-			vec4 point_from_original(point_found.at(0), point_found.at(1), point_found.at(2), 1.0f);
-			vec3 adjusted_point = vec3(adjustment_matrix * point_from_original);
-			modified_vec_vertices.push_back(adjusted_point.x);
-			modified_vec_vertices.push_back(adjusted_point.y);
-			modified_vec_vertices.push_back(adjusted_point.z);
-			point_found.clear();
-		}
-	}
-
+	vector<unsigned int> vertex_indices;
+	vector<float> modified_vec_vertices = mesh.getIndexedInterleaveData(vertex_indices);
+	
 	//for each vector of vec3's in wall_triangles
-	wall_triangles = getTriangles(modified_vec_vertices, geometry_offset, stride);
+	wall_triangles = mesh.getMeshTrianglesVec3();
 
 	//wall model matrix is the inverse of the original adjustment, returning it to its proper location when drawn
 	wall_model_matrix = glm::inverse(adjustment_matrix);
-	wall_edges = getOuterEdges(wall_triangles);
+	wall_edges = mesh.getMeshEdgesVec3();
 
 	//TODO remove lines once graphics are improved, for visual clarity only
 	for (auto i : wall_edges)
@@ -138,6 +126,7 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 		texture_path.c_str(),
 		GL_STATIC_DRAW,
 		modified_vec_vertices,
+		vertex_indices,
 		3,
 		2,
 		stride,
@@ -221,6 +210,35 @@ bool display_wall::removeArtwork(const shared_ptr<artwork> &to_remove)
 	}
 }
 
+/*
+void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
+{
+	for (auto i : lines)
+		i->draw(context, camera);
+
+	for (auto i : wall_contents)
+		i.second->draw(context, camera);
+
+	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
+	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
+	shared_ptr<GLuint> temp_ind = opengl_data->getIND();
+
+	glBindVertexArray(*temp_vao);
+	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+
+	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
+	camera->setMVP(context, wall_model_matrix, (render_type)0);
+
+	//TODO try removing this line
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *temp_ind);
+
+	//glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
+	glDrawElements(GL_TRIANGLES, opengl_data->getIndexCount(), GL_UNSIGNED_INT, (void*)0);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glBindVertexArray(0);
+}
+*/
+
 void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
 {
 	for (auto i : lines)
@@ -290,9 +308,33 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 	map<string, material_data> display_wall_materials = generateMaterials(display_material_path.c_str());
 
 	int display_wall_counter = 0;
+	/*
 	for (auto i : display_wall_meshes)
 	{
 		string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
+		shared_ptr<display_wall> new_wall(new display_wall(context, i, full_texture_path));
+		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
+	}
+	*/
+
+	for (auto i : display_wall_meshes)
+	{
+		string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
+
+		vector<float> interleave_data = i.getInterleaveData();
+		cout << "interleave Data: " << endl;
+		for (auto j : interleave_data)
+			cout << j << endl;
+
+		vector<unsigned int> index_data;
+		vector<float> indexed_interleave_data = i.getIndexedInterleaveData(index_data);
+		cout << "indexed interleave Data: " << endl;
+		for (auto j : indexed_interleave_data)
+			cout << j << endl;
+
+		cout << "index data: " << endl;
+		for (auto j : index_data)
+			cout << j << endl;
 
 		shared_ptr<display_wall> new_wall(new display_wall(
 			context,
@@ -305,6 +347,8 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 
 		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
 	}
+
+
 
 	//TODO add code for filler geometry
 	//TODO add code for floor model

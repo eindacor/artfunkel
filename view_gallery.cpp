@@ -21,9 +21,9 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 		current_player->addGallery(shared_ptr<gallery>(new gallery(
 			context, data_path + "model_data\\",
 			data_path + "model_data\\",
-			"test_gallery_02.obj",
+			"carpets.obj",
 			"test_filler.obj",
-			"test_gallery_02.mtl",
+			"carpets.mtl",
 			"test_filler.mtl")));
 	}
 

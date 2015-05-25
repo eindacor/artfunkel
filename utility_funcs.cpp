@@ -574,6 +574,49 @@ vector< vector<vec3> > getTriangles(const vector<float> &vec_vertices, int offse
 	return triangles;
 }
 
+vector< vector<vec3> > getTriangles(const vector<float> &vec_vertices, const vector<unsigned int> &vertex_indices, int offset, int stride)
+{
+	map<unsigned int, vector<float> > vertex_map;
+	vector<vec3> vertices;
+	//stride output from obj parser is in bit size, not count
+	int stride_count = stride / sizeof(float);
+	//for each stride there will be 3 extracted vertices
+	vertices.reserve((vec_vertices.size() / stride_count) * 3);
+
+	vector<float> point_found;
+	for (int i = offset; i < vec_vertices.size(); i++)
+	{
+		int local_index = i % stride_count;
+		//skip if local index is before or after target range
+		if (local_index < offset || local_index >= offset + 3)
+			continue;
+
+		point_found.push_back(vec_vertices.at(i));
+		if (point_found.size() == 3)
+		{
+			vertices.push_back(vec3(point_found.at(0), point_found.at(1), point_found.at(2)));
+			point_found.clear();
+		}
+	}
+
+	vector< vector<vec3> > triangles;
+	triangles.reserve(vertices.size() / 3);
+
+	vector<vec3> triangle_found;
+	for (int i = 0; i < vertices.size(); i++)
+	{
+		triangle_found.push_back(vertices.at(i));
+
+		if (triangle_found.size() == 3)
+		{
+			triangles.push_back(triangle_found);
+			triangle_found.clear();
+		}
+	}
+
+	return triangles;
+}
+
 vector< pair<vec3, vec3> > getOuterEdges(const vector< vector<vec3> > &triangles)
 {
 	map< int, pair<vec3, vec3> > edges;
