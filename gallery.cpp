@@ -76,7 +76,7 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, string textur
 		uv_offset));
 }
 
-display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, string texture_path)
+display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX)
 {
 	vector<float> vec_vertices = mesh.getInterleaveData();
 
@@ -120,7 +120,7 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mes
 	//vec_vertices need to be modified before passing to GPU
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(
 		context,
-		texture_path.c_str(),
+		TEX,
 		GL_STATIC_DRAW,
 		vertex_indices,
 		modified_vec_vertices,
@@ -277,7 +277,7 @@ bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr
 	return false;
 }
 
-gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, string material_path, 
+gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path, 
 	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename)
 {
 	string display_model_path = model_path + display_model_filename;
@@ -292,8 +292,11 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 	
 	for (const auto &i : display_wall_meshes)
 	{
-		string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
-		shared_ptr<display_wall> new_wall(new display_wall(context, i, full_texture_path));
+		//string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
+		string texture_filename = display_wall_materials.at(i.getMaterialName()).getTextureFilename();
+		if (textures->getTexture(texture_filename) == nullptr)
+			textures->addTexture(texture_filename);
+		shared_ptr<display_wall> new_wall(new display_wall(context, i, textures->getTexture(texture_filename)));
 		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
 	}
 
@@ -304,10 +307,13 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 	{
 		vector<unsigned short> mesh_indices;
 		vector<float> vertex_data = i.getIndexedVertexData(mesh_indices);
-		string full_texture_path = material_path + environment_materials.at(i.getMaterialName()).getTextureFilename();
+		//string full_texture_path = material_path + environment_materials.at(i.getMaterialName()).getTextureFilename();
+		string texture_filename = environment_materials.at(i.getMaterialName()).getTextureFilename();
+		if (textures->getTexture(texture_filename) == nullptr)
+			textures->addTexture(texture_filename);
 		shared_ptr<jep::ogl_data> env_mesh(new jep::ogl_data(
 			context,
-			full_texture_path.c_str(),
+			textures->getTexture(texture_filename),
 			GL_STATIC_DRAW,
 			mesh_indices,
 			vertex_data,
@@ -321,7 +327,7 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 		environment_models.push_back(env_mesh);
 	}
 
-	bool draw_grid = false;
+	bool draw_grid = true;
 
 	if (draw_grid)
 	{

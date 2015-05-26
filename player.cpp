@@ -1,7 +1,8 @@
 #include "player.h"
 #include "artwork.h"
 
-player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_context> ogl_con, string data_path)
+player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<ogl_context> ogl_con, 
+	shared_ptr<texture_handler> &textures, string data_path)
 {
 	name = s;
 
@@ -9,9 +10,7 @@ player::player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_co
 	for (auto i : generated_works)
 		addWorkToInventory(i);
 
-	string frame_path = data_path + "model_data\\frame_black.bmp";
-	string matte_path = data_path + "model_data\\white_matte.bmp";
-	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, frame_path, matte_path));
+	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, "frame_black.bmp", "white_matte.bmp", textures));
 	currency = 5000.0f;
 }
 

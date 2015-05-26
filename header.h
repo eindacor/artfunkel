@@ -64,6 +64,7 @@ using jep::ogl_camera_free;
 using jep::static_text;
 using jep::text_handler;
 using jep::key_handler;
+using jep::texture_handler;
 using jep::date;
 using jep::bignum;
 using jep::render_type;

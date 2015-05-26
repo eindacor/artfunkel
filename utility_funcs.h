@@ -9,7 +9,6 @@ genre genreFromString(string s);
 rarity rarityFromString(string s);
 //this function takes a vector of instances and modifies their model matrices for proper display
 //void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float space_between = 2.0f, float eye_level = 1.65f, float starting_z = 0.0f, bool x_only = false);
-void addFrames(vector< shared_ptr<artwork> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path);
 vector<shared_ptr<artwork> >::iterator sortArtVec(vector<shared_ptr<artwork> > &art_vec, sort_options sort, bool ascending = true);
 void printArtwork(const shared_ptr<artwork> &target);
 mat4 calcImageScale(const shared_ptr<artwork> &target, float width_max, float height_max);
@@ -42,5 +41,7 @@ float getNormalRotation(const vector<float> &vec_vertices, int normal_offset, in
 //pre and post render effects
 void highlight(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
 void fullBrightness(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+
+void loadTextures(shared_ptr<texture_handler> &textures);
 
 #endif

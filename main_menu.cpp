@@ -8,7 +8,7 @@
 #include "gallery.h"
 #include "hud.h"
 
-int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<text_handler> &text)
+int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
 {
 	bool item_selected = false;
 	float camera_distance_from_items = 10.0f;
@@ -24,27 +24,27 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 	//TODO CLEAN UP THIS MESS 
 	options.insert(pair<int, pair<painting_surface, frame_model> > (0, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\enter_gallery.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, "frame_black.bmp", "white_matte.bmp", textures)
 		)));
 
 	options.insert(pair<int, pair<painting_surface, frame_model> >(1, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\view_inventory.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, "frame_black.bmp", "white_matte.bmp", textures)
 		)));
 
 	options.insert(pair<int, pair<painting_surface, frame_model> >(2, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\open_crate.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, "frame_black.bmp", "white_matte.bmp", textures)
 		)));
 
 	options.insert(pair<int, pair<painting_surface, frame_model> >(3, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\options.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, "frame_black.bmp", "white_matte.bmp", textures)
 		)));
 
 	options.insert(pair<int, pair<painting_surface, frame_model> >(4, pair<painting_surface, frame_model>(
 		painting_surface(menu_item_width, menu_item_height, context, (data_path + "images\\menu_art\\exit.bmp").c_str()),
-		frame_model(menu_item_width, menu_item_height, context, (data_path + "model_data\\frame_black.bmp").c_str(), (data_path + "model_data\\white_matte.bmp").c_str())
+		frame_model(menu_item_width, menu_item_height, context, "frame_black.bmp", "white_matte.bmp", textures)
 		)));
 
 	int current_selection = 0;

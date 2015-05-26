@@ -29,8 +29,9 @@ private:
 class frame_model
 {
 public:
-	frame_model(float painting_width, float painting_height, const shared_ptr<ogl_context> &context, string frame_texture, string matte_texture,
-		float frame_width = 0.10f, float frame_depth = .08f, float matte_width = 0.1f, float matte_setback = 0.025f, float painting_setback = 0.003125f);
+	frame_model(float painting_width, float painting_height, const shared_ptr<ogl_context> &context, string frame_texture_filename, string matte_texture_filename,
+		const shared_ptr<texture_handler> &textures, float frame_width = 0.10f, float frame_depth = .08f, float matte_width = 0.1f, 
+		float matte_setback = 0.025f, float painting_setback = 0.003125f);
 	~frame_model(){};
 
 	void draw(const shared_ptr<ogl_context> &context, const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, 
@@ -40,6 +41,8 @@ public:
 	
 	string getFrameTexturePath() const { return frame_texture_path; }
 	string getMatteTexturePath() const { return matte_texture_path; }
+	string getFrameTextureFilename() const { return frame_texture_filename; }
+	string getMatteTextureFilename() const { return matte_texture_filename; }
 	float getFrameWidth() const { return frame_width; }
 	float getFrameDepth() const { return frame_depth; }
 	float getMatteWidth() const { return matte_width; }
@@ -49,6 +52,8 @@ public:
 private:
 	string frame_texture_path;
 	string matte_texture_path;
+	string frame_texture_filename;
+	string matte_texture_filename;
 
 	float frame_width, frame_depth, matte_width, matte_setback, painting_setback;
 

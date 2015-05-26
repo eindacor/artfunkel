@@ -51,11 +51,18 @@ void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &
 	glBindVertexArray(0);
 }
 
-frame_model::frame_model(float painting_width, float painting_height, const shared_ptr<ogl_context> &context, string frame_texture, string matte_texture,
-	float f_width, float f_depth, float m_width, float m_setback, float p_setback)
+frame_model::frame_model(float painting_width, float painting_height, const shared_ptr<ogl_context> &context, 
+	string frame_texture, string matte_texture, const shared_ptr<texture_handler> &textures, float f_width, 
+	float f_depth, float m_width, float m_setback, float p_setback)
 {
-	frame_texture_path = frame_texture;
-	matte_texture_path = matte_texture;
+	frame_texture_filename = frame_texture;
+	matte_texture_filename = matte_texture;
+
+	if (textures->getTexture(frame_texture_filename) == nullptr)
+		textures->addTexture(frame_texture_filename);
+
+	if (textures->getTexture(matte_texture_filename) == nullptr)
+		textures->addTexture(matte_texture_filename);
 
 	frame_width = f_width;
 	frame_depth = f_depth;
@@ -187,7 +194,7 @@ frame_model::frame_model(float painting_width, float painting_height, const shar
 	frame_vertices.insert(frame_vertices.begin(), frame_top_inner.begin(), frame_top_inner.end());
 
 	shared_ptr<jep::ogl_data> generated_frame(new jep::ogl_data(
-		context, frame_texture_path.c_str(), GL_STATIC_DRAW, frame_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+		context, textures->getTexture(frame_texture_filename), GL_STATIC_DRAW, frame_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 
 	frame_opengl_data = generated_frame;
 	
@@ -238,7 +245,7 @@ frame_model::frame_model(float painting_width, float painting_height, const shar
 	matte_vertices.insert(matte_vertices.begin(), matte_top_inner.begin(), matte_top_inner.end());
 
 	shared_ptr<jep::ogl_data> generated_matte(new jep::ogl_data(
-		context, matte_texture_path.c_str(), GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+		context, textures->getTexture(matte_texture_filename), GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 
 	matte_opengl_data = generated_matte;
 }
@@ -311,7 +318,6 @@ line::~line()
 
 void line::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute) const
 {
-	/*
 	glBindVertexArray(*VAO);
 	glUniform1i(context->getShaderGLint("absolute_position"), absolute);
 
@@ -329,7 +335,6 @@ void line::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_cam
 
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	*/
 }
 
 rectangle::rectangle(vec2 centerpoint, vec2 dimensions, vec4 c)

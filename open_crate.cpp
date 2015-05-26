@@ -8,7 +8,8 @@
 #include "hud.h"
 
 int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> &keys,
-	const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, const shared_ptr<text_handler> &text)
+	const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, 
+	const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
 {
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.0f, 0.0f, 0.5f, 1.0f));
@@ -26,7 +27,7 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 
 	for (const auto &i : crate_contents)
 	{
-		i->applyFrameTemplate(context, *(current_player->getDefaultFrame()));
+		i->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.3f, 0.3f), 0.01f));
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);
@@ -135,7 +136,7 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
-				menu_return = mainMenu(data_path, context, keys, text);
+				menu_return = mainMenu(data_path, context, keys, text, textures);
 				finished = true;
 			}
 

@@ -212,32 +212,6 @@ void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float spa
 	}
 }
 
-void addFrames(vector< shared_ptr<artwork> > &art_vec, shared_ptr<ogl_context> context, shared_ptr<ogl_camera> camera, string data_path)
-{
-	string matte_texture = data_path + "model_data\\white_matte.bmp";
-	for (const auto &i : art_vec)
-	{
-		string frame_material_image_name;
-		switch (jep::intRoll(0, 4))
-		{
-		case 0: frame_material_image_name = "frame_white.bmp"; break;
-		case 1: frame_material_image_name = "frame_black.bmp"; break;
-		case 2: frame_material_image_name = "frame_pine.bmp"; break;
-		case 3: frame_material_image_name = "frame_bamboo.bmp"; break;
-		case 4: frame_material_image_name = "frame_aluminum.bmp"; break;
-		}
-
-		string frame_texture = data_path + "model_data\\" + frame_material_image_name;
-
-		float random_frame_width = jep::floatRoll(0.05f, .25f, 2);
-		float random_matte_width = jep::floatRoll(0.05f, .25f, 2);
-		shared_ptr<frame_model> generated_frame(new frame_model(
-			i->getData()->getWidth(), i->getData()->getHeight(), context, frame_texture.c_str(), matte_texture.c_str(), random_frame_width));
-
-		i->loadFrame(generated_frame);
-	}
-}
-
 //TODO typdef vector of pairs
 vector< shared_ptr<artwork> >::iterator sortArtVec(vector< shared_ptr<artwork> > &art_vec, sort_options sort, bool ascending)
 {
@@ -712,6 +686,29 @@ auto renderFunction(const shared_ptr<ogl_context> &context, const shared_ptr<ogl
 {
 
 
+}
+
+//TODO load textures from the directory automatically
+void loadTextures(shared_ptr<texture_handler> &textures)
+{
+	textures->addTexture("act.bmp");
+	textures->addTexture("brick.bmp");
+	textures->addTexture("carpet_blue.bmp");
+	textures->addTexture("carpet_gray.bmp");
+	textures->addTexture("carpet_green.bmp");
+	textures->addTexture("carpet_orange.bmp");
+	textures->addTexture("carpet_purple.bmp");
+	textures->addTexture("concrete.bmp");
+	textures->addTexture("dark_wood.bmp");
+	textures->addTexture("frame_aluminum.bmp");
+	textures->addTexture("frame_bamboo.bmp");
+	textures->addTexture("frame_black.bmp");
+	textures->addTexture("frame_pine.bmp");
+	textures->addTexture("frame_white.bmp");
+	textures->addTexture("hardwood.bmp");
+	textures->addTexture("plaster.bmp");
+	textures->addTexture("poured_concrete.bmp");
+	textures->addTexture("white_matte.bmp");
 }
 
 

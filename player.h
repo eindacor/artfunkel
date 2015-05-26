@@ -7,7 +7,8 @@
 class player
 {
 public:
-	player(string s, const shared_ptr<loot_generator> &lg, shared_ptr<ogl_context> ogl_con, string data_path);
+	player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<ogl_context> ogl_con, 
+		shared_ptr<texture_handler> &textures, string data_path);
 	~player(){};
 
 	void addWorkToInventory(const shared_ptr<artwork> &work);

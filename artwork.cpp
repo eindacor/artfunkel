@@ -160,10 +160,10 @@ bool artwork::operator == (const artwork &other) const
 	return true;
 }
 
-void artwork::applyFrameTemplate(const shared_ptr<ogl_context> &context, const frame_model &frame_template)
+void artwork::applyFrameTemplate(const shared_ptr<ogl_context> &context, const shared_ptr<texture_handler> &textures, const frame_model &frame_template)
 {
 	p_frame = shared_ptr<frame_model>(new frame_model(
-		data->getWidth(), data->getHeight(), context, frame_template.getFrameTexturePath(), frame_template.getMatteTexturePath(),
+		data->getWidth(), data->getHeight(), context, frame_template.getFrameTextureFilename(), frame_template.getMatteTextureFilename(), textures,
 		frame_template.getFrameWidth(), frame_template.getFrameDepth(), frame_template.getMatteWidth(), frame_template.getMatteSetback(), frame_template.getPaintingSetback()));
 
 	updateOverallDimensions();

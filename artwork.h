@@ -97,7 +97,7 @@ public:
 	bool operator == (const artwork &other) const;
 	bool operator != (const artwork &other) const { return !(*this == other); }
 
-	void applyFrameTemplate(const shared_ptr<ogl_context> &context, const frame_model &frame_template);
+	void applyFrameTemplate(const shared_ptr<ogl_context> &context, const shared_ptr<texture_handler> &textures, const frame_model &frame_template);
 
 	bool isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
 		const pair<vec3, vec3> &ray, float &scale) const;

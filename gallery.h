@@ -10,7 +10,7 @@ class display_wall
 public:
 	//class constructed with vec3's, then converts to vec2's with a model matrix to simplify raytracing
 	//first point is used as the wall origin, which is used to determing the painting location matrix
-	display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, string texture_path);
+	display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX);
 	display_wall(const shared_ptr<ogl_context> &context, string texture_path,
 		const vector<float> &vec_vertices, int geometry_offset, int normal_offset, int uv_offset, int stride);
 	~display_wall(){}
@@ -53,7 +53,7 @@ private:
 class gallery
 {
 public:
-	gallery(const shared_ptr<ogl_context> &context, string model_path, string material_path,
+	gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
 		string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename);
 	~gallery(){};
 
