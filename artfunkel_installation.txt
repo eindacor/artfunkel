@@ -1,0 +1,44 @@
+Artfunkel Installation Instructions:
+
+What you'll need
+----------------------------------------
+
+A Computer running a 64-bit Windows OS
+
+About 4GB of free storage space
+
+A Github account -> used to access necessary game files
+	https://github.com/
+	
+Github App for Windows -> used to download necessary game files
+	https://windows.github.com/
+	
+Microsoft's Visual C++ Redistributable Packages for VS 2013 (vcredist_x86.exe) -> used to run programs created in Microsoft's Visual C++ software
+	https://www.microsoft.com/en-us/download/details.aspx?id=40784
+	
+	
+	
+
+Installation
+----------------------------------------
+
+		Getting the Files:
+
+First, make sure you download and install the Github App for Windows from the link above. Start the app, and login with your account information.
+
+Next, go online, log in to Github.com, and go to the url: https://github.com/eindacor/artfunkel
+
+On the right hand side, there's a button labeled "Clone in Desktop". Click the button, and the Github App should launch. 
+
+Be sure to make a note of the target directory specified. You'll need to find this directory again to run the application. You can easily find the directory by selecting the project on the left-hand side of the Github app, right clicking on the name and selecting "Open in Explorer".
+
+On the left panel of the Github App, you should see "artfunkel". Select it, if it isn't selected already, and find the "Sync" button in the upper-right-hand corner of the App. Beside the button there should be a blue indicator that new files need to be downloaded, showing a number and an arrow. Click the button. Note: this might take a while, as this is downloading all of the game assets to your local machine. Thankfully, this is a one-time process. The files may need to be updated occasionally, but this is the bulk of the content.
+
+
+		Running the Application:
+
+To run the application, you need to download and install Microsoft's Visual C++ Redistributable Packages for VS 2013 from the link above. Make sure you specify "vcredist_x86.exe" when you do. Once it downloads, follow the installation instructions.
+
+After the packages are installed, go to the directory where all of the game files were downloaded, and run "artfunkel.exe".
+
+	
