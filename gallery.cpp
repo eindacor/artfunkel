@@ -321,7 +321,7 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 		environment_models.push_back(env_mesh);
 	}
 
-	bool draw_grid = true;
+	bool draw_grid = false;
 
 	if (draw_grid)
 	{
