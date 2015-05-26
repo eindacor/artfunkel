@@ -378,7 +378,7 @@ rectangle::rectangle(vec2 centerpoint, vec2 dimensions, vec4 c)
 rectangle::~rectangle()
 {
 	glDeleteVertexArrays(1, VAO.get());
-	glDeleteBuffers(1, VAO.get());
+	glDeleteBuffers(1, VBO.get());
 }
 
 void rectangle::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute) const
