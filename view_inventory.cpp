@@ -18,8 +18,8 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	//TODO remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> >inventory_copy = current_player->getInventoryCopy();
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.85f, -0.0f), 0.3f, 2.0f ,
-		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.4f, .15f), 1.2f, 1.7f ,
+		pair<horizontal_justification, vertical_justification>(H_LEFT, V_TOP)));
 
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
 
@@ -28,7 +28,7 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	for (const auto &i : inventory_copy)
 	{
 		i->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
-		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.3f, 0.3f), 0.01f));
+		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.2f, 0.3f), 0.04f));
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);
 	}
@@ -70,9 +70,27 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 				shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
 
 				if (selected_type == THUMBNAIL)
-					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), context, vec2(-0.15f, 0.15f), vec2(1.7f, 1.7f), 0.1f));
+					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), context, vec2(-.65f, 0.5f), vec2(0.7f, 1.0f), 0.1f));
 
 				else highlight = nullptr;
+			}
+
+			if (keys->checkPress(GLFW_KEY_COMMA, false))
+			{
+				artwork_thumbnails->pageDown();
+				highlight = nullptr;
+				//title_text = nullptr;
+				//info_text = nullptr;
+				//rarity_text = nullptr;
+			}
+
+			if (keys->checkPress(GLFW_KEY_PERIOD, false))
+			{
+				artwork_thumbnails->pageUp();
+				highlight = nullptr;
+				//title_text = nullptr;
+				//info_text = nullptr;
+				//rarity_text = nullptr;
 			}
 
 			glfwSetTime(0.0f);
