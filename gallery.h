@@ -72,6 +72,7 @@ private:
 	//lines are for testing only
 	vector< shared_ptr<line> > lines;
 
+	vector< shared_ptr<jep::ogl_data> > environment_models;
 	//vector<player> players_present;
 };
 

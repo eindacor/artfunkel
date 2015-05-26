@@ -35,7 +35,7 @@ vector< shared_ptr<artwork> >::const_iterator findChunkEnd(
 pair<vec3, vec3> getRayFromCursorPosition(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera);
 bool paintingSelected(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, const shared_ptr<artwork> &art, float &scale);
 vector< vector<vec3> > getTriangles(const vector<float> &vec_vertices, int offset, int stride);
-vector< vector<vec3> > getTriangles(const vector<float> &vec_vertices, const vector<unsigned int> &vertex_indices, int offset, int stride);
+vector< vector<vec3> > getTriangles(const vector<float> &vec_vertices, const vector<unsigned short> &vertex_indices, int offset, int stride);
 vector< pair<vec3, vec3> > getOuterEdges(const vector< vector<vec3> > &triangles);
 float getNormalRotation(const vector<float> &vec_vertices, int normal_offset, int stride);
 

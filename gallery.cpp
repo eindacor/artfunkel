@@ -98,7 +98,7 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mes
 	//this matrix modifies the modeled geometry to be on the z-axis for easy click intersection detection
 	mat4 adjustment_matrix = adjustment_rotation_matrix * adjustment_position_matrix;
 
-	vector<unsigned int> vertex_indices;
+	vector<unsigned short> vertex_indices;
 	vector<float> modified_vec_vertices =  mesh.getIndexedVertexData(vertex_indices);
 	
 	//for each vector of vec3's in wall_triangles
@@ -223,6 +223,9 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	shared_ptr<GLuint> temp_ind = opengl_data->getIND();
 
 	glBindVertexArray(*temp_vao);
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindTexture(GL_TEXTURE_2D, *temp_tex);
 
 	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
@@ -232,8 +235,12 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *temp_ind);
 
 	//glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
-	glDrawElements(GL_TRIANGLES, opengl_data->getIndexCount(), GL_UNSIGNED_INT, (void*)0);
+	glDrawElements(GL_TRIANGLES, opengl_data->getIndexCount(), GL_UNSIGNED_SHORT, (void*)0);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
 }
 
@@ -290,30 +297,59 @@ gallery::gallery(const shared_ptr<ogl_context> &context, string model_path, stri
 		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
 	}
 
-	int lines_x = 10;
-	int lines_z = 10;
-	float line_spacing = 4.0f;
-	float x_start = ((float)lines_x * line_spacing) / -2.0f;
-	float z_start = ((float)lines_z * line_spacing) / -2.0f;
-	for (int i = 0; i <= lines_x; i++)
+	vector<mesh_data> environment_meshes = generateMeshes(filler_model_path.c_str());
+	map<string, material_data> environment_materials = generateMaterials(filler_material_path.c_str());
+
+	for (const auto &i : environment_meshes)
 	{
-		float z_end = z_start * -1.0f;
-		vec4 start(((float)i * line_spacing) + x_start, 0.0f, z_start, 1.0f);
-		vec4 end(((float)i * line_spacing) + x_start, 0.0f, z_end, 1.0f);
-		lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+		vector<unsigned short> mesh_indices;
+		vector<float> vertex_data = i.getIndexedVertexData(mesh_indices);
+		string full_texture_path = material_path + environment_materials.at(i.getMaterialName()).getTextureFilename();
+		shared_ptr<jep::ogl_data> env_mesh(new jep::ogl_data(
+			context,
+			full_texture_path.c_str(),
+			GL_STATIC_DRAW,
+			mesh_indices,
+			vertex_data,
+			i.getVSize(),
+			i.getVTSize(),
+			i.getVNSize(),
+			i.getInterleaveVTOffset(),
+			i.getInterleaveVNOffset(),
+			i.getInterleaveStride()
+			));
+		environment_models.push_back(env_mesh);
 	}
 
-	for (int i = 0; i <= lines_z; i++)
-	{
-		float x_end = x_start * -1.0f;
-		vec4 start(x_start, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
-		vec4 end(x_end, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
-		lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
-	}
+	bool draw_grid = true;
 
-	vec4 origin_start(0.0f, 1.0f, 0.0f, 1.0f);
-	vec4 origin_end(0.0f, -1.0f, 0.0f, 1.0f);
-	lines.push_back(shared_ptr<line>(new line(origin_start, origin_end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+	if (draw_grid)
+	{
+		int lines_x = 10;
+		int lines_z = 10;
+		float line_spacing = 4.0f;
+		float x_start = ((float)lines_x * line_spacing) / -2.0f;
+		float z_start = ((float)lines_z * line_spacing) / -2.0f;
+		for (int i = 0; i <= lines_x; i++)
+		{
+			float z_end = z_start * -1.0f;
+			vec4 start(((float)i * line_spacing) + x_start, 0.0f, z_start, 1.0f);
+			vec4 end(((float)i * line_spacing) + x_start, 0.0f, z_end, 1.0f);
+			lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+		}
+
+		for (int i = 0; i <= lines_z; i++)
+		{
+			float x_end = x_start * -1.0f;
+			vec4 start(x_start, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
+			vec4 end(x_end, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
+			//lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+		}
+
+		vec4 origin_start(0.0f, 1.0f, 0.0f, 1.0f);
+		vec4 origin_end(0.0f, -1.0f, 0.0f, 1.0f);
+		//lines.push_back(shared_ptr<line>(new line(origin_start, origin_end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+	}
 
 	//TODO add code for filler geometry
 	//TODO add code for floor model
@@ -324,8 +360,36 @@ void gallery::renderGallery(const shared_ptr<ogl_context> &context, const shared
 	for (const auto &i : display_walls)
 		i.second->draw(context, camera);
 
-	for (const auto &i : lines)
-		i->draw(context, camera);
+	for (auto mesh : environment_models)
+	{
+		shared_ptr<GLuint> temp_vao = mesh->getVAO();
+		shared_ptr<GLuint> temp_tex = mesh->getTEX();
+		shared_ptr<GLuint> temp_ind = mesh->getIND();
+
+		glBindVertexArray(*temp_vao);
+		glEnableVertexAttribArray(0);
+		glEnableVertexAttribArray(1);
+		glEnableVertexAttribArray(2);
+		glBindTexture(GL_TEXTURE_2D, *temp_tex);
+
+		//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
+		camera->setMVP(context, mat4(1.0f), (render_type)0);
+
+		//TODO try removing this line
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *temp_ind);
+
+		//glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
+		glDrawElements(GL_TRIANGLES, mesh->getIndexCount(), GL_UNSIGNED_SHORT, (void*)0);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
+		glDisableVertexAttribArray(0);
+		glDisableVertexAttribArray(1);
+		glDisableVertexAttribArray(2);
+		glBindVertexArray(0);
+	}
+
+	//for (const auto &i : lines)
+		//i->draw(context, camera);
 }
 
 shared_ptr<display_wall> gallery::getClosestWallUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)

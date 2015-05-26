@@ -22,9 +22,9 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 			context, data_path + "model_data\\",
 			data_path + "model_data\\",
 			"gallery_template_01_display.obj",
-			"test_filler.obj",
+			"gallery_template_01_filler.obj",
 			"gallery_template_01_display.mtl",
-			"test_filler.mtl")));
+			"gallery_template_01_filler.mtl")));
 	}
 
 	current_gallery = current_player->getGallery(0);
