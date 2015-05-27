@@ -35,12 +35,8 @@ painting_surface::painting_surface(
 
 void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
 {
-	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
-	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
-	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
-
-	glBindVertexArray(*temp_vao);
-	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+	glBindVertexArray(*(opengl_data->getVAO()));
+	glBindTexture(GL_TEXTURE_2D, *(opengl_data->getTEX()));
 
 	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
 	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
@@ -254,12 +250,9 @@ void frame_model::draw(const shared_ptr<ogl_context> &context, const mat4 &model
 {
 	//TODO revise opengl_data class to contain rendering data
 	//draw the frame
-	shared_ptr<GLuint> temp_vao = frame_opengl_data->getVAO();
-	shared_ptr<GLuint> temp_vbo = frame_opengl_data->getVBO();
-	shared_ptr<GLuint> temp_tex = frame_opengl_data->getTEX();
 
-	glBindVertexArray(*temp_vao);
-	glBindTexture(GL_TEXTURE_2D, *temp_tex);	
+	glBindVertexArray(*(frame_opengl_data->getVAO()));
+	glBindTexture(GL_TEXTURE_2D, *(frame_opengl_data->getTEX()));
 
 	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
 	
@@ -269,12 +262,8 @@ void frame_model::draw(const shared_ptr<ogl_context> &context, const mat4 &model
 	glBindVertexArray(0);
 
 	//draw the matte
-	temp_vao = matte_opengl_data->getVAO();
-	temp_vbo = matte_opengl_data->getVBO();
-	temp_tex = matte_opengl_data->getTEX();
-
-	glBindVertexArray(*temp_vao);
-	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+	glBindVertexArray(*(matte_opengl_data->getVAO()));
+	glBindTexture(GL_TEXTURE_2D, *(matte_opengl_data->getTEX()));
 
 	//glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
 	glDrawArrays(GL_TRIANGLES, 0, matte_opengl_data->getVertexCount());
@@ -453,12 +442,8 @@ image::image(vec2 centerpoint, vec2 dimensions, const shared_ptr<ogl_context> &c
 
 void image::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute) const
 {
-	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
-	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
-	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
-
-	glBindVertexArray(*temp_vao);
-	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+	glBindVertexArray(*(opengl_data->getVAO()));
+	glBindTexture(GL_TEXTURE_2D, *(opengl_data->getTEX()));
 
 	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
 	camera->setMVP(context, mat4(1.0f), (absolute ? (render_type)2 : (render_type)0));
@@ -470,12 +455,8 @@ void image::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_ca
 
 void image::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, const mat4 &model_matrix, bool absolute) const
 {
-	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
-	shared_ptr<GLuint> temp_vbo = opengl_data->getVBO();
-	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
-
-	glBindVertexArray(*temp_vao);
-	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+	glBindVertexArray(*(opengl_data->getVAO()));
+	glBindTexture(GL_TEXTURE_2D, *(opengl_data->getTEX()));
 
 	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
 	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));

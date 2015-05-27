@@ -46,9 +46,9 @@ public:
 	void setBaseValue(bignum b) { base_value = b; }
 
 	//load, unload functions increase performance by removing surface data when not needed
-	void loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam);
+	void loadData(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam);
 	void unloadData() { surface = shared_ptr<painting_surface>(nullptr); }
-	void setSurface(shared_ptr<painting_surface> surf) { surface = surf; }
+	void setSurface(const shared_ptr<painting_surface> &surf) { surface = surf; }
 
 private:
 	int ID;

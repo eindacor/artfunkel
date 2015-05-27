@@ -9,13 +9,14 @@
 int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys,
 	const shared_ptr<player> &current_player, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
 {
+	cout << "entering gallery" << endl;
 	float eye_level = 1.65f;
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, context, vec3(0.0f, eye_level, 5.0f), 45.0f));
 
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
 
-	shared_ptr<gallery> current_gallery;
+	shared_ptr<gallery> current_gallery(nullptr);
 	if (current_player->getGallery(0) == nullptr)
 	{
 		current_player->addGallery(shared_ptr<gallery>(new gallery(
@@ -29,6 +30,9 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 	}
 
 	current_gallery = current_player->getGallery(0);
+	cout << "gallery set" << endl;
+	current_gallery->printDisplayINDs();
+	
 
 	//TODO remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
@@ -119,6 +123,14 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 						artwork_thumbnails->addElement(thumbnail);
 					}
 				}
+			}
+
+			if (keys->checkPress(GLFW_KEY_U, false))
+			{
+				float distance;
+				shared_ptr<display_wall> wall_hovered = current_gallery->getClosestWallUnderCursor(keys, camera, distance);
+				if (wall_hovered != nullptr)
+					cout << "wall IND: " << wall_hovered->getIND() << endl;
 			}
 
 			bool new_selection = false;
@@ -302,7 +314,9 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
+				cout << "going to main menu" << endl;
 				menu_return = mainMenu(data_path, context, keys, text, textures);
+				cout << "back from main menu" << endl;
 				if (menu_return != 0)
 					finished = true;
 			}
@@ -313,5 +327,6 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 	}
 
 	context->setBackgroundColor(original_background);
+	cout << "leaving gallery" << endl;
 	return menu_return;
 }

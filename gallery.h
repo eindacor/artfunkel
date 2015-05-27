@@ -31,6 +31,8 @@ public:
 	vec4 getCursorPositionWorldspace() const { return wall_model_matrix * vec4(cursor_position.x, cursor_position.y, 0.0f, 1.0f); }
 	vec2 getCursorPositionWallspace() const { return cursor_position; }
 
+	GLuint getIND() const { return *(opengl_data->getIND()); }
+
 private:
 	//wall_edges is used to determine whether a point is inside or outside the wall
 	vector< pair<vec3, vec3> > wall_edges;
@@ -61,6 +63,11 @@ public:
 	shared_ptr<display_wall> getClosestWallUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 	shared_ptr<artwork> getClosestArtworkUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 	void removeArtwork(const shared_ptr<artwork> &toRemove);
+
+	void printDisplayINDs() const {
+		for (const auto &i : display_walls)
+			cout << i.second->getIND() << endl;
+	}
 
 private:
 	//int is the index of the specific position, mat4 is the position matrix

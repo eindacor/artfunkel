@@ -218,21 +218,17 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	for (const auto &i : wall_contents)
 		i.second->draw(context, camera);
 
-	shared_ptr<GLuint> temp_vao = opengl_data->getVAO();
-	shared_ptr<GLuint> temp_tex = opengl_data->getTEX();
-	shared_ptr<GLuint> temp_ind = opengl_data->getIND();
-
-	glBindVertexArray(*temp_vao);
+	glBindVertexArray(*(opengl_data->getVAO()));
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 	glEnableVertexAttribArray(2);
-	glBindTexture(GL_TEXTURE_2D, *temp_tex);
+	glBindTexture(GL_TEXTURE_2D, *(opengl_data->getTEX()));
 
 	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
 	camera->setMVP(context, wall_model_matrix, (render_type)0);
 
 	//TODO try removing this line
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *temp_ind);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(opengl_data->getIND()));
 
 	//glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
 	glDrawElements(GL_TRIANGLES, opengl_data->getIndexCount(), GL_UNSIGNED_SHORT, (void*)0);
@@ -327,7 +323,7 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 		environment_models.push_back(env_mesh);
 	}
 
-	bool draw_grid = true;
+	bool draw_grid = false;
 
 	if (draw_grid)
 	{
@@ -366,23 +362,19 @@ void gallery::renderGallery(const shared_ptr<ogl_context> &context, const shared
 	for (const auto &i : display_walls)
 		i.second->draw(context, camera);
 
-	for (auto mesh : environment_models)
+	for (const auto &mesh : environment_models)
 	{
-		shared_ptr<GLuint> temp_vao = mesh->getVAO();
-		shared_ptr<GLuint> temp_tex = mesh->getTEX();
-		shared_ptr<GLuint> temp_ind = mesh->getIND();
-
-		glBindVertexArray(*temp_vao);
+		glBindVertexArray(*(mesh->getVAO()));
 		glEnableVertexAttribArray(0);
 		glEnableVertexAttribArray(1);
 		glEnableVertexAttribArray(2);
-		glBindTexture(GL_TEXTURE_2D, *temp_tex);
+		glBindTexture(GL_TEXTURE_2D, *(mesh->getTEX()));
 
 		//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
 		camera->setMVP(context, mat4(1.0f), (render_type)0);
 
 		//TODO try removing this line
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *temp_ind);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(mesh->getIND()));
 
 		//glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
 		glDrawElements(GL_TRIANGLES, mesh->getIndexCount(), GL_UNSIGNED_SHORT, (void*)0);
@@ -394,8 +386,8 @@ void gallery::renderGallery(const shared_ptr<ogl_context> &context, const shared
 		glBindVertexArray(0);
 	}
 
-	//for (const auto &i : lines)
-		//i->draw(context, camera);
+	for (const auto &i : lines)
+		i->draw(context, camera);
 }
 
 shared_ptr<display_wall> gallery::getClosestWallUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)

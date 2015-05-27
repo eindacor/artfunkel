@@ -41,7 +41,7 @@ artwork_data::artwork_data()
 	surface = nullptr;
 }
 
-void artwork_data::loadData(shared_ptr<ogl_context> ogl_con, shared_ptr<ogl_camera> ogl_cam)
+void artwork_data::loadData(const shared_ptr<ogl_context> &ogl_con, const shared_ptr<ogl_camera> &ogl_cam)
 {
 	shared_ptr<painting_surface> work_surface(new painting_surface(width, height, ogl_con, image_path.c_str()));
 	surface = work_surface;
