@@ -711,4 +711,34 @@ void loadTextures(shared_ptr<texture_handler> &textures)
 	textures->addTexture("white_matte.bmp");
 }
 
+void readConfigFile(string &data_path, string &username)
+{
+	std::ifstream config_in;
+
+	config_in.open("settings.config", std::ifstream::in);
+
+	if (config_in.good())
+	{
+		string data_path_line;
+		std::getline(config_in, data_path_line, '\n');
+		data_path.clear();
+		data_path = data_path_line.substr(11);
+
+		string username_line;
+		std::getline(config_in, username_line, '\n');
+		username.clear();
+		username = username_line.substr(10);
+	}
+	
+	else
+	{
+		std::ofstream config_out("settings.config");
+		config_out << "DATA PATH: .\\" << endl;
+		config_out << "USERNAME: default_user" << endl;
+
+		data_path = ".\\";
+		username = "default_user";
+	}
+}
+
 

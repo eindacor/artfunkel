@@ -10,23 +10,17 @@
 
 int main(int argc, char* argv[])
 {
+	string data_path;
+	string username;
+
+	readConfigFile(data_path, username);
+
+	cout << "data_path: " << data_path << endl;
+	cout << "username: " << username << endl;
+
 	jep::init();
 
 	int id_count = 0;
-
-	string data_path = "";
-
-	if (argc > 1)
-	{
-		data_path = argv[1];
-		data_path += "\\";
-	}
-
-	else
-	{
-		//data_path = "C:\\Users\\Joseph\\Documents\\GitHub\\artfunkel\\";		//LAPTOP
-		data_path = "J:\\GitHub\\artfunkel\\";								//DESKTOP
-	}
 	
 	string paintings_path = data_path + "paintings.csv";
 	string artists_path = data_path + "artists.csv";
