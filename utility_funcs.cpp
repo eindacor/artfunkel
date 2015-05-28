@@ -161,12 +161,13 @@ float getDelta(vec3 first, vec3 second, char axis)
 	}
 }
 
+//TODO detect normal direction and include
 vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right, 
 		float uv_map_dimension, char u_axis, char v_axis)
 {
 	vector<float> geometry_data = {
 		bottom_left.x, bottom_left.y, bottom_left.z,	//vert data
-		0.0f, 0.0f,																//uv data
+		0.0f, 0.0f,										//uv data
 		top_left.x, top_left.y, top_left.z,
 		getDelta(bottom_left, top_left, u_axis) / uv_map_dimension, getDelta(bottom_left, top_left, v_axis) / uv_map_dimension,
 		top_right.x, top_right.y, top_right.z,

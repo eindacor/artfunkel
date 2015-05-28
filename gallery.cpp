@@ -126,10 +126,7 @@ display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mes
 		modified_vec_vertices,
 		mesh.getVSize(),
 		mesh.getVTSize(),
-		mesh.getVNSize(),
-		mesh.getInterleaveVTOffset(),
-		mesh.getInterleaveVNOffset(),
-		mesh.getInterleaveStride()
+		mesh.getVNSize()
 		));
 }
 
@@ -315,10 +312,7 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 			vertex_data,
 			i.getVSize(),
 			i.getVTSize(),
-			i.getVNSize(),
-			i.getInterleaveVTOffset(),
-			i.getInterleaveVNOffset(),
-			i.getInterleaveStride()
+			i.getVNSize()
 			));
 		environment_models.push_back(env_mesh);
 	}

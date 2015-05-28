@@ -18,19 +18,22 @@ painting_surface::painting_surface(
 	vector<float> vec_vertices {
 			lower_left.x, lower_left.y, lower_left.z,
 			0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
 			upper_left.x, upper_left.y, upper_left.z,
 			0.0f, 1.0f,
+			0.0f, 0.0f, 1.0f,
 			lower_right.x, lower_right.y, lower_right.z,
 			1.0f, 0.0f,
-			upper_left.x, upper_left.y, upper_left.z,
-			0.0f, 1.0f,
+			0.0f, 0.0f, 1.0f,
 			upper_right.x, upper_right.y, upper_right.z,
 			1.0f, 1.0f,
-			lower_right.x, lower_right.y, lower_right.z,
-			1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f,
 	};
 
-	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+	vector<unsigned short> indices = { 0, 1, 2, 1, 3, 2 };
+
+	//opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, texture_path, GL_STATIC_DRAW, indices, vec_vertices, 3, 2, 3));
 }
 
 void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &model_matrix, const shared_ptr<ogl_camera> &camera, bool absolute) const
