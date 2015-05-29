@@ -2,10 +2,11 @@
 #include "artwork.h"
 
 player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<ogl_context> ogl_con, 
-	shared_ptr<texture_handler> &textures, string data_path)
+	shared_ptr<texture_handler> &textures, string data_path, unsigned long player_xp, unsigned short player_level)
 {
 	name = s;
-
+	xp = player_xp;
+	level = player_level;
 	vector< shared_ptr<artwork> > generated_works = lg->generateArtworks(1, 1.0f);
 	for (auto i : generated_works)
 		addWorkToInventory(i);

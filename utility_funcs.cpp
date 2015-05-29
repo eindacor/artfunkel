@@ -166,8 +166,6 @@ float getDelta(vec3 first, vec3 second, char axis)
 vector<float> generateFrameVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right,
 		float uv_map_dimension, char u_axis, char v_axis, vector<unsigned short> &indices)
 {
-	vec3 bottom_left_normalized = vec3(glm::normalize(bottom_left));
-
 	mat4 normal_calc_translation = glm::inverse(glm::translate(mat4(1.0f), bottom_left));
 	vec4 top_left_translated(normal_calc_translation * vec4(top_left, 1.0f));
 	vec4 bottom_right_translated(normal_calc_translation * vec4(bottom_right, 1.0f));

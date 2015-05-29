@@ -8,7 +8,7 @@ class player
 {
 public:
 	player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<ogl_context> ogl_con, 
-		shared_ptr<texture_handler> &textures, string data_path);
+		shared_ptr<texture_handler> &textures, string data_path, unsigned long player_xp = 0, unsigned short player_level = 0);
 	~player(){};
 
 	bool addWorkToInventory(const shared_ptr<artwork> &work);
@@ -47,6 +47,9 @@ private:
 
 	bignum currency;
 	bignum collection_value;
+
+	unsigned long xp;
+	unsigned short level;
 
 	map<int, shared_ptr<gallery> > active_galleries;
 };
