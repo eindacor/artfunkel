@@ -1,5 +1,6 @@
 #include "geometry.h"
 #include "artwork.h"
+#include "utility_funcs.h"
 
 painting_surface::painting_surface(
 	float width, float height, const shared_ptr<ogl_context> &context, const char* texture_path)
@@ -22,15 +23,15 @@ painting_surface::painting_surface(
 			upper_left.x, upper_left.y, upper_left.z,
 			0.0f, 1.0f,
 			0.0f, 0.0f, 1.0f,
-			lower_right.x, lower_right.y, lower_right.z,
-			1.0f, 0.0f,
-			0.0f, 0.0f, 1.0f,
 			upper_right.x, upper_right.y, upper_right.z,
 			1.0f, 1.0f,
 			0.0f, 0.0f, 1.0f,
+			lower_right.x, lower_right.y, lower_right.z,
+			1.0f, 0.0f,
+			0.0f, 0.0f, 1.0f
 	};
 
-	vector<unsigned short> indices = { 0, 1, 2, 1, 3, 2 };
+	vector<unsigned short> indices = { 0, 1, 2, 2, 3, 0 };
 
 	//opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, texture_path, GL_STATIC_DRAW, indices, vec_vertices, 3, 2, 3));
@@ -44,7 +45,14 @@ void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &
 	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
 	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
 
-	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
+
+	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(opengl_data->getIND()));
+	glDrawElements(GL_TRIANGLES, opengl_data->getIndexCount(), GL_UNSIGNED_SHORT, (void*)0);
+	//glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
 	glUniform1i(context->getShaderGLint("absolute_position"), false);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);
@@ -127,124 +135,257 @@ frame_model::frame_model(float painting_width, float painting_height, const shar
 	vec3 fi_left_bottom_back(fi_x_left, fi_y_bottom, fi_z_back);
 
 	vector<float> frame_vertices;
-
-	vector<float> frame_left_front = generateInterleavedVertices(
+	vector<unsigned short> frame_indices;
+	
+	vector<float> frame_left_front = generateFrameVertices(
 		fo_left_bottom_front, fo_left_top_front, fi_left_top_front, fi_left_bottom_front,
-		default_texture_dimension, 'x', 'y');
+		default_texture_dimension, 'x', 'y', frame_indices);
 
-	vector<float> frame_left_outer = generateInterleavedVertices(
+	vector<float> frame_left_outer = generateFrameVertices(
 		fo_left_bottom_back, fo_left_top_back, fo_left_top_front, fo_left_bottom_front,
-		default_texture_dimension, 'z', 'y');
+		default_texture_dimension, 'z', 'y', frame_indices);
 
-	vector<float> frame_left_inner = generateInterleavedVertices(
+	vector<float> frame_left_inner = generateFrameVertices(
 		fi_left_bottom_front, fi_left_top_front, fi_left_top_back, fi_left_bottom_back,
-		default_texture_dimension, 'z', 'y');
+		default_texture_dimension, 'z', 'y', frame_indices);
 
-	frame_vertices.insert(frame_vertices.begin(), frame_left_front.begin(), frame_left_front.end());
-	frame_vertices.insert(frame_vertices.begin(), frame_left_outer.begin(), frame_left_outer.end());
-	frame_vertices.insert(frame_vertices.begin(), frame_left_inner.begin(), frame_left_inner.end());
+	frame_vertices.insert(frame_vertices.end(), frame_left_front.begin(), frame_left_front.end());
+	frame_vertices.insert(frame_vertices.end(), frame_left_outer.begin(), frame_left_outer.end());
+	frame_vertices.insert(frame_vertices.end(), frame_left_inner.begin(), frame_left_inner.end());
 
-	vector<float> frame_right_front = generateInterleavedVertices(
+	vector<float> frame_right_front = generateFrameVertices(
 		fi_right_bottom_front, fi_right_top_front, fo_right_top_front, fo_right_bottom_front,
-		default_texture_dimension, 'x', 'y');
+		default_texture_dimension, 'x', 'y', frame_indices);
 
-	vector<float> frame_right_outer = generateInterleavedVertices(
+	vector<float> frame_right_outer = generateFrameVertices(
 		fo_right_bottom_front, fo_right_top_front, fo_right_top_back, fo_right_bottom_back,
-		default_texture_dimension, 'z', 'y');
+		default_texture_dimension, 'z', 'y', frame_indices);
 
-	vector<float> frame_right_inner = generateInterleavedVertices(
+	vector<float> frame_right_inner = generateFrameVertices(
 		fi_right_bottom_back, fi_right_top_back, fi_right_top_front, fi_right_bottom_front,
-		default_texture_dimension, 'z', 'y');
+		default_texture_dimension, 'z', 'y', frame_indices);
 
-	frame_vertices.insert(frame_vertices.begin(), frame_right_front.begin(), frame_right_front.end());
-	frame_vertices.insert(frame_vertices.begin(), frame_right_outer.begin(), frame_right_outer.end());
-	frame_vertices.insert(frame_vertices.begin(), frame_right_inner.begin(), frame_right_inner.end());
+	frame_vertices.insert(frame_vertices.end(), frame_right_front.begin(), frame_right_front.end());
+	frame_vertices.insert(frame_vertices.end(), frame_right_outer.begin(), frame_right_outer.end());
+	frame_vertices.insert(frame_vertices.end(), frame_right_inner.begin(), frame_right_inner.end());
 
-	vector<float> frame_bottom_front = generateInterleavedVertices(
+	vector<float> frame_bottom_front = generateFrameVertices(
 		fo_right_bottom_front, fo_left_bottom_front, fi_left_bottom_front, fi_right_bottom_front,
-		default_texture_dimension, 'y', 'x');
+		default_texture_dimension, 'y', 'x', frame_indices);
 
-	vector<float> frame_bottom_outer = generateInterleavedVertices(
+	vector<float> frame_bottom_outer = generateFrameVertices(
 		fo_right_bottom_back, fo_left_bottom_back, fo_left_bottom_front, fo_right_bottom_front,
-		default_texture_dimension, 'z', 'x');
+		default_texture_dimension, 'z', 'x', frame_indices);
 
-	vector<float> frame_bottom_inner = generateInterleavedVertices(
+	vector<float> frame_bottom_inner = generateFrameVertices(
 		fi_right_bottom_front, fi_left_bottom_front, fi_left_bottom_back, fi_right_bottom_back,
-		default_texture_dimension, 'z', 'x');
+		default_texture_dimension, 'z', 'x', frame_indices);
 
-	frame_vertices.insert(frame_vertices.begin(), frame_bottom_front.begin(), frame_bottom_front.end());
-	frame_vertices.insert(frame_vertices.begin(), frame_bottom_outer.begin(), frame_bottom_outer.end());
-	frame_vertices.insert(frame_vertices.begin(), frame_bottom_inner.begin(), frame_bottom_inner.end());
+	frame_vertices.insert(frame_vertices.end(), frame_bottom_front.begin(), frame_bottom_front.end());
+	frame_vertices.insert(frame_vertices.end(), frame_bottom_outer.begin(), frame_bottom_outer.end());
+	frame_vertices.insert(frame_vertices.end(), frame_bottom_inner.begin(), frame_bottom_inner.end());
 
-	vector<float> frame_top_front = generateInterleavedVertices(
+	vector<float> frame_top_front = generateFrameVertices(
 		fi_right_top_front, fi_left_top_front, fo_left_top_front, fo_right_top_front,
-		default_texture_dimension, 'y', 'x');
+		default_texture_dimension, 'y', 'x', frame_indices);
 
-	vector<float> frame_top_outer = generateInterleavedVertices(
+	vector<float> frame_top_outer = generateFrameVertices(
 		fo_right_top_front, fo_left_top_front, fo_left_top_back, fo_right_top_back,
-		default_texture_dimension, 'z', 'x');
+		default_texture_dimension, 'z', 'x', frame_indices);
 
-	vector<float> frame_top_inner = generateInterleavedVertices(
+	vector<float> frame_top_inner = generateFrameVertices(
 		fi_right_top_back, fi_left_top_back, fi_left_top_front, fi_right_top_front, 
-		default_texture_dimension, 'z', 'x');
+		default_texture_dimension, 'z', 'x', frame_indices);
 
-	frame_vertices.insert(frame_vertices.begin(), frame_top_front.begin(), frame_top_front.end());
-	frame_vertices.insert(frame_vertices.begin(), frame_top_outer.begin(), frame_top_outer.end());
-	frame_vertices.insert(frame_vertices.begin(), frame_top_inner.begin(), frame_top_inner.end());
+	frame_vertices.insert(frame_vertices.end(), frame_top_front.begin(), frame_top_front.end());
+	frame_vertices.insert(frame_vertices.end(), frame_top_outer.begin(), frame_top_outer.end());
+	frame_vertices.insert(frame_vertices.end(), frame_top_inner.begin(), frame_top_inner.end());
 
+	//shared_ptr<jep::ogl_data> generated_frame(new jep::ogl_data(
+		//context, textures->getTexture(frame_texture_filename), GL_STATIC_DRAW, frame_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+	
 	shared_ptr<jep::ogl_data> generated_frame(new jep::ogl_data(
-		context, textures->getTexture(frame_texture_filename), GL_STATIC_DRAW, frame_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+		context, textures->getTexture(frame_texture_filename),
+		GL_STATIC_DRAW, frame_indices, frame_vertices, 3, 2, 3));
 
 	frame_opengl_data = generated_frame;
 	
 	vector<float> matte_vertices;
+	vector<unsigned short> matte_indices;
 
-	vector<float> matte_left_front = generateInterleavedVertices(
+	vector<float> matte_left_front = generateFrameVertices(
 		mo_left_bottom_front, mo_left_top_front, mi_left_top_front, mi_left_bottom_front,
-		default_texture_dimension, 'x', 'y');
+		default_texture_dimension, 'x', 'y', matte_indices);
 
-	vector<float> matte_left_inner = generateInterleavedVertices(
+	vector<float> matte_left_inner = generateFrameVertices(
 		mi_left_bottom_front, mi_left_top_front, mi_left_top_back, mi_left_bottom_back,
-		default_texture_dimension, 'z', 'y');
+		default_texture_dimension, 'z', 'y', matte_indices);
 
-	matte_vertices.insert(matte_vertices.begin(), matte_left_front.begin(), matte_left_front.end());
-	matte_vertices.insert(matte_vertices.begin(), matte_left_inner.begin(), matte_left_inner.end());
+	matte_vertices.insert(matte_vertices.end(), matte_left_front.begin(), matte_left_front.end());
+	matte_vertices.insert(matte_vertices.end(), matte_left_inner.begin(), matte_left_inner.end());
 
-	vector<float> matte_right_front = generateInterleavedVertices(
+	vector<float> matte_right_front = generateFrameVertices(
 		mi_right_bottom_front, mi_right_top_front, mo_right_top_front, mo_right_bottom_front,
-		default_texture_dimension, 'x', 'y');
+		default_texture_dimension, 'x', 'y', matte_indices);
 
-	vector<float> matte_right_inner = generateInterleavedVertices(
+	vector<float> matte_right_inner = generateFrameVertices(
 		mi_right_bottom_back, mi_right_top_back, mi_right_top_front, mi_right_bottom_front,
-		default_texture_dimension, 'z', 'y');
+		default_texture_dimension, 'z', 'y', matte_indices);
 
-	matte_vertices.insert(matte_vertices.begin(), matte_right_front.begin(), matte_right_front.end());
-	matte_vertices.insert(matte_vertices.begin(), matte_right_inner.begin(), matte_right_inner.end());
+	matte_vertices.insert(matte_vertices.end(), matte_right_front.begin(), matte_right_front.end());
+	matte_vertices.insert(matte_vertices.end(), matte_right_inner.begin(), matte_right_inner.end());
 
-	vector<float> matte_bottom_front = generateInterleavedVertices(
+	vector<float> matte_bottom_front = generateFrameVertices(
 		mo_right_bottom_front, mo_left_bottom_front, mi_left_bottom_front, mi_right_bottom_front,
-		default_texture_dimension, 'y', 'x');
+		default_texture_dimension, 'y', 'x', matte_indices);
 
-	vector<float> matte_bottom_inner = generateInterleavedVertices(
+	vector<float> matte_bottom_inner = generateFrameVertices(
 		mi_right_bottom_front, mi_left_bottom_front, mi_left_bottom_back, mi_right_bottom_back,
-		default_texture_dimension, 'z', 'x');
+		default_texture_dimension, 'z', 'x', matte_indices);
 
-	matte_vertices.insert(matte_vertices.begin(), matte_bottom_front.begin(), matte_bottom_front.end());
-	matte_vertices.insert(matte_vertices.begin(), matte_bottom_inner.begin(), matte_bottom_inner.end());
+	matte_vertices.insert(matte_vertices.end(), matte_bottom_front.begin(), matte_bottom_front.end());
+	matte_vertices.insert(matte_vertices.end(), matte_bottom_inner.begin(), matte_bottom_inner.end());
 
-	vector<float> matte_top_front = generateInterleavedVertices(
+	vector<float> matte_top_front = generateFrameVertices(
 		mi_right_top_front, mi_left_top_front, mo_left_top_front, mo_right_top_front,
-		default_texture_dimension, 'y', 'x');
+		default_texture_dimension, 'y', 'x', matte_indices);
 
-	vector<float> matte_top_inner = generateInterleavedVertices(
+	vector<float> matte_top_inner = generateFrameVertices(
 		mi_right_top_back, mi_left_top_back, mi_left_top_front, mi_right_top_front,
-		default_texture_dimension, 'z', 'x');
+		default_texture_dimension, 'z', 'x', matte_indices);
 
-	matte_vertices.insert(matte_vertices.begin(), matte_top_front.begin(), matte_top_front.end());
-	matte_vertices.insert(matte_vertices.begin(), matte_top_inner.begin(), matte_top_inner.end());
+	matte_vertices.insert(matte_vertices.end(), matte_top_front.begin(), matte_top_front.end());
+	matte_vertices.insert(matte_vertices.end(), matte_top_inner.begin(), matte_top_inner.end());
+
+	//shared_ptr<jep::ogl_data> generated_matte(new jep::ogl_data(
+		//context, textures->getTexture(matte_texture_filename), GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+	
+	shared_ptr<jep::ogl_data> generated_matte(new jep::ogl_data(
+		context, textures->getTexture(matte_texture_filename),
+		GL_STATIC_DRAW, matte_indices, matte_vertices, 3, 2, 3));
+
+	matte_opengl_data = generated_matte;
+}
+
+frame_model::frame_model(float painting_width, float painting_height, const shared_ptr<ogl_context> &context, const shared_ptr<texture_handler> &textures, 
+	string frame_texture, string matte_texture, float f_width, float m_width)
+{
+	frame_texture_filename = frame_texture;
+	matte_texture_filename = matte_texture;
+
+	if (textures->getTexture(frame_texture_filename) == nullptr)
+		textures->addTexture(frame_texture_filename);
+
+	if (textures->getTexture(matte_texture_filename) == nullptr)
+		textures->addTexture(matte_texture_filename);
+
+	frame_width = f_width;
+	matte_width = m_width;
+
+	float default_texture_dimension = 0.3f;
+
+	float total_width = painting_width + (matte_width * 2.0f) + (frame_width * 2.0f);
+	float total_height = painting_height + (matte_width * 2.0f) + (frame_width * 2.0f);
+
+	//p_ prefix denotes painting dimensions
+	float p_half_width = painting_width / 2.0f, p_half_height = painting_height / 2.0f;
+	float p_x_left = 0.0f - p_half_width, p_x_right = p_half_width, p_y_top = p_half_height, p_y_bottom = 0.0f - p_half_height;
+
+	//mi_ prefix denotes "matte inner", mo_ prefix denotes "matte outer"
+	float mi_x_left = p_x_left, mi_x_right = p_x_right;
+	float mi_y_top = p_y_top, mi_y_bottom = p_y_bottom;
+	float mo_x_left = p_x_left - matte_width, mo_x_right = p_x_right + matte_width;
+	float mo_y_top = p_y_top + matte_width, mo_y_bottom = p_y_bottom - matte_width;
+
+	vec3 mo_right_top_front(mo_x_right, mo_y_top, 0.0f);
+	vec3 mo_right_bottom_front(mo_x_right, mo_y_bottom, 0.0f);
+	vec3 mo_left_top_front(mo_x_left, mo_y_top, 0.0f);
+	vec3 mo_left_bottom_front(mo_x_left, mo_y_bottom, 0.0f);
+
+	vec3 mi_right_top_front(mi_x_right, mi_y_top, 0.0f);
+	vec3 mi_right_bottom_front(mi_x_right, mi_y_bottom, 0.0f);
+	vec3 mi_left_top_front(mi_x_left, mi_y_top, 0.0f);
+	vec3 mi_left_bottom_front(mi_x_left, mi_y_bottom, 0.0f);
+
+	//fi_ prefix denotes "frame inner", fo_ prefix denotes "frame outer"
+	float fi_x_left = mo_x_left, fi_x_right = mo_x_right;
+	float fi_y_top = mo_y_top, fi_y_bottom = mo_y_bottom;
+	float fo_x_left = mo_x_left - frame_width, fo_x_right = mo_x_right + frame_width;
+	float fo_y_top = mo_y_top + frame_width, fo_y_bottom = mo_y_bottom - frame_width;
+
+	vec3 fo_right_top_front(fo_x_right, fo_y_top, 0.0f);
+	vec3 fo_right_bottom_front(fo_x_right, fo_y_bottom, 0.0f);
+	vec3 fo_left_top_front(fo_x_left, fo_y_top, 0.0f);
+	vec3 fo_left_bottom_front(fo_x_left, fo_y_bottom, 0.0f);
+
+	vec3 fi_right_top_front(fi_x_right, fi_y_top, 0.0f);
+	vec3 fi_right_bottom_front(fi_x_right, fi_y_bottom, 0.0f);
+	vec3 fi_left_top_front(fi_x_left, fi_y_top, 0.0f);
+	vec3 fi_left_bottom_front(fi_x_left, fi_y_bottom, 0.0f);
+
+	vector<float> frame_vertices;
+	vector<unsigned short> frame_indices;
+
+	vector<float> frame_left_front = generateFrameVertices(
+		fo_left_bottom_front, fo_left_top_front, fi_left_top_front, fi_left_bottom_front,
+		default_texture_dimension, 'x', 'y', frame_indices);
+
+	frame_vertices.insert(frame_vertices.end(), frame_left_front.begin(), frame_left_front.end());
+
+	vector<float> frame_right_front = generateFrameVertices(
+		fi_right_bottom_front, fi_right_top_front, fo_right_top_front, fo_right_bottom_front,
+		default_texture_dimension, 'x', 'y', frame_indices);
+
+	frame_vertices.insert(frame_vertices.end(), frame_right_front.begin(), frame_right_front.end());
+
+	vector<float> frame_bottom_front = generateFrameVertices(
+		fo_right_bottom_front, fo_left_bottom_front, fi_left_bottom_front, fi_right_bottom_front,
+		default_texture_dimension, 'y', 'x', frame_indices);
+
+	frame_vertices.insert(frame_vertices.end(), frame_bottom_front.begin(), frame_bottom_front.end());
+
+	vector<float> frame_top_front = generateFrameVertices(
+		fi_right_top_front, fi_left_top_front, fo_left_top_front, fo_right_top_front,
+		default_texture_dimension, 'y', 'x', frame_indices);
+
+	frame_vertices.insert(frame_vertices.end(), frame_top_front.begin(), frame_top_front.end());
+
+	shared_ptr<jep::ogl_data> generated_frame(new jep::ogl_data(
+		context, textures->getTexture(frame_texture_filename),
+		GL_STATIC_DRAW, frame_indices, frame_vertices, 3, 2, 3));
+
+	frame_opengl_data = generated_frame;
+
+	vector<float> matte_vertices;
+	vector<unsigned short> matte_indices;
+
+	vector<float> matte_left_front = generateFrameVertices(
+		mo_left_bottom_front, mo_left_top_front, mi_left_top_front, mi_left_bottom_front,
+		default_texture_dimension, 'x', 'y', matte_indices);
+
+	matte_vertices.insert(matte_vertices.end(), matte_left_front.begin(), matte_left_front.end());
+
+	vector<float> matte_right_front = generateFrameVertices(
+		mi_right_bottom_front, mi_right_top_front, mo_right_top_front, mo_right_bottom_front,
+		default_texture_dimension, 'x', 'y', matte_indices);
+
+	matte_vertices.insert(matte_vertices.end(), matte_right_front.begin(), matte_right_front.end());
+
+	vector<float> matte_bottom_front = generateFrameVertices(
+		mo_right_bottom_front, mo_left_bottom_front, mi_left_bottom_front, mi_right_bottom_front,
+		default_texture_dimension, 'y', 'x', matte_indices);
+
+	matte_vertices.insert(matte_vertices.end(), matte_bottom_front.begin(), matte_bottom_front.end());
+
+	vector<float> matte_top_front = generateFrameVertices(
+		mi_right_top_front, mi_left_top_front, mo_left_top_front, mo_right_top_front,
+		default_texture_dimension, 'y', 'x', matte_indices);
+
+	matte_vertices.insert(matte_vertices.end(), matte_top_front.begin(), matte_top_front.end());
 
 	shared_ptr<jep::ogl_data> generated_matte(new jep::ogl_data(
-		context, textures->getTexture(matte_texture_filename), GL_STATIC_DRAW, matte_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+		context, textures->getTexture(matte_texture_filename),
+		GL_STATIC_DRAW, matte_indices, matte_vertices, 3, 2, 3));
 
 	matte_opengl_data = generated_matte;
 }
@@ -255,23 +396,38 @@ void frame_model::draw(const shared_ptr<ogl_context> &context, const mat4 &model
 	//draw the frame
 
 	glBindVertexArray(*(frame_opengl_data->getVAO()));
+	//TODO try moving enables above VAO binding
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindTexture(GL_TEXTURE_2D, *(frame_opengl_data->getTEX()));
 
 	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
-	
-	glDrawArrays(GL_TRIANGLES, 0, frame_opengl_data->getVertexCount());
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(frame_opengl_data->getIND()));
+	glDrawElements(GL_TRIANGLES, frame_opengl_data->getIndexCount(), GL_UNSIGNED_SHORT, (void*)0);
+	//glDrawArrays(GL_TRIANGLES, 0, frame_opengl_data->getVertexCount());
 
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 	glBindVertexArray(0);
 
 	//draw the matte
 	glBindVertexArray(*(matte_opengl_data->getVAO()));
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	glBindTexture(GL_TEXTURE_2D, *(matte_opengl_data->getTEX()));
 
-	//glUniformMatrix4fv(context->getMVPID(), 1, GL_FALSE, &MVP[0][0]);
-	glDrawArrays(GL_TRIANGLES, 0, matte_opengl_data->getVertexCount());
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(matte_opengl_data->getIND()));
+	glDrawElements(GL_TRIANGLES, matte_opengl_data->getIndexCount(), GL_UNSIGNED_SHORT, (void*)0);
+	//glDrawArrays(GL_TRIANGLES, 0, matte_opengl_data->getVertexCount());
 	glUniform1i(context->getShaderGLint("absolute_position"), false);
 	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 	glBindVertexArray(0);
 }
 

@@ -28,7 +28,7 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 
 	for (const auto &i : crate_contents)
 	{
-		i->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
+		i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.3f, 0.3f), 0.01f));
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);

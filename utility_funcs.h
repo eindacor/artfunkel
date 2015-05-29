@@ -2,6 +2,8 @@
 #define UTILITY_FUNCS_H
 #include "header.h"
 
+vector<float> generateFrameVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right,
+	float uv_map_dimension, char u_axis, char v_axis, vector<unsigned short> &frame_indices);
 string getDateString(const date &d, bool include_day);
 bignum lookupValue(rarity work_rarity, bignum work_value_scale);
 void printDate(date d);

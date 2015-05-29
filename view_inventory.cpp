@@ -27,7 +27,7 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	//add player's default frames to each
 	for (const auto &i : inventory_copy)
 	{
-		i->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
+		i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.2f, 0.3f), 0.04f));
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);

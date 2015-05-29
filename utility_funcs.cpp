@@ -161,24 +161,62 @@ float getDelta(vec3 first, vec3 second, char axis)
 	}
 }
 
+//TODO revise to automatically detect u and v vectors instead of passing 'x', 'y', or 'z'
 //TODO detect normal direction and include
-vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right, 
-		float uv_map_dimension, char u_axis, char v_axis)
+vector<float> generateFrameVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right,
+		float uv_map_dimension, char u_axis, char v_axis, vector<unsigned short> &indices)
 {
+	vec3 bottom_left_normalized = vec3(glm::normalize(bottom_left));
+
+	mat4 normal_calc_translation = glm::inverse(glm::translate(mat4(1.0f), bottom_left));
+	vec4 top_left_translated(normal_calc_translation * vec4(top_left, 1.0f));
+	vec4 bottom_right_translated(normal_calc_translation * vec4(bottom_right, 1.0f));
+
+	top_left_translated.w = 1.0f;
+	vec3 normal_rotation_axis = vec3(glm::normalize(vec3(top_left_translated)));
+
+	vec3 normal_direction = vec3(glm::rotate(mat4(1.0f), -90.0f, normal_rotation_axis) * bottom_right_translated);
+	normal_direction = glm::normalize(vec3(normal_direction));
+
+	normal_direction.x = (jep::floatsAreEqual(normal_direction.x, 0.0f) ? 0.0f : normal_direction.x);
+	normal_direction.y = (jep::floatsAreEqual(normal_direction.y, 0.0f) ? 0.0f : normal_direction.y);
+	normal_direction.z = (jep::floatsAreEqual(normal_direction.z, 0.0f) ? 0.0f : normal_direction.z);
+
 	vector<float> geometry_data = {
-		bottom_left.x, bottom_left.y, bottom_left.z,	//vert data
-		0.0f, 0.0f,										//uv data
+		bottom_left.x, bottom_left.y, bottom_left.z,					//vert data
+		0.0f, 0.0f,														//uv data
+		normal_direction.x, normal_direction.y, normal_direction.z,		//normal
+
 		top_left.x, top_left.y, top_left.z,
 		getDelta(bottom_left, top_left, u_axis) / uv_map_dimension, getDelta(bottom_left, top_left, v_axis) / uv_map_dimension,
+		normal_direction.x, normal_direction.y, normal_direction.z,
+
 		top_right.x, top_right.y, top_right.z,
 		getDelta(bottom_left, top_right, u_axis) / uv_map_dimension, getDelta(bottom_left, top_right, v_axis) / uv_map_dimension,
-		bottom_left.x, bottom_left.y, bottom_left.z,
-		0.0f, 0.0f,
-		top_right.x, top_right.y, top_right.z,
-		getDelta(bottom_left, top_right, u_axis) / uv_map_dimension, getDelta(bottom_left, top_right, v_axis) / uv_map_dimension,
+		normal_direction.x, normal_direction.y, normal_direction.z,
+
 		bottom_right.x, bottom_right.y, bottom_right.z,
-		getDelta(bottom_left, bottom_right, u_axis) / uv_map_dimension, getDelta(bottom_left, bottom_right, v_axis) / uv_map_dimension
+		getDelta(bottom_left, bottom_right, u_axis) / uv_map_dimension, getDelta(bottom_left, bottom_right, v_axis) / uv_map_dimension,
+		normal_direction.x, normal_direction.y, normal_direction.z,
 	};
+
+	vector<unsigned short> index_pattern = { 0, 1, 2, 2, 3, 0 };
+
+	int next_index = 0;
+
+	for (const auto &i : indices)
+		if (i > next_index)
+			next_index = i;
+
+	if (indices.size() != 0)
+		next_index += 1;
+
+	indices.push_back(next_index);
+	indices.push_back(next_index + 1);
+	indices.push_back(next_index + 2);
+	indices.push_back(next_index + 2);
+	indices.push_back(next_index + 3);
+	indices.push_back(next_index);
 
 	return geometry_data;
 }

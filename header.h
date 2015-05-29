@@ -77,7 +77,5 @@ using glm::mat4;
 string getDateString(const date &d, bool include_day);
 string stringFromRarity(rarity r);
 string stringFromGenre(genre g);
-vector<float> generateInterleavedVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right,
-	float uv_map_dimension, char u_axis, char v_axis);
 
 #endif

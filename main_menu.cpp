@@ -63,7 +63,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const sha
 			else if (keys->checkPress(GLFW_KEY_RIGHT, false) && current_selection != (options.size() - 1))
 				current_selection++;
 
-			for (auto i : options)
+			for (const auto &i : options)
 			{
 				float x_offset = (float(current_selection) - float(i.first)) * menu_item_offset * -1.0f;
 				mat4 model_matrix(glm::translate(mat4(1.0f), vec3(x_offset, 0.0f, 0.0f)));

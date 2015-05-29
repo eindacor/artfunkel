@@ -41,7 +41,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 	//add player's default frames to each
 	for (const auto &i : not_displayed_copy)
 	{
-		i->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
+		i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
 		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);
@@ -179,6 +179,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 						if (wall_selected.second->validPlacement(painting_to_place, point_clicked))
 						{
 							//TODO find a way to combine these to ensure players paintings are never added without updating player
+							painting_to_place->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
 							wall_selected.second->addArtwork(point_clicked, *painting_to_place);
 							current_player->addPaintingToDisplay(painting_to_place);
 
@@ -186,7 +187,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 							artwork_thumbnails->clearElements();
 							for (const auto &i : not_displayed_copy)
 							{
-								i->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
+								i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
 								shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
 								thumbnail->setDrawSelected(highlight, fullBrightness);
 								artwork_thumbnails->addElement(thumbnail);
@@ -271,7 +272,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 				artwork_thumbnails->clearElements();
 				for (const auto &i : not_displayed_copy)
 				{
-					i->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
+					i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
 					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
 					thumbnail->setDrawSelected(highlight, fullBrightness);
 					artwork_thumbnails->addElement(thumbnail);

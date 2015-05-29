@@ -169,6 +169,15 @@ void artwork::applyFrameTemplate(const shared_ptr<ogl_context> &context, const s
 	updateOverallDimensions();
 }
 
+void artwork::applyFrameTemplate2D(const shared_ptr<ogl_context> &context, const shared_ptr<texture_handler> &textures, const frame_model &frame_template)
+{
+	p_frame = shared_ptr<frame_model>(new frame_model(
+		data->getWidth(), data->getHeight(), context, textures, frame_template.getFrameTextureFilename(), frame_template.getMatteTextureFilename(),
+		frame_template.getFrameWidth(), frame_template.getMatteWidth()));
+
+	updateOverallDimensions();
+}
+
 void artwork::setValue()
 {
 	value = data->getBaseValue() * condition;
