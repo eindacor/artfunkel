@@ -90,9 +90,13 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 
 				else
 				{
-					current_player->addWorkToInventory(current_selection);
-					alert_string = (current_selection)->getData()->getTitle() + " has been added to your inventory";
-					alert_string += "\n\nCollection value: $" + current_player->getCollectionValue().getNumberString(true, false, 2);
+					if (current_player->addWorkToInventory(current_selection))
+					{
+						alert_string = (current_selection)->getData()->getTitle() + " has been added to your inventory";
+						alert_string += "\n\nCollection value: $" + current_player->getCollectionValue().getNumberString(true, false, 2);
+					}
+
+					else alert_string = "Your inventory has reached the limit";
 				}
 
 				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
@@ -102,13 +106,22 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 
 			if (keys->checkPress(GLFW_KEY_A, false))
 			{
+				string alert_string;
 				for (const auto &i : crate_contents)
 				{
 					if (!current_player->alreadyOwned(i))
-						current_player->addWorkToInventory(i);
+					{			
+						if (current_player->addWorkToInventory(i))
+						{
+							alert_string = (i)->getData()->getTitle() + " has been added to your inventory";
+							alert_string += "\n\nCollection value: $" + current_player->getCollectionValue().getNumberString(true, false, 2);
+						}
+
+						else alert_string = "Your inventory has reached the limit";
+					}
 				}
 
-				alert_text = text->getTextArray("All paintings have been added to your inventory", context, false, alert_color, transparent_color,
+				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
 					"text", "text_color", "transparency_color",
 					true, vec2(-0.75f, -0.75f), alert_scale, text_box_width);
 			}

@@ -11,7 +11,7 @@ public:
 		shared_ptr<texture_handler> &textures, string data_path);
 	~player(){};
 
-	void addWorkToInventory(const shared_ptr<artwork> &work);
+	bool addWorkToInventory(const shared_ptr<artwork> &work);
 	void setFrame(const shared_ptr<frame_model> &f) { default_frame = f; }
 	shared_ptr<frame_model> getDefaultFrame() const { return default_frame; }
 

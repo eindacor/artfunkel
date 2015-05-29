@@ -14,13 +14,19 @@ player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<
 	currency = 5000.0f;
 }
 
-void player::addWorkToInventory(const shared_ptr<artwork> &work)
+bool player::addWorkToInventory(const shared_ptr<artwork> &work)
 {
-	collection_value += work->getValue();
+	if (inventory.size() < 60)
+	{
+		collection_value += work->getValue();
 
-	shared_ptr<artwork> copy_ptr(new artwork(*work));
-	inventory.insert(pair<int, shared_ptr<artwork> >(work->getData()->getID(), copy_ptr));
-	paintings_not_on_display.push_back(copy_ptr);
+		shared_ptr<artwork> copy_ptr(new artwork(*work));
+		inventory.insert(pair<int, shared_ptr<artwork> >(work->getData()->getID(), copy_ptr));
+		paintings_not_on_display.push_back(copy_ptr);
+		return true;
+	}
+
+	else return false;
 }
 
 vector<shared_ptr<artwork> > player::getInventoryCopy()
