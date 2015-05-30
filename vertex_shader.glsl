@@ -7,12 +7,14 @@ layout (location = 2) in vec3 normal;
 uniform mat4 MVP;
 
 out vec2 UV;
-out vec3 normal_direction;
+out vec3 original_normal_direction;
+out vec3 original_vertex_position;
 
 void main()
 {
 	gl_Position = MVP * vec4(position, 1.0);	
 
 	UV = vertexUV;
-	normal_direction = normal;
+	original_vertex_position = position;
+	original_normal_direction = normal;
 }

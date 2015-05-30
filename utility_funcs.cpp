@@ -166,38 +166,52 @@ float getDelta(vec3 first, vec3 second, char axis)
 vector<float> generateFrameVertices(vec3 bottom_left, vec3 top_left, vec3 top_right, vec3 bottom_right,
 		float uv_map_dimension, char u_axis, char v_axis, vector<unsigned short> &indices)
 {
-	mat4 normal_calc_translation = glm::inverse(glm::translate(mat4(1.0f), bottom_left));
-	vec4 top_left_translated(normal_calc_translation * vec4(top_left, 1.0f));
-	vec4 bottom_right_translated(normal_calc_translation * vec4(bottom_right, 1.0f));
-
-	top_left_translated.w = 1.0f;
 	vec3 normal_rotation_axis;
-	bool reverse_direciton = false;
+	vec3 calibration_point;
+	float rotation_angle = -90.0f;
 	switch (v_axis)
 	{
 	case 'y': 
-		normal_rotation_axis = vec3(glm::normalize(vec3(0.0f, 1.0f, 0.0f)));
+		normal_rotation_axis = vec3(0.0f, 1.0f, 0.0f);
 		if (bottom_left.y > top_left.y)
-			reverse_direciton = true;
-
+			rotation_angle *= -1.0f;
 		break;
 
 	case 'z':
-		normal_rotation_axis = vec3(glm::normalize(vec3(0.0f, 0.0f,1.0f)));
+		normal_rotation_axis = vec3(0.0f, 0.0f,1.0f);
 		if (bottom_left.z > top_left.z)
-			reverse_direciton = true;
-
+			rotation_angle *= -1.0f;
 		break;
 
 	case 'x':
-		normal_rotation_axis = vec3(glm::normalize(vec3(1.0f, 0.0f, 0.0f)));
+		normal_rotation_axis = vec3(1.0f, 0.0f, 0.0f);
 		if (bottom_left.x > top_left.x)
-			reverse_direciton = true;
-
+			rotation_angle *= -1.0f;
 		break;
 	}
 
-	vec3 normal_direction = vec3(glm::rotate(mat4(1.0f), -90.0f, normal_rotation_axis) * bottom_right_translated);
+	switch (u_axis)
+	{
+	case 'x':
+		calibration_point = vec3(1.0f, 0.0f, 0.0f);
+		if (bottom_left.x > bottom_left.x)
+			calibration_point *= -1.0f;
+		break;
+
+	case 'y':
+		calibration_point = vec3(0.0f, 1.0f, 0.0f);
+		if (bottom_left.y > bottom_left.y)
+			calibration_point *= -1.0f;
+		break;
+
+	case 'z':
+		calibration_point = vec3(0.0f, 0.0f, 1.0f);
+		if (bottom_left.z > bottom_left.z)
+			calibration_point *= -1.0f;
+		break;
+	}
+
+	vec3 normal_direction = vec3(glm::rotate(mat4(1.0f), rotation_angle, normal_rotation_axis) * vec4(calibration_point, 1.0f));
 	normal_direction = glm::normalize(vec3(normal_direction));
 
 	normal_direction.x = (jep::floatsAreEqual(normal_direction.x, 0.0f) ? 0.0f : normal_direction.x);
