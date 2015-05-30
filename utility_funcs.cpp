@@ -171,7 +171,31 @@ vector<float> generateFrameVertices(vec3 bottom_left, vec3 top_left, vec3 top_ri
 	vec4 bottom_right_translated(normal_calc_translation * vec4(bottom_right, 1.0f));
 
 	top_left_translated.w = 1.0f;
-	vec3 normal_rotation_axis = vec3(glm::normalize(vec3(top_left_translated)));
+	vec3 normal_rotation_axis;
+	bool reverse_direciton = false;
+	switch (v_axis)
+	{
+	case 'y': 
+		normal_rotation_axis = vec3(glm::normalize(vec3(0.0f, 1.0f, 0.0f)));
+		if (bottom_left.y > top_left.y)
+			reverse_direciton = true;
+
+		break;
+
+	case 'z':
+		normal_rotation_axis = vec3(glm::normalize(vec3(0.0f, 0.0f,1.0f)));
+		if (bottom_left.z > top_left.z)
+			reverse_direciton = true;
+
+		break;
+
+	case 'x':
+		normal_rotation_axis = vec3(glm::normalize(vec3(1.0f, 0.0f, 0.0f)));
+		if (bottom_left.x > top_left.x)
+			reverse_direciton = true;
+
+		break;
+	}
 
 	vec3 normal_direction = vec3(glm::rotate(mat4(1.0f), -90.0f, normal_rotation_axis) * bottom_right_translated);
 	normal_direction = glm::normalize(vec3(normal_direction));

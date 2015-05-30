@@ -18,7 +18,11 @@ uniform vec4 transparency_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform mat4 model_matrix;
 uniform mat4 view_matrix;
 uniform bool use_lighting = false;
-vec4 light_direction = vec4(-2.0, -1.0, -6.0, 1.0);
+
+//light parameters
+vec3 light_direction_worldspace = normalize(vec3(1.0, 7.0, 2.0));
+vec3 light_color = vec3(1.0, 1.0, 1.0);
+float light_power = 1.0;
 
 out vec4 output_color;
 
@@ -45,14 +49,23 @@ void main()
 	{
 		if(use_lighting)
 		{
-			vec4 light_color = vec4(1.0, 1.0, 1.0, 1.0);
-			vec3 worldspace_normal = vec3(model_matrix * vec4(normal_direction, 1.0));
-			worldspace_normal = glm::normalize(worldspace_normal);
+			
+			//vec3 relative_light_direction = vec3(model_matrix * vec4(light_direction_worldspace, 1.0));
+			//relative_light_direction = normalize(relative_light_direction);
 
-			float cosTheta = glm::clamp( glm::dot( worldspace_normal, light_direction ), 0.0, 1.0 );
-			vec4 modified_color = light_color * cosTheta;
+			float cosTheta = clamp( dot(light_direction_worldspace, normal_direction), 0, 1 );
 
-			output_color = modified_color;
+			vec3 ambient_light = texture_color * vec3(0.95, 0.95, 0.95);
+
+			vec3 modified_color = (light_color * light_power * cosTheta * texture_color) + ambient_light;
+
+			modified_color.x = clamp(modified_color.x, ambient_light.x, texture_color.x);
+			modified_color.y = clamp(modified_color.y, ambient_light.y, texture_color.y);
+			modified_color.z = clamp(modified_color.z, ambient_light.z, texture_color.z);
+
+			output_color = vec4(modified_color, 1.0);
+
+			//output_color = vec4(abs(normal_direction.x), abs(normal_direction.y), abs(normal_direction.z), 1.0f);
 
 			//vec4 diffuse_color = vec4(texture_color, 1.0);
 

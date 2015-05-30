@@ -11,8 +11,6 @@ public:
 	//class constructed with vec3's, then converts to vec2's with a model matrix to simplify raytracing
 	//first point is used as the wall origin, which is used to determing the painting location matrix
 	display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX);
-	display_wall(const shared_ptr<ogl_context> &context, string texture_path,
-		const vector<float> &vec_vertices, int geometry_offset, int normal_offset, int uv_offset, int stride);
 	~display_wall(){}
 
 	bool validPlacement(const shared_ptr<artwork> &placed, const vec2 &position);
