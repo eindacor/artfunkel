@@ -12,6 +12,7 @@ public:
 	~player(){};
 
 	bool addWorkToInventory(const shared_ptr<artwork> &work);
+	bool removeWorkFromInventory(const shared_ptr<artwork> &work);
 	void setFrame(const shared_ptr<frame_model> &f) { default_frame = f; }
 	shared_ptr<frame_model> getDefaultFrame() const { return default_frame; }
 
@@ -37,6 +38,11 @@ public:
 	shared_ptr<gallery> getGallery(int n) const;
 	void addGallery(const shared_ptr<gallery> &to_add);
 
+	unsigned long getXP() const { return xp; }
+	unsigned short getLevel() const { return level; }
+
+	string getBankBalance() const;
+
 private:
 	string name;
 	//key corresponds to painting ID
@@ -45,7 +51,7 @@ private:
 	vector<shared_ptr<artwork> > paintings_on_display;
 	vector<shared_ptr<artwork> > paintings_not_on_display;
 
-	bignum currency;
+	bignum bank;
 	bignum collection_value;
 
 	unsigned long xp;

@@ -6,6 +6,7 @@ in vec3 original_normal_direction;
 in vec3 original_vertex_position;
 
 uniform sampler2D myTextureSampler;
+uniform sampler2D normal_sampler;
 uniform float dim_factor = 1.0;
 
 uniform bool color_override = false;
@@ -19,9 +20,10 @@ uniform vec4 transparency_color = vec4(1.0, 1.0, 1.0, 1.0);
 uniform mat4 model_matrix;
 uniform mat4 view_matrix;
 uniform bool use_lighting = false;
+uniform bool use_normal_map = false;
 
 //light parameters
-vec3 light_direction_worldspace = normalize(vec3(1.0, -7.0, 2.0));
+vec3 light_direction_worldspace = normalize(vec3(1.0, -7.0, -2.0));
 vec3 light_color = vec3(1.0, 1.0, 1.0);
 float light_power = 1.0;
 
@@ -58,7 +60,7 @@ void main()
 
 			float cosTheta = clamp( dot(light_direction_worldspace, new_normal_direction), 0, 1 );
 
-			vec3 ambient_light = texture_color * vec3(0.7, 0.7, 0.7);
+			vec3 ambient_light = texture_color * vec3(0.9, 0.9, 0.9);
 
 			vec3 modified_color = (light_color * light_power * cosTheta * texture_color) + ambient_light;
 

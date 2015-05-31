@@ -33,7 +33,7 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 		artwork_thumbnails->addElement(thumbnail);
 	}
 
-	shared_ptr<artwork_thumbnail> highlight = nullptr;
+	shared_ptr<artwork_thumbnail> selected_painting = nullptr;
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
@@ -51,8 +51,8 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 	
 			artwork_thumbnails->draw(context, camera);
 
-			if (highlight != nullptr)
-				highlight->draw(context, camera);
+			if (selected_painting != nullptr)
+				selected_painting->draw(context, camera);
 
 			context->swapBuffers();
 
@@ -70,15 +70,15 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 				shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
 
 				if (selected_type == THUMBNAIL)
-					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), context, vec2(-.65f, 0.5f), vec2(0.7f, 1.0f), 0.1f));
+					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), context, vec2(-.65f, 0.5f), vec2(0.7f, 1.0f), 0.1f));
 
-				else highlight = nullptr;
+				else selected_painting = nullptr;
 			}
 
 			if (keys->checkPress(GLFW_KEY_COMMA, false))
 			{
 				artwork_thumbnails->pageDown();
-				highlight = nullptr;
+				selected_painting = nullptr;
 				//title_text = nullptr;
 				//info_text = nullptr;
 				//rarity_text = nullptr;
@@ -87,10 +87,29 @@ int viewInventory_HUD(string data_path, const shared_ptr<ogl_context> &context,
 			if (keys->checkPress(GLFW_KEY_PERIOD, false))
 			{
 				artwork_thumbnails->pageUp();
-				highlight = nullptr;
+				selected_painting = nullptr;
 				//title_text = nullptr;
 				//info_text = nullptr;
 				//rarity_text = nullptr;
+			}
+
+			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_DELETE, false)) && selected_painting != nullptr)
+			{
+				current_player->removeWorkFromInventory(selected_painting->getStoredArt());
+
+				artwork_thumbnails->clearElements();
+
+				inventory_copy.clear();
+				inventory_copy = current_player->getInventoryCopy();
+				selected_painting = nullptr;
+
+				for (const auto &i : inventory_copy)
+				{
+					i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.2f, 0.3f), 0.04f));
+					thumbnail->setDrawSelected(highlight, fullBrightness);
+					artwork_thumbnails->addElement(thumbnail);
+				}
 			}
 
 			glfwSetTime(0.0f);

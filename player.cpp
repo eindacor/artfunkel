@@ -30,6 +30,26 @@ bool player::addWorkToInventory(const shared_ptr<artwork> &work)
 	else return false;
 }
 
+bool player::removeWorkFromInventory(const shared_ptr<artwork> &work)
+{
+	if (work != nullptr && !isOnDisplay(work) && alreadyOwned(work))
+	{
+		collection_value -= work->getValue();
+		inventory.erase(work->getData()->getID());
+
+		for (vector<shared_ptr<artwork> >::iterator it = paintings_not_on_display.begin(); it != paintings_not_on_display.end(); it++)
+		{
+			if ((*it)->getData()->getID() == work->getData()->getID())
+			{
+				paintings_not_on_display.erase(it);
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 vector<shared_ptr<artwork> > player::getInventoryCopy()
 {
 	vector<shared_ptr<artwork> > copied_inventory;
