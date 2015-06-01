@@ -22,11 +22,7 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			context, textures, 
 			data_path + "model_data\\",
 			data_path + "model_data\\",
-			"gallery_template_01_display.obj",
-			"gallery_template_01_filler.obj",
-			"gallery_template_01_display.mtl",
-			"gallery_template_01_filler.mtl",
-			0														//gallery ID
+			"gallery_template_01"
 			)));
 	}
 

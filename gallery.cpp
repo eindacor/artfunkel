@@ -202,9 +202,9 @@ bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr
 }
 
 gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path, 
-	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename, unsigned template_ID)
+	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename, string template_name_string)
 {
-	gallery_ID = template_ID;
+	template_name = template_name_string;
 	string display_model_path = model_path + display_model_filename;
 	string filler_model_path = model_path + filler_model_filename;
 	string display_material_path = material_path + display_material_filename;
@@ -215,6 +215,89 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 
 	int display_wall_counter = 0;
 	
+	for (const auto &i : display_wall_meshes)
+	{
+		//string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
+		string texture_filename = display_wall_materials.at(i.getMaterialName()).getTextureFilename();
+		if (textures->getTexture(texture_filename) == nullptr)
+			textures->addTexture(texture_filename);
+		shared_ptr<display_wall> new_wall(new display_wall(context, i, textures->getTexture(texture_filename)));
+		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
+	}
+
+	vector<mesh_data> environment_meshes = generateMeshes(filler_model_path.c_str());
+	map<string, material_data> environment_materials = generateMaterials(filler_material_path.c_str());
+
+	for (const auto &i : environment_meshes)
+	{
+		vector<unsigned short> mesh_indices;
+		vector<float> vertex_data = i.getIndexedVertexData(mesh_indices);
+		//string full_texture_path = material_path + environment_materials.at(i.getMaterialName()).getTextureFilename();
+		string texture_filename = environment_materials.at(i.getMaterialName()).getTextureFilename();
+		if (textures->getTexture(texture_filename) == nullptr)
+			textures->addTexture(texture_filename);
+		shared_ptr<jep::ogl_data> env_mesh(new jep::ogl_data(
+			context,
+			textures->getTexture(texture_filename),
+			GL_STATIC_DRAW,
+			mesh_indices,
+			vertex_data,
+			i.getVSize(),
+			i.getVTSize(),
+			i.getVNSize()
+			));
+		environment_models.push_back(env_mesh);
+	}
+
+	bool draw_grid = false;
+
+	if (draw_grid)
+	{
+		int lines_x = 10;
+		int lines_z = 10;
+		float line_spacing = 4.0f;
+		float x_start = ((float)lines_x * line_spacing) / -2.0f;
+		float z_start = ((float)lines_z * line_spacing) / -2.0f;
+		for (int i = 0; i <= lines_x; i++)
+		{
+			float z_end = z_start * -1.0f;
+			vec4 start(((float)i * line_spacing) + x_start, 0.0f, z_start, 1.0f);
+			vec4 end(((float)i * line_spacing) + x_start, 0.0f, z_end, 1.0f);
+			lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+		}
+
+		for (int i = 0; i <= lines_z; i++)
+		{
+			float x_end = x_start * -1.0f;
+			vec4 start(x_start, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
+			vec4 end(x_end, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
+			//lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+		}
+
+		vec4 origin_start(0.0f, 1.0f, 0.0f, 1.0f);
+		vec4 origin_end(0.0f, -1.0f, 0.0f, 1.0f);
+		//lines.push_back(shared_ptr<line>(new line(origin_start, origin_end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
+	}
+
+	//TODO add code for filler geometry
+	//TODO add code for floor model
+}
+
+gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
+	string template_name_string)
+{
+	template_name = template_name_string;
+
+	string display_model_path = model_path + template_name_string + "_display.obj";
+	string filler_model_path = model_path + template_name_string + "_filler.obj";
+	string display_material_path = material_path + template_name_string + "_display.mtl";
+	string filler_material_path = material_path + template_name_string + "_filler.mtl";
+
+	vector<mesh_data> display_wall_meshes = generateMeshes(display_model_path.c_str());
+	map<string, material_data> display_wall_materials = generateMaterials(display_material_path.c_str());
+
+	int display_wall_counter = 0;
+
 	for (const auto &i : display_wall_meshes)
 	{
 		//string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
@@ -358,6 +441,12 @@ shared_ptr<artwork> gallery::getClosestArtworkUnderCursor(shared_ptr<key_handler
 	return artwork_clicked.second;
 }
 
+void gallery::addArtwork(int wall_index, const shared_ptr<artwork> &toAdd, vec2 position)
+{
+	if (display_walls.find(wall_index) != display_walls.end())
+		display_walls.at(wall_index)->addArtwork(position, *toAdd);
+}
+
 void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
 {
 	for (const auto &i : display_walls)
@@ -376,10 +465,8 @@ const map< unsigned, pair<vec2, unsigned short> > gallery::getWorkMap() const
 	{
 		//TODO make const
 		vector< pair<vec2, shared_ptr<artwork> > > wall_contents = display_walls.at(i)->getWallContents();
-		cout << "wall contents size: " << wall_contents.size() << endl;
 		for (auto &work_info : wall_contents)
 		{
-			cout << "loop" << endl;
 			unsigned short wall_index = i;
 			vec2 local_position = work_info.first;
 			unsigned work_id = work_info.second->getData()->getID();
@@ -391,6 +478,5 @@ const map< unsigned, pair<vec2, unsigned short> > gallery::getWorkMap() const
 		}
 	}
 
-	cout << "all_works size: " << all_works.size() << endl;
 	return all_works;
 }

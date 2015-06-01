@@ -21,7 +21,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> > crate_contents = lg->generateArtworks(drop_count, 1.0f);
 
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.85f, -0.0f), 0.3f, 2.0f,
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.0f, -0.85f), 2.0f, 0.3f,
 		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
 
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
@@ -41,13 +41,10 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 	vec4 rarity_color;
 	vec4 info_color(0.6f, 0.6f, 0.6f, 1.0f);
 	vec4 transparent_color(0.0f, 1.0f, 0.0f, 1.0f);
-	float title_scale(0.06f);
-	float info_scale(0.04f);
-	float highlight_buffer(0.1f);
-	vec2 title_screen_position(0.2f, 0.75f);
-	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
-	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
-	float text_box_width(0.7f);
+	float title_scale(0.05f);
+	float info_scale(0.035f);
+	vec2 title_screen_position(0.25f, 0.8f);
+	float text_box_width(0.8f);
 
 	shared_ptr<static_text> title_text(nullptr);
 	shared_ptr<static_text> rarity_text(nullptr);
@@ -56,7 +53,6 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 	vec4 alert_color(0.8f, 0.5f, 0.5f, 1.0f);
 	float alert_scale(0.04f);
 	float alert_buffer(0.1f);
-	vec2 alert_screen_position(info_screen_position.x, info_screen_position.y - alert_buffer);
 	shared_ptr<static_text> alert_text(nullptr);
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
@@ -99,9 +95,11 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 					else alert_string = "Your inventory has reached the limit";
 				}
 
+				vec2 alert_position = (highlight != nullptr ? info_text->getLowerLeft() - vec2(0.0f, 0.1f) : title_screen_position);
+
 				alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
 					"text", "text_color", "transparency_color",
-					true, vec2(-0.75f, -0.75f), alert_scale, text_box_width);
+					true, alert_position, alert_scale, text_box_width);
 			}
 
 			if (keys->checkPress(GLFW_KEY_A, false))
@@ -134,9 +132,43 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 				shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
 
 				if (selected_type == THUMBNAIL)
-					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), context, vec2(-0.15f, 0.15f), vec2(1.7f, 1.7f), 0.1f));
+				{
+					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), 
+						context, vec2(-0.4f, 0.15f), vec2(1.2f, 1.7f), 0.1f));
 
-				else highlight = nullptr;
+					title_text = text->getTextArray(selected->getStoredArt()->getData()->getTitle(), context,
+						true, title_color, transparent_color, "text", "text_color", "transparency_color", true, title_screen_position, title_scale, text_box_width);
+
+					switch (selected->getStoredArt()->getData()->getRarity())
+					{
+					case COMMON: rarity_color = vec4(0.6f, 0.9f, 0.6f, 1.0f); break;
+					case UNCOMMON: rarity_color = vec4(0.6f, 0.6f, 0.9f, 1.0f); break;
+					case RARE: rarity_color = vec4(0.9f, 0.9f, 0.6f, 1.0f); break;
+					case LEGENDARY: rarity_color = vec4(1.0f, 0.75f, 0.6f, 1.0f); break;
+					case MASTERPIECE: rarity_color = vec4(0.6f, 0.9f, 0.9f, 1.0f); break;
+					}
+
+					rarity_text = text->getTextArray(stringFromRarity(selected->getStoredArt()->getData()->getRarity()), context,
+						false, rarity_color, transparent_color, "text", "text_color", "transparency_color", true, title_text->getLowerLeft(), info_scale, text_box_width);
+
+					string to_print = std::to_string(selected->getStoredArt()->getData()->getDate().getYear()) + "\n" + 
+						selected->getStoredArt()->getData()->getArtistName();
+					to_print += "\n$" + selected->getStoredArt()->getValue().getNumberString(true, false, 2);
+
+					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, 
+						"text", "text_color", "transparency_color", true, rarity_text->getLowerLeft(), info_scale, text_box_width);
+
+					alert_text = nullptr;
+				}
+
+				else
+				{
+					highlight = nullptr;
+					title_text = nullptr;
+					info_text = nullptr;
+					rarity_text = nullptr;
+					alert_text = nullptr;
+				}
 			}
 
 			if (title_text != nullptr)
