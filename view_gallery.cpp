@@ -6,8 +6,8 @@
 #include "hud.h"
 #include "utility_funcs.h"
 
-int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys,
-	const shared_ptr<player> &current_player, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
+int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys,
+	shared_ptr<player> &current_player, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
 {
 	float eye_level = 1.65f;
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, context, vec3(0.0f, eye_level, 5.0f), 45.0f));
@@ -25,7 +25,9 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 			"gallery_template_01_display.obj",
 			"gallery_template_01_filler.obj",
 			"gallery_template_01_display.mtl",
-			"gallery_template_01_filler.mtl")));
+			"gallery_template_01_filler.mtl",
+			0														//gallery ID
+			)));
 	}
 
 	current_gallery = current_player->getGallery(0);
@@ -303,7 +305,7 @@ int viewGallery_HUD(string data_path, const shared_ptr<ogl_context> &context, sh
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
-				menu_return = mainMenu(data_path, context, keys, text, textures);
+				menu_return = mainMenu(data_path, context, keys, text, textures, current_player);
 				if (menu_return != 0)
 					finished = true;
 			}

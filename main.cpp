@@ -7,6 +7,7 @@
 #include "menus.h"
 #include "player.h"
 #include "gallery.h"
+#include "fileman.h"
 
 int main(int argc, char* argv[])
 {
@@ -39,18 +40,21 @@ int main(int argc, char* argv[])
 	shared_ptr<art_db> artist_database(new art_db(artists_path.c_str(), paintings_path.c_str(), images_path.c_str()));
 	shared_ptr<loot_generator> loot(new loot_generator(artist_database));
 
-	shared_ptr<player> current_player(new player("Test Player", loot, context, textures, data_path));
+	//savePlayer(data_path, current_player->getName(), current_player);
+	shared_ptr<player> current_player = nullptr;
+	current_player = loadPlayer(data_path, username, artist_database, loot, context, textures);
+	savePlayer(data_path, current_player->getName(), current_player);
 
-	int menu_return = mainMenu(data_path, context, keys, text, textures);
+	int menu_return = mainMenu(data_path, context, keys, text, textures, current_player);
 
 	//TODO possibly give context a text handler
 	while (menu_return != 4 && menu_return != 3)
 	{
 		switch (menu_return)
 		{
-		case 0: menu_return = viewGallery_HUD(data_path, context, keys, current_player, text, textures); break;
-		case 1: menu_return = viewInventory_HUD(data_path, context, keys, current_player, text, textures); break;
-		case 2: menu_return = openCrate_HUD(data_path, context, keys, current_player, loot, text, textures); break;
+		case 0: menu_return = viewGallery(data_path, context, keys, current_player, text, textures); break;
+		case 1: menu_return = viewInventory(data_path, context, keys, current_player, text, textures); break;
+		case 2: menu_return = openCrate(data_path, context, keys, current_player, loot, text, textures); break;
 		}
 	}
 

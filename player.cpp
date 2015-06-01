@@ -2,17 +2,27 @@
 #include "artwork.h"
 
 player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<ogl_context> ogl_con, 
-	shared_ptr<texture_handler> &textures, string data_path, unsigned long player_xp, unsigned short player_level)
+	shared_ptr<texture_handler> &textures, string data_path)
 {
 	name = s;
-	xp = player_xp;
-	level = player_level;
-	vector< shared_ptr<artwork> > generated_works = lg->generateArtworks(1, 1.0f);
+	xp = 0;
+	level = 0;
+	vector< shared_ptr<artwork> > generated_works = lg->generateArtworks(5, 1.0f);
 	for (auto i : generated_works)
 		addWorkToInventory(i);
 
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, "frame_black.bmp", "white_matte.bmp", textures));
-	currency = 5000.0f;
+	bank = bignum("5000");
+}
+
+player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, unsigned long player_xp, unsigned short player_level, string balance)
+{
+	name = s;
+	xp = player_xp;
+	level = player_level;
+	bank = bignum(balance);
+
+	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, context, "frame_black.bmp", "white_matte.bmp", textures));
 }
 
 bool player::addWorkToInventory(const shared_ptr<artwork> &work)
@@ -50,7 +60,7 @@ bool player::removeWorkFromInventory(const shared_ptr<artwork> &work)
 	return false;
 }
 
-vector<shared_ptr<artwork> > player::getInventoryCopy()
+vector<shared_ptr<artwork> > player::getInventoryCopy() const
 {
 	vector<shared_ptr<artwork> > copied_inventory;
 	copied_inventory.reserve(inventory.size());

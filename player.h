@@ -8,7 +8,8 @@ class player
 {
 public:
 	player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<ogl_context> ogl_con, 
-		shared_ptr<texture_handler> &textures, string data_path, unsigned long player_xp = 0, unsigned short player_level = 0);
+		shared_ptr<texture_handler> &textures, string data_path);
+	player(string s, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, unsigned long player_xp, unsigned short player_level, string balance);
 	~player(){};
 
 	bool addWorkToInventory(const shared_ptr<artwork> &work);
@@ -21,7 +22,8 @@ public:
 	//map<int, shared_ptr<artwork> > getInventory() { return inventory; }
 	//copied inventory is used when the position will be modified, such as menus
 	//returns a vector of pairs for sortability
-	vector<shared_ptr<artwork> > getInventoryCopy();
+	vector<shared_ptr<artwork> > getInventoryCopy() const;
+	const map<unsigned int, shared_ptr<artwork> > getInventory() const { return inventory; }
 
 	//returns a vector of pairs for sortability
 	vector<shared_ptr<artwork> > getDisplayedCopy();
@@ -36,17 +38,19 @@ public:
 
 	bool alreadyOwned(const shared_ptr<artwork> &to_find) const;
 	shared_ptr<gallery> getGallery(int n) const;
+	const map<int, shared_ptr<gallery> > getGalleries() const { return active_galleries; }
 	void addGallery(const shared_ptr<gallery> &to_add);
 
 	unsigned long getXP() const { return xp; }
 	unsigned short getLevel() const { return level; }
+	string getName() const { return name; }
 
-	string getBankBalance() const;
+	string getBankBalanceString(bool commas) const { return bank.getNumberString(commas, false, 2); }
 
 private:
 	string name;
 	//key corresponds to painting ID
-	map<int, shared_ptr<artwork> > inventory;
+	map<unsigned int, shared_ptr<artwork> > inventory;
 	shared_ptr<frame_model> default_frame;
 	vector<shared_ptr<artwork> > paintings_on_display;
 	vector<shared_ptr<artwork> > paintings_not_on_display;

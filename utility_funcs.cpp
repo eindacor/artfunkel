@@ -814,6 +814,15 @@ void readConfigFile(string &data_path, string &username)
 		data_path = ".\\";
 		username = "default_user";
 	}
+
+	config_in.close();
+}
+
+bool fileExists(string filename)
+{
+	const char *c_name = filename.c_str();
+	std::ifstream infile(c_name);
+	return infile.good();
 }
 
 

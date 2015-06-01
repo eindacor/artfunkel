@@ -7,9 +7,13 @@
 #include "menus.h"
 #include "gallery.h"
 #include "hud.h"
+#include "fileman.h"
 
-int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
+int mainMenu(string data_path, const shared_ptr<ogl_context> &context, const shared_ptr<key_handler> &keys, const shared_ptr<text_handler> &text,
+	shared_ptr<texture_handler> &textures, shared_ptr<player> &current_player)
 {
+	savePlayer(data_path, current_player->getName(), current_player);
+
 	bool item_selected = false;
 	float camera_distance_from_items = 10.0f;
 	float menu_item_offset = 3.0f;

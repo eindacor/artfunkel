@@ -17,7 +17,7 @@ public:
 	mat4 getWallModelMatrix() const { return wall_model_matrix; }
 	bool cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
 		const pair<vec3, vec3> &ray, float &scale);
-	vector< pair<vec2, shared_ptr<artwork> > > getWallContents() const { return wall_contents; }
+	const vector< pair<vec2, shared_ptr<artwork> > > getWallContents() const { return wall_contents; }
 
 	//shared_ptr not used to insure a unique instance of the painting is used for transformation
 	//TODO change to addArtwork
@@ -52,16 +52,22 @@ class gallery
 {
 public:
 	gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
-		string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename);
+		string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename, unsigned template_ID);
 	~gallery(){};
 
 	void renderGallery(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;	
 	shared_ptr<display_wall> getClosestWallUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 	shared_ptr<artwork> getClosestArtworkUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance);
 	void removeArtwork(const shared_ptr<artwork> &toRemove);
+	unsigned int getTemplateID() const { return gallery_ID; }
+	const map <int, shared_ptr<display_wall> > getWalls() const { return display_walls; }
+
+	//work ID, position, wall index
+	const map< unsigned, pair<vec2, unsigned short> >  getWorkMap() const;
 
 private:
 	//int is the index of the specific position, mat4 is the position matrix
+	unsigned gallery_ID;
 	int max_paintings;
 	map <int, mat4> work_positions;
 	map <int, shared_ptr<display_wall> > display_walls;

@@ -202,8 +202,9 @@ bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr
 }
 
 gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path, 
-	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename)
+	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename, unsigned template_ID)
 {
+	gallery_ID = template_ID;
 	string display_model_path = model_path + display_model_filename;
 	string filler_model_path = model_path + filler_model_filename;
 	string display_material_path = material_path + display_material_filename;
@@ -364,4 +365,32 @@ void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
 		if (i.second->removeArtwork(to_remove))
 			return;
 	}
+}
+
+//painting id, position, wall index
+const map< unsigned, pair<vec2, unsigned short> > gallery::getWorkMap() const
+{
+	map< unsigned, pair<vec2, unsigned short> > all_works;
+
+	for (int i = 0; i < display_walls.size(); i++)
+	{
+		//TODO make const
+		vector< pair<vec2, shared_ptr<artwork> > > wall_contents = display_walls.at(i)->getWallContents();
+		cout << "wall contents size: " << wall_contents.size() << endl;
+		for (auto &work_info : wall_contents)
+		{
+			cout << "loop" << endl;
+			unsigned short wall_index = i;
+			vec2 local_position = work_info.first;
+			unsigned work_id = work_info.second->getData()->getID();
+
+			pair<vec2, unsigned> wall_pair(local_position, wall_index);
+
+			pair< unsigned short, pair<vec2, unsigned> > toAdd(work_id, wall_pair);
+			all_works.insert(all_works.end(), toAdd);
+		}
+	}
+
+	cout << "all_works size: " << all_works.size() << endl;
+	return all_works;
 }

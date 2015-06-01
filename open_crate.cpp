@@ -7,8 +7,8 @@
 #include "gallery.h"
 #include "hud.h"
 
-int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> &keys,
-	const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, 
+int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> &keys,
+	shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, 
 	const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
 {
 	cout << "opening crate" << endl;
@@ -150,7 +150,7 @@ int openCrate_HUD(string data_path, const shared_ptr<ogl_context> &context, shar
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
 			{
-				menu_return = mainMenu(data_path, context, keys, text, textures);
+				menu_return = mainMenu(data_path, context, keys, text, textures, current_player);
 				finished = true;
 			}
 

@@ -45,7 +45,7 @@ void highlight(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_came
 void fullBrightness(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
 
 void loadTextures(shared_ptr<texture_handler> &textures);
-
 void readConfigFile(string &data_path, string &username);
+bool fileExists(string filename);
 
 #endif
