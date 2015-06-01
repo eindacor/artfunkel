@@ -21,15 +21,17 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> > crate_contents = lg->generateArtworks(drop_count, 1.0f);
 
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.0f, -0.85f), 2.0f, 0.3f,
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(0.0f, -0.85f), 2.0f, 0.3f,
 		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
 
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
 
-	for (const auto &i : crate_contents)
+	for (int i = 0; i < crate_contents.size(); i++)
 	{
-		i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.3f, 0.3f), 0.01f));
+		string identifier = std::to_string(i) + "_" + crate_contents.at(i)->getData()->getArtistName() + "_"
+			+ crate_contents.at(i)->getData()->getTitle();
+		crate_contents.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, crate_contents.at(i), context, vec2(0.3f, 0.3f), 0.01f));
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);
 	}
@@ -133,11 +135,12 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 				if (selected_type == THUMBNAIL)
 				{
-					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), 
+					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("highlight", selected->getStoredArt(), 
 						context, vec2(-0.4f, 0.15f), vec2(1.2f, 1.7f), 0.1f));
 
 					title_text = text->getTextArray(selected->getStoredArt()->getData()->getTitle(), context,
-						true, title_color, transparent_color, "text", "text_color", "transparency_color", true, title_screen_position, title_scale, text_box_width);
+						true, title_color, transparent_color, "text", "text_color", "transparency_color", true, 
+						title_screen_position, title_scale, text_box_width);
 
 					switch (selected->getStoredArt()->getData()->getRarity())
 					{

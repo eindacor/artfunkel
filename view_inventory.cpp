@@ -18,17 +18,19 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	//TODO remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> >inventory_copy = current_player->getInventoryCopy();
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.4f, .15f), 1.2f, 1.7f ,
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(0.4f, .15f), 1.2f, 1.7f ,
 		pair<horizontal_justification, vertical_justification>(H_LEFT, V_TOP)));
 
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
 
 	//TODO equip dynamic array with function that generates thumbnails from artwork
 	//add player's default frames to each
-	for (const auto &i : inventory_copy)
+	for (int i = 0; i < inventory_copy.size(); i++)
 	{
-		i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.2f, 0.3f), 0.04f));
+		string identifier = std::to_string(i) + "_" + inventory_copy.at(i)->getData()->getArtistName() + "_"
+			+ inventory_copy.at(i)->getData()->getTitle();
+		inventory_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, inventory_copy.at(i), context, vec2(0.2f, 0.3f), 0.04f));
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);
 	}
@@ -97,7 +99,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 				if (selected_type == THUMBNAIL)
 				{
-					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail(selected->getStoredArt(), context, 
+					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("selected", selected->getStoredArt(), context, 
 						vec2(-.65f, 0.5f), vec2(0.7f, 1.0f), 0.1f));
 					
 					title_text = text->getTextArray(selected->getStoredArt()->getData()->getTitle(), context,
@@ -171,10 +173,12 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				rarity_text = nullptr;
 				alert_text = nullptr;
 
-				for (const auto &i : inventory_copy)
+				for (int i = 0; i < inventory_copy.size(); i++)
 				{
-					i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, vec2(0.2f, 0.3f), 0.04f));
+					string identifier = std::to_string(i) + "_" + inventory_copy.at(i)->getData()->getArtistName() + "_"
+						+ inventory_copy.at(i)->getData()->getTitle();
+					inventory_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, inventory_copy.at(i), context, vec2(0.2f, 0.3f), 0.04f));
 					thumbnail->setDrawSelected(highlight, fullBrightness);
 					artwork_thumbnails->addElement(thumbnail);
 				}

@@ -51,11 +51,11 @@ private:
 class gallery
 {
 public:
-	gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
-		string display_model_filename, string filler_model_filename, string display_material_filename, 
-		string filler_material_filename, string template_name_string);
+	//gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
+		//string display_model_filename, string filler_model_filename, string display_material_filename, 
+		//string filler_material_filename, string template_name_string, string owner);
 	gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path, 
-		string template_name_string);
+		string template_name_string, string owner);
 	~gallery(){};
 
 	void renderGallery(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;	
@@ -64,6 +64,7 @@ public:
 	void addArtwork(int wall_index, const shared_ptr<artwork> &toAdd, vec2 position);
 	void removeArtwork(const shared_ptr<artwork> &toRemove);
 	string getTemplateName() const { return template_name; }
+	string getOwnerName() const { return owner; }
 	const map <int, shared_ptr<display_wall> > getWalls() const { return display_walls; }
 
 	//work ID, position, wall index
@@ -72,6 +73,7 @@ public:
 private:
 	//int is the index of the specific position, mat4 is the position matrix
 	string template_name;
+	string owner;
 	int max_paintings;
 	map <int, mat4> work_positions;
 	map <int, shared_ptr<display_wall> > display_walls;

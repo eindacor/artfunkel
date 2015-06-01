@@ -1,10 +1,11 @@
 #include "hud.h"
 
-hud_element::hud_element(const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type)
+hud_element::hud_element(string hud_id, const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type)
 {
 	height = on_screen_height;
 	width = on_screen_width;
 	centerpoint = item_centerpoint;
+	identifier = hud_id;
 
 	float half_height(height / 2.0f);
 	float half_width(width / 2.0f);
@@ -434,21 +435,25 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 			if (j->itemSelected(keys, cursor_position))
 			{
 				if (j->getType() == ELEMENT_ARRAY)
-					j->getSelectedWithinArray(keys, cursor_position, type, identifier);
-
-				else
 				{
-					type = j->getType();
-					found = j;
-					found->setBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.5f));
+					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(j);
+					found = nested_array->getSelectedWithinArray(keys, cursor_position, type, identifier);
 				}
+
+				else found = j;
 			}
 		}
 	}
 
-	identifier = "";
 	if (found == nullptr)
 		type = NO_TYPE;
+
+	else
+	{
+		type = found->getType();
+		found->setBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.5f));
+		identifier = found->getIdentifier();
+	}
 
 	return found;
 }

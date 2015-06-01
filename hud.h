@@ -8,7 +8,7 @@
 class hud_element
 {
 public:
-	hud_element(const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type);
+	hud_element(string identifier, const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type);
 	~hud_element(){};
 
 	virtual bool itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position);
@@ -41,6 +41,7 @@ public:
 	virtual shared_ptr<hud_element> getSelectedWithinArray(
 		shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) 
 	{
+		cout << "null search" << endl;
 		type = NO_TYPE;
 		return nullptr;
 	}
@@ -77,9 +78,12 @@ public:
 
 	void drawBackground(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;
 
+	string getIdentifier() const { return identifier; }
+
 private:
 
 	//below are the binding points for click detection
+	string identifier;
 	vec2 upper_left, upper_right, lower_left, lower_right;
 	float height, width;
 	vec2 centerpoint;
@@ -100,9 +104,9 @@ class dynamic_hud_array : public hud_element
 {
 public:
 	//TODO swap width with height in constructor
-	dynamic_hud_array(const shared_ptr<ogl_context> &ogl_con, const vec2 centerpoint,
+	dynamic_hud_array(string identifier, const shared_ptr<ogl_context> &ogl_con, const vec2 centerpoint,
 		float on_screen_width, float on_screen_height, pair<horizontal_justification, vertical_justification> j, float padding = 0.0f)
-		: hud_element(centerpoint, on_screen_width, on_screen_height, ELEMENT_ARRAY)
+		: hud_element(identifier, centerpoint, on_screen_width, on_screen_height, ELEMENT_ARRAY)
 	{
 		context = ogl_con;
 		justification = j;
@@ -149,12 +153,12 @@ class artwork_thumbnail : public hud_element
 {
 public:
 	//dimensions & position
-	artwork_thumbnail(const shared_ptr<artwork> &art, 
+	artwork_thumbnail(string identifier, const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context, 
 		const vec2 centerpoint, 
 		const vec2 on_screen_dimensions,
 		float padding)
-		: hud_element(centerpoint, on_screen_dimensions.x, on_screen_dimensions.y, THUMBNAIL)
+		: hud_element(identifier, centerpoint, on_screen_dimensions.x, on_screen_dimensions.y, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;  
@@ -162,12 +166,12 @@ public:
 	}
 
 	//square & position
-	artwork_thumbnail(const shared_ptr<artwork> &art,
+	artwork_thumbnail(string identifier, const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context,
 		const vec2 centerpoint,
 		float square_height, 
 		float padding)
-		: hud_element(centerpoint, square_height / context->getAspectRatio(), square_height, THUMBNAIL)
+		: hud_element(identifier, centerpoint, square_height / context->getAspectRatio(), square_height, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
@@ -175,11 +179,11 @@ public:
 	}
 
 	//dimensions & no position
-	artwork_thumbnail(const shared_ptr<artwork> &art,
+	artwork_thumbnail(string identifier, const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context,
 		const vec2 on_screen_dimensions, 
 		float padding)
-		: hud_element(vec2(0.0f, 0.0f), on_screen_dimensions.x, on_screen_dimensions.y, THUMBNAIL)
+		: hud_element(identifier, vec2(0.0f, 0.0f), on_screen_dimensions.x, on_screen_dimensions.y, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
@@ -187,11 +191,11 @@ public:
 	}
 
 	//square & no position
-	artwork_thumbnail(const shared_ptr<artwork> &art,
+	artwork_thumbnail(string identifier, const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context,
 		float on_screen_height, 
 		float padding = 0.0f)
-		: hud_element(vec2(0.0f, 0.0f), on_screen_height / context->getAspectRatio(), on_screen_height, THUMBNAIL)
+		: hud_element(identifier, vec2(0.0f, 0.0f), on_screen_height / context->getAspectRatio(), on_screen_height, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
@@ -216,9 +220,10 @@ private:
 class text_box : public hud_element
 {
 public:
-	text_box(std::string s, const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &th,  vec2 centerpoint, vec2 on_screen_dimensions, bool italics, glm::vec4 color, glm::vec4 trans_color,
+	text_box(string identifier, std::string s, const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &th, 
+		vec2 centerpoint, vec2 on_screen_dimensions, bool italics, glm::vec4 color, glm::vec4 trans_color,
 		bool transparent, float scale, float padding = 0.0f) :
-		hud_element(centerpoint, on_screen_dimensions.x, on_screen_dimensions.y, TEXT_BOX)
+		hud_element(identifier, centerpoint, on_screen_dimensions.x, on_screen_dimensions.y, TEXT_BOX)
 	{
 		float x_padding = padding / context->getAspectRatio();
 		vec2 text_position(getUpperLeft().x + x_padding, getUpperLeft().y - padding);

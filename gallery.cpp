@@ -201,10 +201,14 @@ bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr
 	return false;
 }
 
+/*
 gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path, 
-	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename, string template_name_string)
+	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename, 
+	string template_name_string, string owner_name)
 {
 	template_name = template_name_string;
+	owner = owner_name;
+
 	string display_model_path = model_path + display_model_filename;
 	string filler_model_path = model_path + filler_model_filename;
 	string display_material_path = material_path + display_material_filename;
@@ -282,11 +286,13 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 	//TODO add code for filler geometry
 	//TODO add code for floor model
 }
+*/
 
 gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
-	string template_name_string)
+	string template_name_string, string owner_name)
 {
 	template_name = template_name_string;
+	owner = owner_name;
 
 	string display_model_path = model_path + template_name_string + "_display.obj";
 	string filler_model_path = model_path + template_name_string + "_filler.obj";

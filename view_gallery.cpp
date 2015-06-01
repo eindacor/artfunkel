@@ -19,10 +19,11 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	if (current_player->getGallery(0) == nullptr)
 	{
 		current_player->addGallery(shared_ptr<gallery>(new gallery(
-			context, textures, 
+			context, textures,
 			data_path + "model_data\\",
 			data_path + "model_data\\",
-			"gallery_template_01"
+			"gallery_template_01",
+			current_player->getName()
 			)));
 	}
 
@@ -31,16 +32,19 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	//TODO remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> >not_displayed_copy = current_player->getNotDisplayedCopy();
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array(context, vec2(0.0f, -0.85f), 1.7f, 0.3f,
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(0.0f, -0.85f), 1.7f, 0.3f,
 		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE)));
 
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
 
 	//add player's default frames to each
-	for (const auto &i : not_displayed_copy)
+	for (int i = 0; i < not_displayed_copy.size(); i++)
 	{
-		i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
+		string identifier = std::to_string(i) + "_" + not_displayed_copy.at(i)->getData()->getArtistName() + "_"
+			+ not_displayed_copy.at(i)->getData()->getTitle();
+		not_displayed_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, not_displayed_copy.at(i), context, 
+			vec2(0.3f, 0.3f), 0.01f));
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		artwork_thumbnails->addElement(thumbnail);
 	}
@@ -110,9 +114,13 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				{
 					inventory_displayed = true;
 					artwork_thumbnails->clearElements();
-					for (const auto &i : not_displayed_copy)
+					for (int i = 0; i < not_displayed_copy.size(); i++)
 					{
-						shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
+						string identifier = std::to_string(i) + "_" + not_displayed_copy.at(i)->getData()->getArtistName() + "_"
+							+ not_displayed_copy.at(i)->getData()->getTitle();
+						not_displayed_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+						shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, not_displayed_copy.at(i), context,
+							vec2(0.3f, 0.3f), 0.01f));
 						thumbnail->setDrawSelected(highlight, fullBrightness);
 						artwork_thumbnails->addElement(thumbnail);
 					}
@@ -183,10 +191,13 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 							not_displayed_copy = current_player->getNotDisplayedCopy();
 							artwork_thumbnails->clearElements();
-							for (const auto &i : not_displayed_copy)
+							for (int i = 0; i < not_displayed_copy.size(); i++)
 							{
-								i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-								shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
+								string identifier = std::to_string(i) + "_" + not_displayed_copy.at(i)->getData()->getArtistName() + "_"
+									+ not_displayed_copy.at(i)->getData()->getTitle();
+								not_displayed_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+								shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, not_displayed_copy.at(i), context,
+									vec2(0.3f, 0.3f), 0.01f));
 								thumbnail->setDrawSelected(highlight, fullBrightness);
 								artwork_thumbnails->addElement(thumbnail);
 							}
@@ -268,10 +279,13 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 				not_displayed_copy = current_player->getNotDisplayedCopy();
 				artwork_thumbnails->clearElements();
-				for (const auto &i : not_displayed_copy)
+				for (int i = 0; i < not_displayed_copy.size(); i++)
 				{
-					i->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(i, context, 0.3f, 0.01f));
+					string identifier = std::to_string(i) + "_" + not_displayed_copy.at(i)->getData()->getArtistName() + "_"
+						+ not_displayed_copy.at(i)->getData()->getTitle();
+					not_displayed_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, not_displayed_copy.at(i), context,
+						vec2(0.3f, 0.3f), 0.01f));
 					thumbnail->setDrawSelected(highlight, fullBrightness);
 					artwork_thumbnails->addElement(thumbnail);
 				}

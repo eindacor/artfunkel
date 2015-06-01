@@ -370,4 +370,5 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Value Scale,Height (cm),Width (cm),Imag
 368,Cecily Brown,Strolling Actresses,2012????,ABSTRACT,COMMON,Ink,0.32,26.04,35.88,brown_strolling.bmp,no
 369,Cecily Brown,What the Shepherd Saw,2013????,ABSTRACT,COMMON,Lithograph,0.53,35.56,48.26,brown_what.bmp,no
 370,Landon Wilson,Carbon Planet,2015????,CONTEMPORARY,COMMON,Digital,0.87,42,78,wilson_carbon.bmp,no
-371,Landon Wilson,Schrodinger's Cat,2015????,CONTEMPORARY,UNCOMMON,"Oil, Acrylic, Graphite",0.91,22.9,34.3,wilson_schrodingers.bmp,no
+371,Landon Wilson,Schrodinger's Cat,2015????,CONTEMPORARY,UNCOMMON,"Oil, Acrylic, Graphite",0.42,22.9,34.3,wilson_schrodingers.bmp,no
+372,Landon Wilson,Rhinos,2012????,CONTEMPORARY,UNCOMMON,"Oil, Acrylic, Dirt",0.71,50.8,40.6,wilson_rhinos.bmp,no

@@ -61,7 +61,7 @@ void savePlayer(const string &data_path, const string player_name, const shared_
 	*/
 
 	cout << "SAVING PLAYER" << endl;
-	string file_path = data_path + player_name + ".sav";
+	string file_path = data_path + "gamesave_data\\" + player_name + ".sav";
 	const char* c_path = file_path.c_str();
 
 	std::ofstream save_file;
@@ -136,7 +136,7 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 	*/
 
 	cout << "LOADING PLAYER" << endl;
-	string file_path = data_path + "\\" + player_name + ".sav";
+	string file_path = data_path + "\\gamesave_data\\" + player_name + ".sav";
 	
 	if (fileExists(file_path))
 	{
@@ -176,7 +176,8 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 				context, textures,
 				data_path + "model_data\\",
 				data_path + "model_data\\",
-				gallery_template_name
+				gallery_template_name,
+				generated_player->getName()
 				));
 
 			unsigned short paintings_in_gallery = getFromFile<unsigned short>(load_file);
@@ -212,11 +213,114 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 			context, textures,
 			data_path + "model_data\\",
 			data_path + "model_data\\",
-			"gallery_template_01"
+			"gallery_template_01",
+			generated_player->getName()
 			)));
 
 		savePlayer(data_path, player_name, generated_player);
 		return generated_player;
 	}
+}
+
+void saveGellery(const string &data_path, const shared_ptr<gallery> &toSave)
+{
+	/*
+	string owner_name
+	string gallery_template_name
+
+	unsigned short paintings_in_gallery
+		unsigned work_id
+		float position_x
+		float position_y
+		unsigned short wall_index
+	*/
+
+	cout << "SAVING GALLERY" << endl;
+	string file_path = data_path + "gamesave_data\\" + toSave->getOwnerName() + "_" + toSave->getTemplateName() + ".gal";
+	const char* c_path = file_path.c_str();
+
+	std::ofstream save_file;
+	save_file.open(c_path, std::ios::binary);
+
+	writeStringToFile(save_file, toSave->getOwnerName());
+	writeStringToFile(save_file, toSave->getTemplateName());
+
+	//work id, wall position, wall index
+	const map< unsigned, pair<vec2, unsigned short> > work_map(toSave->getWorkMap());
+	writeToFile(save_file, (unsigned short)work_map.size());
+
+	for (const auto &map_data : work_map)
+	{
+		unsigned work_id = map_data.first;
+		vec2 wall_position = map_data.second.first;
+		unsigned short wall_index = map_data.second.second;
+
+		writeToFile(save_file, work_id);
+		writeToFile(save_file, wall_position.x);
+		writeToFile(save_file, wall_position.y);
+		writeToFile(save_file, wall_index);
+	}
+
+	save_file.close();
+}
+
+shared_ptr<gallery> loadGallery(const string &data_path, const string &player_name, const string &template_name, 
+	const shared_ptr<art_db> &database, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures)
+{
+	//TODO load/save frame data for each painting
+	/*
+	string owner_name
+	string gallery_template_name
+
+	unsigned short paintings_in_gallery
+		unsigned work_id
+		float position_x
+		float position_y
+		unsigned short wall_index
+	*/
+
+	cout << "LOADING GALLERY" << endl;
+	string file_path = data_path + "gamesave_data\\" + player_name + "_" + template_name + ".gal";
+
+	if (fileExists(file_path))
+	{
+		std::ifstream load_file;
+		load_file.open(file_path.c_str(), std::ios::in | std::ios::binary);
+		
+		string owner_name = getStringFromFile(load_file);
+		string gallery_template_name = getStringFromFile(load_file);
+
+		shared_ptr<gallery> loaded_gallery(new gallery(
+			context, textures,
+			data_path + "model_data\\",
+			data_path + "model_data\\",
+			gallery_template_name,
+			owner_name
+			));
+
+		unsigned short paintings_in_gallery = getFromFile<unsigned short>(load_file);
+
+		for (int j = 0; j < paintings_in_gallery; j++)
+		{
+			unsigned work_id = getFromFile<unsigned>(load_file);
+			float position_x = getFromFile<float>(load_file);
+			float position_y = getFromFile<float>(load_file);
+			unsigned short wall_index = getFromFile<unsigned short>(load_file);
+
+			shared_ptr<artwork_data> work_data = database->getArtwork(work_id);
+			shared_ptr<artwork> work(new artwork(work_data, false, 1.0f));
+
+			//TODO Replace with frame information
+			//work->applyFrameTemplate(context, textures, *(generated_player->getDefaultFrame()));
+
+			loaded_gallery->addArtwork(wall_index, work, vec2(position_x, position_y));
+		}
+
+		load_file.close();
+
+		return loaded_gallery;
+	}
+
+	else return nullptr;
 }
 
