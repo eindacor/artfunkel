@@ -65,6 +65,7 @@ using jep::static_text;
 using jep::text_handler;
 using jep::key_handler;
 using jep::texture_handler;
+using jep::text_character;
 using jep::date;
 using jep::bignum;
 using jep::render_type;

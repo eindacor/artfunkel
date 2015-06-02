@@ -53,6 +53,7 @@ void painting_surface::draw(const shared_ptr<ogl_context> &context, const mat4 &
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *(opengl_data->getIND()));
 	glDrawElements(GL_TRIANGLES, opengl_data->getIndexCount(), GL_UNSIGNED_SHORT, (void*)0);
 	//glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
+	
 	glUniform1i(context->getShaderGLint("absolute_position"), false);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindVertexArray(0);

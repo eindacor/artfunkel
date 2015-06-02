@@ -149,6 +149,56 @@ private:
 	map<int, vector< shared_ptr<hud_element> >::iterator > page_map;
 };
 
+class text_area : public hud_element
+{
+public:
+	text_area(string identifier, std::string s, const shared_ptr<ogl_context> &ogl_con, const shared_ptr<text_handler> &th,
+		vec2 centerpoint, vec2 on_screen_area_dimensions, float on_screen_height, 
+		pair<horizontal_justification, vertical_justification> j, bool italics, glm::vec4 color, GLchar* text_enable_ID, 
+		GLchar* text_color_ID, float padding = 0.0f) :
+		hud_element(identifier, centerpoint, on_screen_area_dimensions.x, on_screen_area_dimensions.y, TEXT_BOX)
+	{
+		character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
+		context = ogl_con;
+		justification = j;
+		array_padding = padding;
+
+		raw_text = s;
+		text_enable_shader_ID = text_enable_ID;
+		text_color_shader_ID = text_color_ID;
+		text_color = color;
+
+		setPageData();
+
+		//TODO add code for setting text array
+	};
+	~text_area(){};
+
+private:
+	void setPageData();
+	void setVisible(int n);
+
+	string raw_text;
+	shared_ptr<ogl_context> context;
+	pair<horizontal_justification, vertical_justification> justification;
+	float array_padding;
+
+	map <int, vector<shared_ptr<text_character> > >visible_lines;
+	//int is page number (zero-indexed), iterator is first element of each page
+	map<int, vector< shared_ptr<text_character> >::iterator > page_map;
+
+	float array_padding;
+	pair<horizontal_justification, vertical_justification> justification;
+	vector< shared_ptr<line> > lines;
+
+	vec4 text_color;
+
+	GLchar* text_enable_shader_ID;
+	GLchar* text_color_shader_ID;
+
+	vec2 character_dimensions;
+};
+
 class artwork_thumbnail : public hud_element
 {
 public:
@@ -214,26 +264,6 @@ private:
 	mat4 scale_matrix;
 	shared_ptr<artwork> stored;
 	float thumbnail_padding;
-};
-
-
-class text_box : public hud_element
-{
-public:
-	text_box(string identifier, std::string s, const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &th, 
-		vec2 centerpoint, vec2 on_screen_dimensions, bool italics, glm::vec4 color, glm::vec4 trans_color,
-		bool transparent, float scale, float padding = 0.0f) :
-		hud_element(identifier, centerpoint, on_screen_dimensions.x, on_screen_dimensions.y, TEXT_BOX)
-	{
-		float x_padding = padding / context->getAspectRatio();
-		vec2 text_position(getUpperLeft().x + x_padding, getUpperLeft().y - padding);
-		//stored = th->getTextArray(s, context, italics, color, trans_color, transparent, text_position, scale, getWidth() - (2.0f * x_padding), getHeight() - 2.0f * padding);
-	}
-	~text_box(){};
-
-private:
-	shared_ptr<static_text> stored;
-
 };
 
 /*
