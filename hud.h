@@ -155,13 +155,14 @@ public:
 	text_area(string identifier, std::string s, const shared_ptr<ogl_context> &ogl_con, const shared_ptr<text_handler> &th,
 		vec2 centerpoint, vec2 on_screen_area_dimensions, float on_screen_height, 
 		pair<horizontal_justification, vertical_justification> j, bool italics, glm::vec4 color, GLchar* text_enable_ID, 
-		GLchar* text_color_ID, float padding = 0.0f) :
+		GLchar* text_color_ID, vec2 element_Padding = vec2(0.0f, 0.0f), float line_Spacing = 0.0f) :
 		hud_element(identifier, centerpoint, on_screen_area_dimensions.x, on_screen_area_dimensions.y, TEXT_BOX)
 	{
 		character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
 		context = ogl_con;
 		justification = j;
-		array_padding = padding;
+		element_padding = element_Padding;
+		line_spacing = line_Spacing;
 
 		raw_text = s;
 		text_enable_shader_ID = text_enable_ID;
@@ -176,20 +177,21 @@ public:
 
 private:
 	void setPageData();
-	void setVisible(int n);
+	bool setVisible(int first_line_index);
 
 	string raw_text;
 	shared_ptr<ogl_context> context;
 	pair<horizontal_justification, vertical_justification> justification;
-	float array_padding;
+	vec2 element_padding;
+	float line_spacing;
+	int lines_per_page;
 
 	map <int, vector<shared_ptr<text_character> > >visible_lines;
 	//int is page number (zero-indexed), iterator is first element of each page
-	map<int, vector< shared_ptr<text_character> >::iterator > page_map;
+	map<int, string> lines;
+	int current_first_line;
 
-	float array_padding;
 	pair<horizontal_justification, vertical_justification> justification;
-	vector< shared_ptr<line> > lines;
 
 	vec4 text_color;
 

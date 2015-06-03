@@ -69,6 +69,14 @@ using jep::text_character;
 using jep::date;
 using jep::bignum;
 using jep::render_type;
+using jep::NORMAL;
+using jep::TEXT;
+using jep::ABSOLUTE;
+using jep::text_justification;
+using jep::LL;
+using jep::UL;
+using jep::UR;
+using jep::LR;
 
 using glm::vec4;
 using glm::vec3;

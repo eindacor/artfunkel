@@ -259,7 +259,6 @@ void dynamic_hud_array::setPageData()
 	vector< pair<vector< shared_ptr<hud_element> >::iterator, float> >line_heights;
 	float current_line_width = 0.0f;
 	float current_line_height = 0.0f;
-	bool new_line = true;
 	vector< shared_ptr<hud_element> >::iterator current_line_first = array_elements.begin();
 	for (vector< shared_ptr<hud_element> >::iterator it = array_elements.begin(); it != array_elements.end(); it++)
 	{
@@ -427,79 +426,158 @@ bool dynamic_hud_array::setVisible(int page_number)
 void text_area::setPageData()
 {
 	visible_lines.clear();
-	page_map.clear();
 
 	//divide characters into words separated by spaces
-	//index, word
-	map <int, vector<char> > word_vec;
+	
+	float line_width_max = getWidth() - (element_padding.x * 2.0f);
+	int max_characters = line_width_max / character_dimensions.x;
 
-	for (int i = 0; i < raw_text.size(); i++)
+	float page_height_max = getHeight() - (element_padding.y * 2.0f);
+	
+	lines_per_page = 0;
+
+	float total_height = 0.0f;
+	for (;;)
 	{
-		vector<char> current_word;
+		if (total_height + character_dimensions.y < page_height_max)
+		{
+			lines_per_page++;
+			total_height += character_dimensions.y;
+		}
 
-		if ((raw_text.at(i) == '\n' || raw_text.at(i) == ' ' || i == raw_text.size() - 1) && current_word.size() != 0)
-			word_vec.insert(pair<int, vector<char> >(word_vec.size(), current_word));
+		else break;
 
-		else current_word.push_back(raw_text.at(i));
+		if (total_height + line_spacing < page_height_max)
+			total_height += line_spacing;
+
+		else break;
 	}
 
-	float line_width_max = getWidth();
-	float page_height_max = getHeight();
-
-	//vector of pairs containing iterators and floats
-	vector< pair<vector< shared_ptr<text_character> >::iterator, float> >line_heights;
-	float current_line_width = 0.0f;
-	float current_line_height = 0.0f;
-	bool new_line = true;
-	int current_line_first = 0;
-	for (const auto &word : word_vec)
+	//TODO explain below with comments
+	lines.clear();
+	for (string::iterator first_of_line = raw_text.begin(); first_of_line != raw_text.end(); first_of_line++)
 	{
-		float word_width = word.second.size() * character_dimensions.x;
+		bool endline = false;
 
-		if (current_line_width + word_width > line_width_max)
+		if (*first_of_line == '\n')
 		{
-			line_heights.push_back(pair< vector< shared_ptr<text_character> >::iterator, float>(current_line_first, current_line_height));
-			current_line_height = (*it)->getHeight();
-			current_line_width = (*it)->getWidth();
-			current_line_first = it;
+			lines.insert(pair<int, string>(lines.size(), "\n"));
+			continue;
+		}
+			
+		if (*first_of_line == ' ')
+			continue;
+
+		string::iterator last_of_line = first_of_line;
+		for (int i = 0; i < max_characters; i++)
+		{
+			last_of_line++;
+			if (last_of_line == raw_text.end() || *last_of_line == '\n')
+			{
+				string extracted_line;
+				extracted_line.insert(extracted_line.end(), first_of_line, last_of_line);
+				lines.insert(pair<int, string>(lines.size(), extracted_line));
+				
+				endline = true;
+				//first_of_line is set to last_of_line, because when loop continues, it will increment it to the location right after last_of_line
+				first_of_line = last_of_line;
+				break;
+			}
 		}
 
-		else
-		{
-			current_line_width += (*it)->getWidth();
+		if (endline)
+			continue;
 
-			if ((*it)->getHeight() > current_line_height)
-				current_line_height = (*it)->getHeight();
+		if (std::find(first_of_line, last_of_line, ' ') == last_of_line)
+		{
+			string extracted_line;
+			extracted_line.insert(extracted_line.end(), first_of_line, last_of_line);
+			lines.insert(pair<int, string>(lines.size(), extracted_line));
+
+			//first_of_line is set to last_of_line, because when loop continues, it will increment it to the location right after last_of_line
+			first_of_line = last_of_line;
+			continue;
 		}
 
-		if (it == array_elements.end() - 1)
-			line_heights.push_back(pair< vector< shared_ptr<hud_element> >::iterator, float>(current_line_first, current_line_height));
-	}
+		else while (*last_of_line != ' ')
+			last_of_line--;
 
-	float current_page_height = 0.0f;
-	int page_counter = 0;
-	for (int i = 0; i < line_heights.size(); i++)
-	{
-		pair<vector< shared_ptr<hud_element> >::iterator, float> line_data = line_heights.at(i);
-		if (current_page_height + line_data.second > page_height_max || i == 0)
-		{
-			page_map[page_counter] = line_data.first;
-			current_page_height = line_data.second;
-			page_counter++;
-		}
+		string extracted_line;
+		extracted_line.insert(extracted_line.end(), first_of_line, last_of_line);
+		lines.insert(pair<int, string>(lines.size(), extracted_line));
 
-		else current_page_height += line_data.second;
+		//first_of_line is set to last_of_line, because when loop continues, it will increment it to the location right after last_of_line
+		first_of_line = last_of_line;
 	}
 
 	setVisible(0);
 }
 
-bool text_area::setVisible(int page_number)
+bool text_area::setVisible(int first_line_index)
 {
-	if (page_number < 0 || page_map.find(page_number) == page_map.end())
+	if (first_line_index < 0)
+		return setVisible(0);
+
+	if (first_line_index >= lines.size())
 		return false;
 
-	current_page = page_number;
+	current_first_line = first_line_index;
+
+	visible_lines.clear();
+
+	int lines_to_format = (lines.size() - current_first_line < lines_per_page ? lines.size() - current_first_line : lines_per_page)
+
+	for (int i = current_first_line; i < current_first_line + lines_per_page && i < lines.size(); i++)
+	{
+		int local_index = i - current_first_line;
+		string line_to_format = lines.at(i);
+		float line_width = line_to_format.size() * character_dimensions.x;
+
+		vec2 starting_position;
+
+		switch (justification.first)
+		{
+		case H_LEFT: starting_position.x = getCenterpoint().x - (getWidth() / 2.0f); break;
+		case H_CENTER: starting_position.x = getCenterpoint().x - (line_width / 2.0f); break;
+		case H_RIGHT: starting_position.x = getCenterpoint().x + (getWidth() / 2.0f) - line_width; break;
+		default: break;
+		}
+
+		float distance_from_top = (float)local_index * (character_dimensions.y + line_spacing);
+		//for each case, find the top-most point, then use distance from top/height of line to come down incrementally
+		switch (justification.second)
+		{
+		case V_TOP: starting_position.y = getCenterpoint().y + (getHeight() / 2.0f) - (distance_from_top + (character_dimensions.y / 2.0f)); break;
+
+		case V_MIDDLE:
+			float total_height = 
+			starting_position.y = getCenterpoint().y + (total_height / 2.0f) - (distance_from_top + (dimensions.y / 2.0f));
+			setYForLine(line_contents, y_offset);
+			break;
+
+		case V_BOTTOM:
+			y_offset = getCenterpoint().y - (getHeight() / 2.0f) + total_height - (distance_from_top + (dimensions.y / 2.0f));
+			setYForLine(line_contents, y_offset);
+			break;
+
+		case V_STRETCH:
+		default:
+			break;
+		}
+		
+	}
+
+
+
+
+
+
+
+
+
+
+
+
 
 	vector< shared_ptr<hud_element> >::iterator start = page_map.at(page_number);
 	vector< shared_ptr<hud_element> >::iterator end = (page_map.find(page_number + 1) == page_map.end() ? array_elements.end() : page_map.at(page_number + 1));
