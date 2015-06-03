@@ -312,10 +312,10 @@ int viewGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				info_text = nullptr;
 				rarity_text = nullptr;
 			}
-
+			
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
-				menu_return = mainMenu(data_path, context, keys, text, textures, current_player);
+				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 				if (menu_return != 0)
 					finished = true;
 			}

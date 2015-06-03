@@ -224,13 +224,26 @@ void dynamic_hud_array::setXForLine(vector< shared_ptr<hud_element> > &line_cont
 		previous_x_offset = individual_x_offset + (element->getWidth() / 2.0f);
 		individual_x_offset += initial_x_offset;
 		element->setX(individual_x_offset);
+
+		if (element->getType() == TEXT_AREA)
+		{
+			shared_ptr<text_area> text_element = boost::dynamic_pointer_cast<text_area>(element);
+			text_element->setVisible(text_element->getCurrentFirstLine());
+		}
 	}
 }
 
 void dynamic_hud_array::setYForLine(vector< shared_ptr<hud_element> > &line_contents, float y_offset)
 {
 	for (const auto &element : line_contents)
+	{
 		element->setY(y_offset);
+		if (element->getType() == TEXT_AREA)
+		{
+			shared_ptr<text_area> text_element = boost::dynamic_pointer_cast<text_area>(element);
+			text_element->setVisible(text_element->getCurrentFirstLine());
+		}
+	}
 }
 
 void dynamic_hud_array::addElement(const shared_ptr<hud_element> &to_add)
@@ -310,7 +323,7 @@ bool dynamic_hud_array::setVisible(int page_number)
 	vector< shared_ptr<hud_element> >::iterator start = page_map.at(page_number);
 	vector< shared_ptr<hud_element> >::iterator end = (page_map.find(page_number + 1) == page_map.end() ? array_elements.end() : page_map.at(page_number + 1));
 
-	float width_max = getWidth();
+	float width_max = getWidth() - (array_padding.x * 2.0f);
 	visible_lines.clear();
 	//total width and height of individual lines
 	map< int, vec2 > line_dimensions;
@@ -372,7 +385,7 @@ bool dynamic_hud_array::setVisible(int page_number)
 		switch (justification.first)
 		{
 		case H_LEFT:
-			initial_x_offset = getCenterpoint().x - (getWidth() / 2.0f);
+			initial_x_offset = getCenterpoint().x - ((getWidth() / 2.0f) - array_padding.x);
 			setXForLine(line_contents, initial_x_offset);
 			break;
 
@@ -384,7 +397,7 @@ bool dynamic_hud_array::setVisible(int page_number)
 
 		case H_RIGHT:
 			//dimensions refers to the actual dimensions of the line contents, which is <- getWidth(), the overall binding width of the array
-			initial_x_offset = getCenterpoint().x + (getWidth() / 2.0f) - dimensions.x;
+			initial_x_offset = getCenterpoint().x + ((getWidth() / 2.0f) - array_padding.x) - dimensions.x;
 			setXForLine(line_contents, initial_x_offset);
 			break;
 
@@ -397,7 +410,7 @@ bool dynamic_hud_array::setVisible(int page_number)
 		switch (justification.second)
 		{
 		case V_TOP:
-			y_offset = getCenterpoint().y + (getHeight() / 2.0f) - (distance_from_top + (dimensions.y / 2.0f));
+			y_offset = getCenterpoint().y + ((getHeight() / 2.0f) - array_padding.y) - (distance_from_top + (dimensions.y / 2.0f));
 			setYForLine(line_contents, y_offset);
 			break;
 
@@ -407,7 +420,7 @@ bool dynamic_hud_array::setVisible(int page_number)
 			break;
 
 		case V_BOTTOM:
-			y_offset = getCenterpoint().y - (getHeight() / 2.0f) + total_height - (distance_from_top + (dimensions.y / 2.0f));
+			y_offset = getCenterpoint().y - ((getHeight() / 2.0f) - array_padding.y) + total_height - (distance_from_top + (dimensions.y / 2.0f));
 			setYForLine(line_contents, y_offset);
 			break;
 
@@ -425,58 +438,42 @@ bool dynamic_hud_array::setVisible(int page_number)
 
 void text_area::setPageData()
 {
-	visible_lines.clear();
-
-	//divide characters into words separated by spaces
-	
 	float line_width_max = getWidth() - (element_padding.x * 2.0f);
-	int max_characters = line_width_max / character_dimensions.x;
+	int max_characters = line_width_max / (character_dimensions.x * xy_spacing_scale.x);
 
 	float page_height_max = getHeight() - (element_padding.y * 2.0f);
 	
-	lines_per_page = 0;
-
-	float total_height = 0.0f;
-	for (;;)
-	{
-		if (total_height + character_dimensions.y < page_height_max)
-		{
-			lines_per_page++;
-			total_height += character_dimensions.y;
-		}
-
-		else break;
-
-		if (total_height + line_spacing < page_height_max)
-			total_height += line_spacing;
-
-		else break;
-	}
+	float line_height_max = getHeight() - (element_padding.y * 2.0f);
+	lines_per_page = line_height_max / (character_dimensions.y * xy_spacing_scale.y);
 
 	//TODO explain below with comments
-	lines.clear();
-	for (string::iterator first_of_line = raw_text.begin(); first_of_line != raw_text.end(); first_of_line++)
+	line_map.clear();
+	vector<char> char_vec;
+	for (int c = 0; c < raw_text.size(); c++)
+		char_vec.push_back(raw_text.at(c));
+
+	for (vector<char>::iterator first_of_line = char_vec.begin(); first_of_line != char_vec.end(); first_of_line++)
 	{
 		bool endline = false;
 
 		if (*first_of_line == '\n')
 		{
-			lines.insert(pair<int, string>(lines.size(), "\n"));
+			line_map.insert(pair<int, string>(line_map.size(), "\n"));
 			continue;
 		}
 			
 		if (*first_of_line == ' ')
 			continue;
 
-		string::iterator last_of_line = first_of_line;
+		vector<char>::iterator last_of_line = first_of_line;
 		for (int i = 0; i < max_characters; i++)
 		{
 			last_of_line++;
-			if (last_of_line == raw_text.end() || *last_of_line == '\n')
+			if (last_of_line == char_vec.end() || *last_of_line == '\n')
 			{
 				string extracted_line;
 				extracted_line.insert(extracted_line.end(), first_of_line, last_of_line);
-				lines.insert(pair<int, string>(lines.size(), extracted_line));
+				line_map.insert(pair<int, string>(line_map.size(), extracted_line));
 				
 				endline = true;
 				//first_of_line is set to last_of_line, because when loop continues, it will increment it to the location right after last_of_line
@@ -484,15 +481,19 @@ void text_area::setPageData()
 				break;
 			}
 		}
+		
+		if (first_of_line == char_vec.end())
+			break;
 
 		if (endline)
 			continue;
 
+		//if there are no breaks before line max, extract line
 		if (std::find(first_of_line, last_of_line, ' ') == last_of_line)
 		{
 			string extracted_line;
 			extracted_line.insert(extracted_line.end(), first_of_line, last_of_line);
-			lines.insert(pair<int, string>(lines.size(), extracted_line));
+			line_map.insert(pair<int, string>(line_map.size(), extracted_line));
 
 			//first_of_line is set to last_of_line, because when loop continues, it will increment it to the location right after last_of_line
 			first_of_line = last_of_line;
@@ -504,7 +505,7 @@ void text_area::setPageData()
 
 		string extracted_line;
 		extracted_line.insert(extracted_line.end(), first_of_line, last_of_line);
-		lines.insert(pair<int, string>(lines.size(), extracted_line));
+		line_map.insert(pair<int, string>(line_map.size(), extracted_line));
 
 		//first_of_line is set to last_of_line, because when loop continues, it will increment it to the location right after last_of_line
 		first_of_line = last_of_line;
@@ -518,20 +519,20 @@ bool text_area::setVisible(int first_line_index)
 	if (first_line_index < 0)
 		return setVisible(0);
 
-	if (first_line_index >= lines.size())
+	if (first_line_index >= line_map.size())
 		return false;
 
 	current_first_line = first_line_index;
 
-	visible_lines.clear();
+	int lines_to_format = (line_map.size() - current_first_line < lines_per_page ? line_map.size() - current_first_line : lines_per_page);
+	float total_height = (float)lines_to_format * (character_dimensions.y * xy_spacing_scale.y);
 
-	int lines_to_format = (lines.size() - current_first_line < lines_per_page ? lines.size() - current_first_line : lines_per_page)
-
-	for (int i = current_first_line; i < current_first_line + lines_per_page && i < lines.size(); i++)
+	visible_characters.clear();
+	for (int i = current_first_line; i < current_first_line + lines_per_page && i < line_map.size(); i++)
 	{
 		int local_index = i - current_first_line;
-		string line_to_format = lines.at(i);
-		float line_width = line_to_format.size() * character_dimensions.x;
+		string line_to_format = line_map.at(i);
+		float line_width = line_to_format.size() * (character_dimensions.x * xy_spacing_scale.x);
 
 		vec2 starting_position;
 
@@ -543,156 +544,55 @@ bool text_area::setVisible(int first_line_index)
 		default: break;
 		}
 
-		float distance_from_top = (float)local_index * (character_dimensions.y + line_spacing);
+		float distance_from_top_line = (float)local_index * (character_dimensions.y * xy_spacing_scale.y);
 		//for each case, find the top-most point, then use distance from top/height of line to come down incrementally
 		switch (justification.second)
 		{
-		case V_TOP: starting_position.y = getCenterpoint().y + (getHeight() / 2.0f) - (distance_from_top + (character_dimensions.y / 2.0f)); break;
-
-		case V_MIDDLE:
-			float total_height = 
-			starting_position.y = getCenterpoint().y + (total_height / 2.0f) - (distance_from_top + (dimensions.y / 2.0f));
-			setYForLine(line_contents, y_offset);
+		case V_TOP: starting_position.y = getCenterpoint().y + (getHeight() / 2.0f) - 
+			(distance_from_top_line /*+ (character_dimensions.y / 2.0f)*/); 
 			break;
-
-		case V_BOTTOM:
-			y_offset = getCenterpoint().y - (getHeight() / 2.0f) + total_height - (distance_from_top + (dimensions.y / 2.0f));
-			setYForLine(line_contents, y_offset);
+		case V_MIDDLE: starting_position.y = getCenterpoint().y + (total_height / 2.0f) - 
+			(distance_from_top_line /*+ (character_dimensions.y / 2.0f)*/);
 			break;
-
-		case V_STRETCH:
-		default:
+		case V_BOTTOM: starting_position.y = getCenterpoint().y - (getHeight() / 2.0f) + total_height - 
+			(distance_from_top_line /*+ (character_dimensions.y / 2.0f)*/);
 			break;
+		default: break;
 		}
-		
-	}
 
+		vec2 cursor_position = starting_position;
 
-
-
-
-
-
-
-
-
-
-
-
-	vector< shared_ptr<hud_element> >::iterator start = page_map.at(page_number);
-	vector< shared_ptr<hud_element> >::iterator end = (page_map.find(page_number + 1) == page_map.end() ? array_elements.end() : page_map.at(page_number + 1));
-
-	float width_max = getWidth();
-	visible_lines.clear();
-	//total width and height of individual lines
-	map< int, vec2 > line_dimensions;
-
-	vector<shared_ptr<hud_element> > current_line;
-	float current_line_width = 0.0f;
-	float current_line_height = 0.0f;
-	int line_count = 0;
-	float total_height = 0.0f;
-	for (vector< shared_ptr<hud_element> >::iterator it = start; it != end; it++)
-	{
-		if (current_line_width + (*it)->getWidth() > width_max)
+		for (const auto &c : line_to_format)
 		{
-			//submit current line, check new value
-			if (current_line.size() > 0)
-			{
-				visible_lines.insert(pair<int, vector<shared_ptr<hud_element> > >(line_count, current_line));
-				line_dimensions.insert(pair<int, vec2>(line_count, vec2(current_line_width, current_line_height)));
-				total_height += current_line_height;
-				line_count++;
-				current_line.clear();
-			}
+			shared_ptr<text_character> toAdd(new text_character(c, text, cursor_position, UL, character_dimensions, ital));
+			visible_characters.push_back(toAdd);
 
-			current_line_width = (*it)->getWidth();
-			current_line_height = (*it)->getHeight();
-			current_line.push_back(*it);
-		}
-
-		//add element to line
-		else
-		{
-			//add element
-			current_line.push_back(*it);
-			//adjust width
-			current_line_width += (*it)->getWidth();
-			//adjust height
-			if ((*it)->getHeight() > current_line_height)
-				current_line_height = (*it)->getHeight();
-		}
-
-		//if it's the last of the array, add current line
-		if (it == end - 1)
-		{
-			visible_lines.insert(pair<int, vector<shared_ptr<hud_element> > >(line_count, current_line));
-			line_dimensions.insert(pair<int, vec2>(line_count, vec2(current_line_width, current_line_height)));
-			total_height += current_line_height;
-		}
-	}
-
-	float initial_x_offset = 0.0f;
-	float distance_from_top = 0.0f;
-	float y_offset = 0.0f;
-	for (const auto &element_vec : visible_lines)
-	{
-		vector< shared_ptr<hud_element> > line_contents = element_vec.second;
-		int line_number = element_vec.first;
-		vec2 dimensions = line_dimensions.at(element_vec.first);
-
-		switch (justification.first)
-		{
-		case H_LEFT:
-			initial_x_offset = getCenterpoint().x - (getWidth() / 2.0f);
-			setXForLine(line_contents, initial_x_offset);
-			break;
-
-		case H_CENTER:
-			//dimensions refers to the actual dimensions of the line contents, which is <- getWidth(), the overall binding width of the array
-			initial_x_offset = getCenterpoint().x - (dimensions.x / 2.0f);
-			setXForLine(line_contents, initial_x_offset);
-			break;
-
-		case H_RIGHT:
-			//dimensions refers to the actual dimensions of the line contents, which is <- getWidth(), the overall binding width of the array
-			initial_x_offset = getCenterpoint().x + (getWidth() / 2.0f) - dimensions.x;
-			setXForLine(line_contents, initial_x_offset);
-			break;
-
-		case H_STRETCH:
-		default:
-			break;
-		}
-
-		//for each case, find the top-most point, then use distance from top/height of line to come down incrementally
-		switch (justification.second)
-		{
-		case V_TOP:
-			y_offset = getCenterpoint().y + (getHeight() / 2.0f) - (distance_from_top + (dimensions.y / 2.0f));
-			setYForLine(line_contents, y_offset);
-			break;
-
-		case V_MIDDLE:
-			y_offset = getCenterpoint().y + (total_height / 2.0f) - (distance_from_top + (dimensions.y / 2.0f));
-			setYForLine(line_contents, y_offset);
-			break;
-
-		case V_BOTTOM:
-			y_offset = getCenterpoint().y - (getHeight() / 2.0f) + total_height - (distance_from_top + (dimensions.y / 2.0f));
-			setYForLine(line_contents, y_offset);
-			break;
-
-		case V_STRETCH:
-		default:
-			break;
-		}
-
-		//actively keep track of how far the lines are from the top of the total_height value, in order to set the y offset
-		distance_from_top += dimensions.y;
+			cursor_position += vec2(character_dimensions.x * xy_spacing_scale.x, 0.0f);
+			//cursor_position = toAdd->getUpperRight() - vec2((character_dimensions.x / 2.0f), 0.0f);
+		}		
 	}
 
 	return true;
+}
+
+void text_area::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
+{
+	glDisable(GL_DEPTH_TEST);
+	drawBackground(context, camera);
+	//drawLines(context, camera);
+
+	glUniform1i(context->getShaderGLint(text_enable_shader_ID), true);
+
+	//set text color
+	glUniform4f(context->getShaderGLint(text_color_shader_ID),
+		text_color.x, text_color.y, text_color.z, text_color.w);
+
+	for (const auto &c : visible_characters)
+		c->draw(context, camera);
+
+	glUniform1i(context->getShaderGLint(text_enable_shader_ID), false);
+
+	glEnable(GL_DEPTH_TEST);
 }
 
 shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
@@ -728,10 +628,28 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 	return found;
 }
 
+void dynamic_hud_array::deselectAllWithin()
+{
+	for (const auto &i : visible_lines) {
+		for (const auto &j : i.second) {
+			j->clearBackgroundColor();
+			if (j->getType() == ELEMENT_ARRAY)
+			{
+				shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(j);
+				nested_array->deselectAllWithin();
+				nested_array->deselect();
+			}
+
+			else j->deselect();
+		}
+	}
+}
+
 void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
 	glDisable(GL_DEPTH_TEST);
 	drawBackground(context, camera);
+	//drawLines(context, camera);
 	for (const auto &i : visible_lines)
 	{
 		for (const auto &j : i.second)

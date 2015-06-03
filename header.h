@@ -9,7 +9,7 @@ enum genre {
 };
 enum rarity { COMMON, UNCOMMON, RARE, LEGENDARY, MASTERPIECE, UNKNOWN_RARITY };
 enum sort_options { ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, TITLE, AREA, HEIGHT, WIDTH, RARITY, PAINTING_ID, NO_SORT };
-enum hud_element_type { ELEMENT_ARRAY, THUMBNAIL, TEXT_BOX, TEXT_FIELD, BUTTON_TOGGLE, BUTTON_PRESS, NO_TYPE };
+enum hud_element_type { ELEMENT_ARRAY, THUMBNAIL, TEXT_AREA, TEXT_FIELD, BUTTON_TOGGLE, BUTTON_PRESS, NO_TYPE };
 enum vertical_justification { V_TOP, V_MIDDLE, V_BOTTOM, V_STRETCH };
 enum horizontal_justification { H_LEFT, H_CENTER, H_RIGHT, H_STRETCH };
 
@@ -40,8 +40,8 @@ class player;
 class gallery;
 class display_wall;
 class loot_generator;
-class line;
-class rectangle;
+//class line;
+//class rectangle;
 class image;
 class hud_element;
 class hud;
@@ -68,6 +68,8 @@ using jep::texture_handler;
 using jep::text_character;
 using jep::date;
 using jep::bignum;
+using jep::line;
+using jep::rectangle;
 using jep::render_type;
 using jep::NORMAL;
 using jep::TEXT;

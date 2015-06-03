@@ -65,6 +65,7 @@ private:
 	float painting_to_wall_dimension;
 };
 
+/*
 class line
 {
 public:
@@ -103,6 +104,7 @@ private:
 	shared_ptr<GLuint> VAO;
 	vec4 color;
 };
+*/
 
 class image
 {

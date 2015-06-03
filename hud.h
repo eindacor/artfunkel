@@ -12,6 +12,7 @@ public:
 	~hud_element(){};
 
 	virtual bool itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position);
+	void deselect() { currently_selected = false; }
 	virtual void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const = 0;
 
 	vec2 getUpperLeft() const { return upper_left; }
@@ -50,7 +51,7 @@ public:
 	virtual shared_ptr<artwork> getStoredArt() const { return nullptr; }
 	virtual shared_ptr<artwork> getStoredText() const { return nullptr; }
 
-	void setDrawSelected(void(*preDS)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera), 
+	void setDrawSelected(void(*preDS)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera),
 		void(*postDS)(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)) {
 		preDrawSelected = preDS; postDrawSelected = postDS;
 	}
@@ -105,7 +106,7 @@ class dynamic_hud_array : public hud_element
 public:
 	//TODO swap width with height in constructor
 	dynamic_hud_array(string identifier, const shared_ptr<ogl_context> &ogl_con, const vec2 centerpoint,
-		float on_screen_width, float on_screen_height, pair<horizontal_justification, vertical_justification> j, float padding = 0.0f)
+		float on_screen_width, float on_screen_height, pair<horizontal_justification, vertical_justification> j, vec2 padding=vec2(0.0f, 0.0f))
 		: hud_element(identifier, centerpoint, on_screen_width, on_screen_height, ELEMENT_ARRAY)
 	{
 		context = ogl_con;
@@ -119,12 +120,13 @@ public:
 	void addElements(const vector< shared_ptr<hud_element> > &element_vec);
 	void setPageData();
 	bool setVisible(int page_number);
-	void pageUp() { setVisible(current_page + 1); }
-	void pageDown() { setVisible(current_page - 1); }
+	void pageUp() { deselectAllWithin();  setVisible(current_page + 1); }
+	void pageDown() { deselectAllWithin();  setVisible(current_page - 1); }
 	void clearElements() { array_elements.clear(); visible_lines.clear(); }
 	//getSelectedWithinArray is design to recurse if it detects nested arrays
 	virtual shared_ptr<hud_element> getSelectedWithinArray(
 		shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) const;
+	void deselectAllWithin();
 
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;
 	void setLines();
@@ -137,7 +139,7 @@ private:
 	//TODO add iterators taht denote "pages" for paging in menus
 	vector< shared_ptr<hud_element> > array_elements;
 	map <int, vector<shared_ptr<hud_element> > >visible_lines;
-	float array_padding;
+	vec2 array_padding;
 	pair<horizontal_justification, vertical_justification> justification;
 	vector< shared_ptr<line> > lines;
 
@@ -155,19 +157,23 @@ public:
 	text_area(string identifier, std::string s, const shared_ptr<ogl_context> &ogl_con, const shared_ptr<text_handler> &th,
 		vec2 centerpoint, vec2 on_screen_area_dimensions, float on_screen_height, 
 		pair<horizontal_justification, vertical_justification> j, bool italics, glm::vec4 color, GLchar* text_enable_ID, 
-		GLchar* text_color_ID, vec2 element_Padding = vec2(0.0f, 0.0f), float line_Spacing = 0.0f) :
-		hud_element(identifier, centerpoint, on_screen_area_dimensions.x, on_screen_area_dimensions.y, TEXT_BOX)
+		GLchar* text_color_ID, vec2 element_Padding = vec2(0.0f, 0.0f), vec2 character_spacing_scale=vec2(1.0f, 1.0f)) :
+		hud_element(identifier, centerpoint, on_screen_area_dimensions.x, on_screen_area_dimensions.y, TEXT_AREA)
 	{
+		//character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
 		character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
 		context = ogl_con;
 		justification = j;
 		element_padding = element_Padding;
-		line_spacing = line_Spacing;
+		xy_spacing_scale = character_spacing_scale;
 
 		raw_text = s;
 		text_enable_shader_ID = text_enable_ID;
 		text_color_shader_ID = text_color_ID;
 		text_color = color;
+
+		text = th;
+		ital = italics;
 
 		setPageData();
 
@@ -175,23 +181,35 @@ public:
 	};
 	~text_area(){};
 
-private:
-	void setPageData();
+	void addText(string s) { raw_text += s; setPageData(); }
+	void setText(string s) { raw_text = s; setPageData(); }
+	void setColor(vec4 c) { text_color = c; }
+	void backspace();
+	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;
+
+	void pageUp() { setVisible(current_first_line + lines_per_page); }
+	void pageDown() { setVisible(current_first_line - lines_per_page); }
+	int getCurrentFirstLine() const { return current_first_line; }
+
 	bool setVisible(int first_line_index);
 
+private:
+	void setPageData();
+	shared_ptr<text_handler> text;
+
 	string raw_text;
+	bool ital;
 	shared_ptr<ogl_context> context;
 	pair<horizontal_justification, vertical_justification> justification;
-	vec2 element_padding;
-	float line_spacing;
+	vec2 element_padding, xy_spacing_scale;
 	int lines_per_page;
 
-	map <int, vector<shared_ptr<text_character> > >visible_lines;
+	vector<shared_ptr<text_character> > visible_characters;
 	//int is page number (zero-indexed), iterator is first element of each page
-	map<int, string> lines;
+	map<int, string> line_map;
 	int current_first_line;
 
-	pair<horizontal_justification, vertical_justification> justification;
+	vector< shared_ptr<line> > guidelines;
 
 	vec4 text_color;
 

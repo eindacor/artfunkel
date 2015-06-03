@@ -32,7 +32,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	//TODO remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> >not_displayed_copy = current_player->getNotDisplayedCopy();
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(0.0f, -0.85f), 1.7f, 0.3f,
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(0.0f, -0.85f), 2.0f, 0.3f,
 		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE)));
 
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
@@ -55,23 +55,72 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	bool finished = false;
 	int menu_return = 0;
 
-	//TODO replace all text code with HUD elements
+	/////////////////////UPDATED HUD
 	//identify positions for text
-	vec4 title_color(1.0f, 1.0f, 1.0f, 1.0f);
-	vec4 rarity_color;
-	vec4 info_color(0.3f, 0.3f, 0.3f, 1.0f);
-	vec4 transparent_color(0.0f, 1.0f, 0.0f, 1.0f);
-	float title_scale(0.045f);
-	float info_scale(0.035f);
-	float highlight_buffer(0.1f);
-	vec2 title_screen_position(0.5f, 0.75f);
-	vec2 rarity_screen_position(title_screen_position.x, title_screen_position.y - title_scale);
-	vec2 info_screen_position(title_screen_position.x, rarity_screen_position.y - info_scale);
-	float text_box_width(0.45f);
+	shared_ptr<dynamic_hud_array> work_description(new dynamic_hud_array("description", context, vec2(0.6f, 0.9f), 0.8f, 0.25f,
+		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
 
-	shared_ptr<static_text> title_text(nullptr);
-	shared_ptr<static_text> rarity_text(nullptr);
-	shared_ptr<static_text> info_text(nullptr);
+	work_description->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
+
+	float title_text_height(0.045f);
+	vec4 title_color(1.0f, 1.0f, 1.0f, 1.0f);
+	vec2 title_centerpoint(0.0f, 0.0f);
+	vec2 title_element_dimensions(0.8f, 0.1f);
+	pair <horizontal_justification, vertical_justification> title_just(H_LEFT, V_MIDDLE);
+	bool title_italics = true;
+	vec2 title_element_padding(0.015f, 0.0f / context->getAspectRatio());
+	vec2 title_spacing_scale(0.8f, 1.1f);
+
+	shared_ptr<text_area> title_text(new text_area("title_text", "not yet set",
+		context, text, title_centerpoint, title_element_dimensions, title_text_height, title_just, title_italics, title_color, 
+		"text", "text_color", title_element_padding, title_spacing_scale));
+
+	float rarity_text_height(0.03f);
+	vec4 rarity_color(1.0f, 1.0f, 1.0f, 1.0f);
+	vec2 rarity_centerpoint(0.0f, 0.0f);
+	vec2 rarity_element_dimensions(0.8f, 0.032f);
+	pair <horizontal_justification, vertical_justification> rarity_just(H_LEFT, V_MIDDLE);
+	bool rarity_italics = false;
+	vec2 rarity_element_padding(0.025f, 0.0f);
+	vec2 rarity_spacing_scale(0.8f, 1.0f);
+
+	shared_ptr<text_area> rarity_text(new text_area("rarity_text", "not yet set",
+		context, text, rarity_centerpoint, rarity_element_dimensions, rarity_text_height, rarity_just, rarity_italics, rarity_color, 
+		"text", "text_color", rarity_element_padding, rarity_spacing_scale));
+
+	float artist_text_height(0.03f);
+	vec4 artist_color(0.7f, 0.7f, 0.7f, 1.0f);
+	vec2 artist_centerpoint(0.0f, 0.0f);
+	vec2 artist_element_dimensions(0.8f, 0.032f);
+	pair <horizontal_justification, vertical_justification> artist_just(H_LEFT, V_MIDDLE);
+	bool artist_italics = false;
+	vec2 artist_element_padding(0.025f, 0.0f);
+	vec2 artist_spacing_scale(0.8f, 1.0f);
+
+	shared_ptr<text_area> artist_text(new text_area("artist_text", "not yet set",
+		context, text, artist_centerpoint, artist_element_dimensions, artist_text_height, artist_just, artist_italics, artist_color,
+		"text", "text_color", artist_element_padding, artist_spacing_scale));
+
+	float value_text_height(0.03f);
+	vec4 value_color(0.7f, 0.7f, 0.7f, 1.0f);
+	vec2 value_centerpoint(0.0f, 0.0f);
+	vec2 value_element_dimensions(0.8f, 0.032f);
+	pair <horizontal_justification, vertical_justification> value_just(H_LEFT, V_MIDDLE);
+	bool value_italics = false;
+	vec2 value_element_padding(0.025f, 0.0f);
+	vec2 value_spacing_scale(0.8f, 1.0f);
+
+	shared_ptr<text_area> value_text(new text_area("value_text", "not yet set",
+		context, text, value_centerpoint, value_element_dimensions, value_text_height, value_just, value_italics, value_color,
+		"text", "text_color", value_element_padding, value_spacing_scale));
+
+	work_description->addElement(title_text);
+	work_description->addElement(rarity_text);
+	work_description->addElement(artist_text);
+	work_description->addElement(value_text);
+
+	////////////////////////////////
+
 	shared_ptr<artwork> painting_to_place(nullptr);
 	pair<float, shared_ptr<artwork> > artwork_selected(0.0f, nullptr);
 	pair<float, shared_ptr<display_wall> > wall_selected(0.0f, nullptr);
@@ -94,12 +143,8 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			if (inventory_displayed)
 				artwork_thumbnails->draw(context, camera);
 
-			if (title_text != nullptr)
-				title_text->draw(camera, context);
-			if (info_text != nullptr)
-				info_text->draw(camera, context);
-			if (rarity_text != nullptr)
-				rarity_text->draw(camera, context);
+			if (painting_to_place != nullptr || artwork_selected.second != nullptr)
+				work_description->draw(context, camera);
 
 			if (keys->checkPress(GLFW_KEY_I, false))
 			{
@@ -142,28 +187,20 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					placement_preview = shared_ptr<rectangle>(new rectangle(vec2(0.0f, 0.0f), painting_dimensions, vec4(1.0f, 1.0f, 0.0f, 0.5f)));
 
 					new_selection = true;
-					printArtwork(selected->getStoredArt());
 
-					title_text = text->getTextArray(painting_to_place->getData()->getTitle(), context,
-						true, title_color, transparent_color, "text", "text_color", "transparency_color", true, title_screen_position, title_scale, text_box_width);
+					title_text->setText(painting_to_place->getData()->getTitle());
+					artist_text->setText(painting_to_place->getData()->getArtistName());
+					value_text->setText("$" + painting_to_place->getValue().getNumberString(true, false, 2));
+					rarity_text->setText(stringFromRarity(painting_to_place->getData()->getRarity()));
 
 					switch (painting_to_place->getData()->getRarity())
 					{
-					case COMMON: rarity_color = vec4(0.6f, 0.9f, 0.6f, 1.0f); break;
-					case UNCOMMON: rarity_color = vec4(0.6f, 0.6f, 0.9f, 1.0f); break;
-					case RARE: rarity_color = vec4(0.9f, 0.9f, 0.6f, 1.0f); break;
-					case LEGENDARY: rarity_color = vec4(1.0f, 0.75f, 0.6f, 1.0f); break;
-					case MASTERPIECE: rarity_color = vec4(0.6f, 0.9f, 0.9f, 1.0f); break;
+					case COMMON: rarity_text->setColor(vec4(0.6f, 0.9f, 0.6f, 1.0f)); break;
+					case UNCOMMON: rarity_text->setColor(vec4(0.6f, 0.6f, 0.9f, 1.0f)); break;
+					case RARE: rarity_text->setColor(vec4(0.9f, 0.9f, 0.6f, 1.0f)); break;
+					case LEGENDARY: rarity_text->setColor(vec4(1.0f, 0.75f, 0.6f, 1.0f)); break;
+					case MASTERPIECE: rarity_text->setColor(vec4(0.6f, 0.9f, 0.9f, 1.0f)); break;
 					}
-
-					rarity_text = text->getTextArray(stringFromRarity(painting_to_place->getData()->getRarity()), context,
-						false, rarity_color, transparent_color, "text", "text_color", "transparency_color", true, title_text->getLowerLeft(), info_scale, text_box_width);
-
-					string to_print = std::to_string(painting_to_place->getData()->getDate().getYear()) + "\n" + painting_to_place->getData()->getArtistName();
-					to_print += "\n$" + painting_to_place->getValue().getNumberString(true, false, 2);
-
-					info_text = text->getTextArray(to_print, context, false, info_color, transparent_color, "text", "text_color", "transparency_color",
-						true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 				}
 
 				if (!new_selection)
@@ -212,40 +249,23 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					if (artwork_was_selected)
 					{
 						shared_ptr<artwork> selected = artwork_selected.second;
-						title_text = text->getTextArray(selected->getData()->getTitle(), context,
-							true, title_color, transparent_color, "text", "text_color", "transparency_color",
-							true, title_screen_position, title_scale, text_box_width);
+						title_text->setText(selected->getData()->getTitle());
+						artist_text->setText(selected->getData()->getArtistName());
+						value_text->setText("$" + selected->getValue().getNumberString(true, false, 2));
+						rarity_text->setText(stringFromRarity(selected->getData()->getRarity()));
 
 						switch (selected->getData()->getRarity())
 						{
-						case COMMON: rarity_color = vec4(0.6f, 0.9f, 0.6f, 1.0f); break;
-						case UNCOMMON: rarity_color = vec4(0.6f, 0.6f, 0.9f, 1.0f); break;
-						case RARE: rarity_color = vec4(0.9f, 0.9f, 0.6f, 1.0f); break;
-						case LEGENDARY: rarity_color = vec4(1.0f, 0.75f, 0.6f, 1.0f); break;
-						case MASTERPIECE: rarity_color = vec4(0.6f, 0.9f, 0.9f, 1.0f); break;
+						case COMMON: rarity_text->setColor(vec4(0.6f, 0.9f, 0.6f, 1.0f)); break;
+						case UNCOMMON: rarity_text->setColor(vec4(0.6f, 0.6f, 0.9f, 1.0f)); break;
+						case RARE: rarity_text->setColor(vec4(0.9f, 0.9f, 0.6f, 1.0f)); break;
+						case LEGENDARY: rarity_text->setColor(vec4(1.0f, 0.75f, 0.6f, 1.0f)); break;
+						case MASTERPIECE: rarity_text->setColor(vec4(0.6f, 0.9f, 0.9f, 1.0f)); break;
 						}
-
-						rarity_text = text->getTextArray(stringFromRarity(selected->getData()->getRarity()), context,
-							false, rarity_color, transparent_color, "text", "text_color", "transparency_color",
-							true, title_text->getLowerLeft(), info_scale, text_box_width);
-
-						string to_print = std::to_string(selected->getData()->getDate().getYear()) + "\n" + selected->getData()->getArtistName();
-						to_print += "\n$" + selected->getValue().getNumberString(true, false, 2);
-
-						info_text = text->getTextArray(to_print, context, false, info_color, transparent_color,
-							"text", "text_color", "transparency_color",
-							true, rarity_text->getLowerLeft(), info_scale, text_box_width);
 
 						//remove from display
 						painting_to_place = nullptr;
 						placement_preview = nullptr;
-					}
-
-					else
-					{
-						title_text = nullptr;
-						info_text = nullptr;
-						rarity_text = nullptr;
 					}
 				}
 			}
@@ -289,33 +309,34 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					thumbnail->setDrawSelected(highlight, fullBrightness);
 					artwork_thumbnails->addElement(thumbnail);
 				}
-
-				title_text = nullptr;
-				info_text = nullptr;
-				rarity_text = nullptr;
 			}
 
 			if (keys->checkPress(GLFW_KEY_COMMA, false) && inventory_displayed)
 			{
 				artwork_thumbnails->pageDown();
 				painting_to_place = nullptr;
-				title_text = nullptr;
-				info_text = nullptr;
-				rarity_text = nullptr;
+				placement_preview = nullptr;
 			}
 
 			if (keys->checkPress(GLFW_KEY_PERIOD, false) && inventory_displayed)
 			{
 				artwork_thumbnails->pageUp();
 				painting_to_place = nullptr;
-				title_text = nullptr;
-				info_text = nullptr;
-				rarity_text = nullptr;
+				placement_preview = nullptr;
 			}
 
+			if (keys->checkMouse(GLFW_MOUSE_BUTTON_RIGHT, false))
+			{
+				painting_to_place = nullptr;
+				placement_preview = nullptr;
+				artwork_selected.second = nullptr;
+				artwork_thumbnails->deselectAllWithin();
+			}
+
+			//TODO see why this only works when include_hold is enabled
 			if (keys->checkPress(GLFW_KEY_ESCAPE))
 			{
-				menu_return = mainMenu(data_path, context, keys, text, textures, current_player);
+				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 				if (menu_return != 0)
 					finished = true;
 			}

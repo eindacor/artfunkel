@@ -42,6 +42,7 @@ float getNormalRotation(const vector<float> &vec_vertices, int normal_offset, in
 
 //pre and post render effects
 void highlight(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
+void highlightSubtle(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
 void fullBrightness(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera);
 
 void loadTextures(shared_ptr<texture_handler> &textures);

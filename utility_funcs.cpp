@@ -751,6 +751,11 @@ void highlight(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_came
 	glUniform1f(context->getShaderGLint("dim_factor"), 1.5f);
 }
 
+void highlightSubtle(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
+{
+	glUniform1f(context->getShaderGLint("dim_factor"), 1.2f);
+}
+
 void fullBrightness(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
 {
 	glUniform1f(context->getShaderGLint("dim_factor"), 1.0f);
@@ -784,6 +789,7 @@ void loadTextures(shared_ptr<texture_handler> &textures)
 	textures->addTexture("plaster.bmp");
 	textures->addTexture("poured_concrete.bmp");
 	textures->addTexture("white_matte.bmp");
+	textures->addTexture("text_template.bmp");
 }
 
 void readConfigFile(string &data_path, string &username)

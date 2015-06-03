@@ -432,6 +432,7 @@ void frame_model::draw(const shared_ptr<ogl_context> &context, const mat4 &model
 	glBindVertexArray(0);
 }
 
+/*
 line::line(vec4 first, vec4 second, vec4 c)
 {
 	p1 = first;
@@ -571,6 +572,7 @@ void rectangle::draw(const shared_ptr<ogl_context> &context, const shared_ptr<og
 	glBindVertexArray(0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
+*/
 
 image::image(vec2 centerpoint, vec2 dimensions, const shared_ptr<ogl_context> &context, const char* texture_path)
 {
