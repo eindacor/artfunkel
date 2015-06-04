@@ -45,6 +45,19 @@ int main(int argc, char* argv[])
 	current_player = loadPlayer(data_path, username, artist_database, loot, context, textures);
 	savePlayer(data_path, current_player->getName(), current_player);
 
+	cout << "common crate, 5 works: $" << loot->getCrateCost(COMMON, 5).getNumberString(true, false, 0) << endl;
+	cout << "common crate, 10 works: $" << loot->getCrateCost(COMMON, 10).getNumberString(true, false, 0) << endl;
+	cout << "common crate, 15 works: $" << loot->getCrateCost(COMMON, 15).getNumberString(true, false, 0) << endl;
+	cout << "uncommon crate, 5 works: $" << loot->getCrateCost(UNCOMMON, 5).getNumberString(true, false, 0) << endl;
+	cout << "uncommon crate, 10 works: $" << loot->getCrateCost(UNCOMMON, 10).getNumberString(true, false, 0) << endl;
+	cout << "uncommon crate, 15 works: $" << loot->getCrateCost(UNCOMMON, 15).getNumberString(true, false, 0) << endl;
+	cout << "rare crate, 5 works: $" << loot->getCrateCost(RARE, 5).getNumberString(true, false, 0) << endl;
+	cout << "rare crate, 10 works: $" << loot->getCrateCost(RARE, 10).getNumberString(true, false, 0) << endl;
+	cout << "rare crate, 15 works: $" << loot->getCrateCost(RARE, 15).getNumberString(true, false, 0) << endl;
+	cout << "legendary crate, 5 works: $" << loot->getCrateCost(LEGENDARY, 5).getNumberString(true, false, 0) << endl;
+	cout << "legendary crate, 10 works: $" << loot->getCrateCost(LEGENDARY, 10).getNumberString(true, false, 0) << endl;
+	cout << "legendary crate, 15 works: $" << loot->getCrateCost(LEGENDARY, 15).getNumberString(true, false, 0) << endl;
+
 	int menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 
 	//TODO possibly give context a text handler
@@ -55,7 +68,7 @@ int main(int argc, char* argv[])
 		//case -1: menu_return = menuTest(data_path, context, keys, current_player, loot, text, textures); break;
 		case 0: menu_return = editGallery(data_path, context, keys, current_player, text, textures); break;
 		case 1: menu_return = viewInventory(data_path, context, keys, current_player, text, textures); break;
-		case 2: menu_return = openCrate(data_path, context, keys, current_player, loot, text, textures); break;
+		case 2: menu_return = visitStore(data_path, context, keys, current_player, loot, text, textures); break;
 		}
 	}
 

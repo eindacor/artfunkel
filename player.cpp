@@ -12,7 +12,7 @@ player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<
 		addWorkToInventory(i);
 
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, "frame_black.bmp", "white_matte.bmp", textures));
-	bank = bignum("5000");
+	bank = bignum("500000");
 }
 
 player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, unsigned long player_xp, unsigned short player_level, string balance)
@@ -45,6 +45,7 @@ bool player::removeWorkFromInventory(const shared_ptr<artwork> &work)
 	if (work != nullptr && !isOnDisplay(work) && alreadyOwned(work))
 	{
 		collection_value -= work->getValue();
+		bank += work->getValue();
 		inventory.erase(work->getData()->getID());
 
 		for (vector<shared_ptr<artwork> >::iterator it = paintings_not_on_display.begin(); it != paintings_not_on_display.end(); it++)

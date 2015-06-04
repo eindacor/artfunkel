@@ -29,7 +29,75 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 		default_rarity_map[MASTERPIECE] = 1;
 	}
 
+	common_rarity_map[COMMON] = 50;
+	common_rarity_map[UNCOMMON] = 13;
+	common_rarity_map[RARE] = 1;
 	
+	uncommon_rarity_map[COMMON] = 30;
+	uncommon_rarity_map[UNCOMMON] = 30;
+	uncommon_rarity_map[RARE] = 2;
+
+	rare_rarity_map[UNCOMMON] = 100;							
+	rare_rarity_map[RARE] = 27;								
+	rare_rarity_map[LEGENDARY] = 1;						
+
+	legendary_rarity_map[RARE] = 1000;
+	legendary_rarity_map[LEGENDARY] = 23;
+	legendary_rarity_map[MASTERPIECE] = 1;
+
+	average_common_crate_work_value = calcAveragePaintingValue(common_rarity_map);
+	average_uncommon_crate_work_value = calcAveragePaintingValue(uncommon_rarity_map);
+	average_rare_crate_work_value = calcAveragePaintingValue(rare_rarity_map);
+	average_legendary_crate_work_value = calcAveragePaintingValue(legendary_rarity_map);
+	
+	cout << "average work value, common crate: $" << average_common_crate_work_value.getNumberString(true, false, 2) << endl;
+	cout << "average work value, uncommon crate: $" << average_uncommon_crate_work_value.getNumberString(true, false, 2) << endl;
+	cout << "average work value, rare crate: $" << average_rare_crate_work_value.getNumberString(true, false, 2) << endl;
+	cout << "average work value, legendary crate: $" << average_legendary_crate_work_value.getNumberString(true, false, 2) << endl;
+}
+
+bignum loot_generator::calcAveragePaintingValue(const map<rarity, unsigned> &rarity_map) const
+{
+	unsigned map_proportion_total = 0;
+	for (const auto &r : rarity_map)
+		map_proportion_total += r.second;
+
+	bignum map_total;
+	for (const auto &r : rarity_map)
+	{
+		bignum min_value = lookupValue(r.first, 0.0f);
+		bignum max_value = lookupValue(r.first, 1.0f);
+		bignum sumtotal = min_value + max_value;
+		bignum average = sumtotal / 2;
+
+		float proportion_to_total = (float)r.second / (float)map_proportion_total;
+
+		map_total += average * (bignum)proportion_to_total;
+	}
+
+	return map_total;
+}
+
+bignum loot_generator::getCrateCost(rarity r, int count) const
+{
+	bignum cost_modifier(1);
+	
+	for (int i = 0; i < count / 5 ; i++)
+		cost_modifier *= (bignum)".90";
+
+	bignum result;
+
+	switch (r)
+	{
+	case COMMON: result = cost_modifier * average_common_crate_work_value * bignum(count); break;
+	case UNCOMMON: result = cost_modifier * average_uncommon_crate_work_value * bignum(count); break;
+	case RARE: result = cost_modifier * average_rare_crate_work_value * bignum(count); break;
+	case LEGENDARY: result = cost_modifier * average_legendary_crate_work_value * bignum(count); break;
+	default: break;
+	}
+
+	result.roundDownToIndex(ONES_PLACE + 3);
+	return result;
 }
 
 vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count,
@@ -76,6 +144,38 @@ vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, float m
 	}
 
 	printGenerated(loot_vec, default_rarity_map);
+	return loot_vec;
+}
+
+vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, rarity r) const
+{
+	map<rarity, unsigned int> rarity_proportions;
+
+	switch (r)
+	{
+	case COMMON: rarity_proportions = common_rarity_map; break;
+	case UNCOMMON: rarity_proportions = uncommon_rarity_map; break;
+	case RARE: rarity_proportions = rare_rarity_map; break;
+	case LEGENDARY: rarity_proportions = legendary_rarity_map; break;
+	}
+
+	vector<shared_ptr<artwork> > loot_vec;
+	loot_vec.reserve(count);
+
+	for (int i = 0; i < count; i++)
+	{
+		rarity random_rarity = jep::catRoll<rarity>(rarity_proportions);
+		list< shared_ptr<artwork_data> > rarity_selection = artist_database->getWorksByRarity(random_rarity);
+
+		list< shared_ptr<artwork_data> >::const_iterator it = rarity_selection.begin();
+		for (int i = 0; i < jep::intRoll(0, (rarity_selection.size() - 1)); i++)
+			it++;
+
+		shared_ptr<artwork> toAdd(new artwork(*it, false, 1.0f));
+		loot_vec.push_back(toAdd);
+	}
+
+	printGenerated(loot_vec, rarity_proportions);
 	return loot_vec;
 }
 

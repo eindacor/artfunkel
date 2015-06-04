@@ -94,7 +94,7 @@ bool hud_element::itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor
 
 	else currently_selected = true;
 
-	return currently_selected;
+	return currently_selected && selectable;
 }
 
 void hud_element::setBackgroundImage(const shared_ptr<ogl_context> &context, const char* image_path)
@@ -230,6 +230,12 @@ void dynamic_hud_array::setXForLine(vector< shared_ptr<hud_element> > &line_cont
 			shared_ptr<text_area> text_element = boost::dynamic_pointer_cast<text_area>(element);
 			text_element->setVisible(text_element->getCurrentFirstLine());
 		}
+
+		else if (element->getType() == ELEMENT_ARRAY)
+		{
+			shared_ptr<dynamic_hud_array> text_element = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+			text_element->setVisible(0);
+		}
 	}
 }
 
@@ -242,6 +248,12 @@ void dynamic_hud_array::setYForLine(vector< shared_ptr<hud_element> > &line_cont
 		{
 			shared_ptr<text_area> text_element = boost::dynamic_pointer_cast<text_area>(element);
 			text_element->setVisible(text_element->getCurrentFirstLine());
+		}
+
+		else if (element->getType() == ELEMENT_ARRAY)
+		{
+			shared_ptr<dynamic_hud_array> text_element = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+			text_element->setVisible(0);
 		}
 	}
 }
@@ -604,19 +616,23 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 			j->clearBackgroundColor();
 			if (j->itemSelected(keys, cursor_position))
 			{
-				if (j->getType() == ELEMENT_ARRAY)
+				if (j->getType() == ELEMENT_ARRAY && !j->isSelectable())
 				{
 					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(j);
 					found = nested_array->getSelectedWithinArray(keys, cursor_position, type, identifier);
 				}
 
-				else found = j;
+				else if (j->isSelectable())
+					found = j;
 			}
 		}
 	}
 
 	if (found == nullptr)
+	{
 		type = NO_TYPE;
+		identifier = "";
+	}
 
 	else
 	{

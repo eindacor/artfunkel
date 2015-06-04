@@ -226,6 +226,8 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 							wall_selected.second->addArtwork(point_clicked, *painting_to_place);
 							current_player->addPaintingToDisplay(painting_to_place);
 
+							current_player->addFunds(painting_to_place->getValue() / 3);
+
 							not_displayed_copy = current_player->getNotDisplayedCopy();
 							artwork_thumbnails->clearElements();
 							for (int i = 0; i < not_displayed_copy.size(); i++)

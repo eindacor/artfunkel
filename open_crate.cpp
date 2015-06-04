@@ -9,7 +9,7 @@
 
 int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> &keys,
 	shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, 
-	const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
+	const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures, rarity r, int count)
 {
 	cout << "opening crate" << endl;
 	vec4 original_background = context->getBackgroundColor();
@@ -19,7 +19,9 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
-	vector<shared_ptr<artwork> > crate_contents = lg->generateArtworks(drop_count, 1.0f);
+	vector<shared_ptr<artwork> > crate_contents = lg->generateArtworks(count, r);
+	current_player->deductPayment(lg->getCrateCost(r, count));
+	cout << "charged: $" << lg->getCrateCost(r, count).getNumberString(true, false, 0) << endl;
 
 	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(0.0f, -0.85f), 2.0f, 0.3f,
 		pair<horizontal_justification, vertical_justification>(H_CENTER, V_MIDDLE)));
@@ -36,7 +38,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 		artwork_thumbnails->addElement(thumbnail);
 	}
 
-	shared_ptr<artwork_thumbnail> highlight = nullptr;
+	shared_ptr<artwork_thumbnail> painting_selected = nullptr;
 
 	/////////////////////UPDATED HUD
 	//identify positions for text
@@ -120,17 +122,17 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 			artwork_thumbnails->draw(context, camera);
 
-			if (highlight != nullptr)
+			if (painting_selected != nullptr)
 			{
 				work_description->draw(context, camera);
-				highlight->draw(context, camera);
+				painting_selected->draw(context, camera);
 			}
 
 			else work_description->drawBackground(context, camera);
 
-			if (keys->checkPress(GLFW_KEY_ENTER, false) && highlight != nullptr)
+			if (keys->checkPress(GLFW_KEY_ENTER, false) && painting_selected != nullptr)
 			{
-				shared_ptr<artwork> current_selection = highlight->getStoredArt();
+				shared_ptr<artwork> current_selection = painting_selected->getStoredArt();
 				bool already_owned = current_player->alreadyOwned(current_selection);
 
 				string alert_string;
@@ -148,12 +150,33 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 					else alert_string = "Your inventory has reached the limit";
 				}
+			}
 
-				//vec2 alert_position = (highlight != nullptr ? info_text->getLowerLeft() - vec2(0.0f, 0.1f) : title_screen_position);
+			if (keys->checkPress(GLFW_KEY_BACKSPACE, false) && painting_selected != nullptr)
+			{
+				shared_ptr<artwork> current_selection = painting_selected->getStoredArt();
 
-				//alert_text = text->getTextArray(alert_string, context, false, alert_color, transparent_color,
-					//"text", "text_color", "transparency_color",
-					//true, alert_position, alert_scale, text_box_width);
+				for (vector<shared_ptr<artwork> >::iterator it = crate_contents.begin(); it != crate_contents.end(); it++)
+				{
+					if (**it == *current_selection)
+					{
+						crate_contents.erase(it);
+						current_player->addFunds(current_selection->getValue());		
+						painting_selected = nullptr;
+						break;
+					}
+				}
+
+				artwork_thumbnails->clearElements();
+				for (int i = 0; i < crate_contents.size(); i++)
+				{
+					string identifier = std::to_string(i) + "_" + crate_contents.at(i)->getData()->getArtistName() + "_"
+						+ crate_contents.at(i)->getData()->getTitle();
+					crate_contents.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, crate_contents.at(i), context, vec2(0.3f, 0.3f), 0.01f));
+					thumbnail->setDrawSelected(highlight, fullBrightness);
+					artwork_thumbnails->addElement(thumbnail);
+				}
 			}
 
 			if (keys->checkPress(GLFW_KEY_A, false))
@@ -187,15 +210,15 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 				if (selected_type == THUMBNAIL)
 				{
-					highlight = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("highlight", selected->getStoredArt(), 
+					painting_selected = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("painting_selected", selected->getStoredArt(),
 						context, vec2(-0.4f, 0.15f), vec2(1.2f, 1.7f), 0.1f));
 
-					title_text->setText(highlight->getStoredArt()->getData()->getTitle());
-					artist_text->setText(highlight->getStoredArt()->getData()->getArtistName());
-					value_text->setText("$" + highlight->getStoredArt()->getValue().getNumberString(true, false, 2));
-					rarity_text->setText(stringFromRarity(highlight->getStoredArt()->getData()->getRarity()));
+					title_text->setText(painting_selected->getStoredArt()->getData()->getTitle());
+					artist_text->setText(painting_selected->getStoredArt()->getData()->getArtistName());
+					value_text->setText("$" + painting_selected->getStoredArt()->getValue().getNumberString(true, false, 2));
+					rarity_text->setText(stringFromRarity(painting_selected->getStoredArt()->getData()->getRarity()));
 
-					switch (highlight->getStoredArt()->getData()->getRarity())
+					switch (painting_selected->getStoredArt()->getData()->getRarity())
 					{
 					case COMMON: rarity_text->setColor(vec4(0.6f, 0.9f, 0.6f, 1.0f)); break;
 					case UNCOMMON: rarity_text->setColor(vec4(0.6f, 0.6f, 0.9f, 1.0f)); break;
@@ -209,7 +232,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 				else
 				{
-					highlight = nullptr;
+					painting_selected = nullptr;
 					//title_text = nullptr;
 					//info_text = nullptr;
 					//rarity_text = nullptr;
@@ -230,6 +253,18 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 			{
 				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 				finished = true;
+			}
+
+			if (keys->checkPress(GLFW_KEY_COMMA, false))
+			{
+				artwork_thumbnails->pageDown();
+				painting_selected = nullptr;
+			}
+
+			if (keys->checkPress(GLFW_KEY_PERIOD, false))
+			{
+				artwork_thumbnails->pageUp();
+				painting_selected = nullptr;
 			}
 
 			context->swapBuffers();

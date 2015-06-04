@@ -155,7 +155,9 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 		context, text, title_centerpoint, title_element_dimensions, title_text_height, title_just, title_italics, title_color,
 		"text", "text_color", title_element_padding, title_spacing_scale));
 
-	vector<string> menu_items = { "edit gallery", "view inventory", "open crate", "options", "exit game" };
+	title_text->setSelectable(false);
+
+	vector<string> menu_items = { "edit gallery", "view inventory", "visit store", "options", "exit game" };
 	vector< shared_ptr<text_area> > menu_elements = createMenuOptions(menu_items, context, text);
 
 	menu->addElement(title_text);
@@ -192,7 +194,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 				if (identifier == "view inventory")
 					return 1;
 
-				if (identifier == "open crate")
+				if (identifier == "visit store")
 					return 2;
 
 				//if (identifier == "options")

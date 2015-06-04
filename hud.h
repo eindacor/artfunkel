@@ -25,6 +25,8 @@ public:
 	mat4 getTranslationMatrix() const { return glm::translate(mat4(1.0f), vec3(centerpoint.x, centerpoint.y, 0.0f)); }
 	float getHeight() const { return height; }
 	float getWidth() const { return width; }
+	void setHeight(float f) { height = f; }
+	void setWidth(float w) { width = w; }
 
 	bool isCurrentlyHovered() const { return currently_hovered; }
 	bool isCurrentlySelected() const { return currently_selected; }
@@ -73,6 +75,8 @@ public:
 	void setBackgroundColor(vec4 color);
 	void setBackgroundImage(const shared_ptr<image> &bi) { background_image = bi; }
 	void setBackgroundRec(const shared_ptr<rectangle> &br) { background_rec = br; }
+	void setSelectable(bool s) { selectable = s; }
+	bool isSelectable() const { return selectable; }
 
 	void clearBackgroundImage() { background_image = nullptr; }
 	void clearBackgroundColor() { background_rec = nullptr; }
@@ -97,6 +101,7 @@ private:
 	bool currently_hovered;
 	bool currently_selected;
 	bool currently_not_selected;
+	bool selectable = true;
 };
 
 //TODO create first and last getters, change to a thumbnail-specific class
@@ -112,6 +117,7 @@ public:
 		context = ogl_con;
 		justification = j;
 		array_padding = padding;
+		setSelectable(false);
 	}
 	~dynamic_hud_array(){};
 

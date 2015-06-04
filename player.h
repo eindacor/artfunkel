@@ -45,7 +45,10 @@ public:
 	unsigned short getLevel() const { return level; }
 	string getName() const { return name; }
 
+	bignum getBankBalance() const { return bank; }
 	string getBankBalanceString(bool commas) const { return bank.getNumberString(commas, false, 2); }
+	void deductPayment(const bignum &bn) { bank -= bn; }
+	void addFunds(const bignum &bn) { bank += bn; }
 
 private:
 	string name;

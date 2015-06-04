@@ -99,6 +99,57 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	work_description->addElement(artist_text);
 	work_description->addElement(value_text);
 
+
+	shared_ptr<dynamic_hud_array> player_summary(new dynamic_hud_array("player_summary", context, vec2(0.4f, -0.85f), 1.2f, 0.3f,
+		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
+
+	player_summary->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.7f));
+
+	float username_text_height(0.045f);
+	vec4 username_color(1.0f, 1.0f, 1.0f, 1.0f);
+	vec2 username_centerpoint(0.0f, 0.0f);
+	vec2 username_element_dimensions(0.76f, 0.1f);
+	pair <horizontal_justification, vertical_justification> username_just(H_LEFT, V_MIDDLE);
+	bool username_italics = true;
+	vec2 username_element_padding(0.015f, 0.0f / context->getAspectRatio());
+	vec2 username_spacing_scale(0.8f, 1.1f);
+
+	shared_ptr<text_area> username_text(new text_area("username_text", current_player->getName(),
+		context, text, username_centerpoint, username_element_dimensions, username_text_height, username_just, username_italics, username_color,
+		"text", "text_color", username_element_padding, username_spacing_scale));
+
+	float collection_text_height(0.03f);
+	vec4 collection_color(0.7f, 0.7f, 0.7f, 1.0f);
+	vec2 collection_centerpoint(0.0f, 0.0f);
+	vec2 collection_element_dimensions(0.76f, 0.032f);
+	pair <horizontal_justification, vertical_justification> collection_just(H_LEFT, V_MIDDLE);
+	bool collection_italics = false;
+	vec2 collection_element_padding(0.025f, 0.0f);
+	vec2 collection_spacing_scale(0.8f, 1.0f);
+
+	shared_ptr<text_area> collection_text(new text_area("collection_text", 
+		"Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2), context, text, collection_centerpoint, 
+		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
+		"text", "text_color", collection_element_padding, collection_spacing_scale));
+
+	float bank_text_height(0.03f);
+	vec4 bank_color(0.7f, 0.7f, 0.7f, 1.0f);
+	vec2 bank_centerpoint(0.0f, 0.0f);
+	vec2 bank_element_dimensions(0.76f, 0.032f);
+	pair <horizontal_justification, vertical_justification> bank_just(H_LEFT, V_MIDDLE);
+	bool bank_italics = false;
+	vec2 bank_element_padding(0.025f, 0.0f);
+	vec2 bank_spacing_scale(0.8f, 1.0f);
+
+	shared_ptr<text_area> bank_text(new text_area("bank_text",
+		"Bank Balance: $" + current_player->getBankBalanceString(true), context, text, collection_centerpoint,
+		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
+		"text", "text_color", collection_element_padding, collection_spacing_scale));
+
+	player_summary->addElement(username_text);
+	player_summary->addElement(collection_text);
+	player_summary->addElement(bank_text);
+
 	////////////////////////////////
 
 	shared_ptr<artwork_thumbnail> selected_painting = nullptr;
@@ -117,6 +168,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			glfwPollEvents();
 			context->clearBuffers();
 	
+			player_summary->draw(context, camera);
 			artwork_thumbnails->draw(context, camera);
 
 			if (selected_painting != nullptr)
@@ -126,13 +178,6 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			}
 
 			else work_description->drawBackground(context, camera);
-
-			//if (title_text != nullptr)
-				//title_text->draw(camera, context);
-			//if (info_text != nullptr)
-				//info_text->draw(camera, context);
-			//if (rarity_text != nullptr)
-				//rarity_text->draw(camera, context);
 
 			context->swapBuffers();
 
@@ -172,10 +217,6 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				else
 				{
 					selected_painting = nullptr;
-					//title_text = nullptr;
-					//info_text = nullptr;
-					//rarity_text = nullptr;
-					//alert_text = nullptr;
 				}
 			}
 
@@ -183,35 +224,26 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			{
 				artwork_thumbnails->pageDown();
 				selected_painting = nullptr;
-				//title_text = nullptr;
-				//info_text = nullptr;
-				//rarity_text = nullptr;
-				//alert_text = nullptr;
 			}
 
 			if (keys->checkPress(GLFW_KEY_PERIOD, false))
 			{
 				artwork_thumbnails->pageUp();
 				selected_painting = nullptr;
-				//title_text = nullptr;
-				//info_text = nullptr;
-				//rarity_text = nullptr;
-				//alert_text = nullptr;
 			}
 
 			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_DELETE, false)) && selected_painting != nullptr)
 			{
 				current_player->removeWorkFromInventory(selected_painting->getStoredArt());
 
+				bank_text->setText("Bank Balance: $" + current_player->getBankBalanceString(true));
+				collection_text->setText("Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2));
+
 				artwork_thumbnails->clearElements();
 
 				inventory_copy.clear();
 				inventory_copy = current_player->getInventoryCopy();
 				selected_painting = nullptr;
-				//title_text = nullptr;
-				//info_text = nullptr;
-				//rarity_text = nullptr;
-				//alert_text = nullptr;
 
 				for (int i = 0; i < inventory_copy.size(); i++)
 				{
