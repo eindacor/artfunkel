@@ -146,9 +146,31 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 					{
 						alert_string = (current_selection)->getData()->getTitle() + " has been added to your inventory";
 						alert_string += "\n\nCollection value: $" + current_player->getCollectionValue().getNumberString(true, false, 2);
+
+						for (vector<shared_ptr<artwork> >::iterator it = crate_contents.begin(); it != crate_contents.end(); it++)
+						{
+							if (**it == *current_selection)
+							{
+								crate_contents.erase(it);
+								painting_selected = nullptr;
+								break;
+							}
+						}
+
+						artwork_thumbnails->clearElements();
+						for (int i = 0; i < crate_contents.size(); i++)
+						{
+							string identifier = std::to_string(i) + "_" + crate_contents.at(i)->getData()->getArtistName() + "_"
+								+ crate_contents.at(i)->getData()->getTitle();
+							crate_contents.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
+							shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, crate_contents.at(i), context, vec2(0.3f, 0.3f), 0.01f));
+							thumbnail->setDrawSelected(highlight, fullBrightness);
+							artwork_thumbnails->addElement(thumbnail);
+						}
 					}
 
 					else alert_string = "Your inventory has reached the limit";
+
 				}
 			}
 
@@ -179,7 +201,8 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 				}
 			}
 
-			if (keys->checkPress(GLFW_KEY_A, false))
+			//temporarily disable
+			if (keys->checkPress(GLFW_KEY_A, false) && false)
 			{
 				string alert_string;
 				for (const auto &i : crate_contents)
