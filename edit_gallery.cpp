@@ -50,12 +50,6 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 		artwork_thumbnails->addElement(thumbnail);
 	}
 
-	glfwSetTime(0);
-	float render_fps = 60.0f;
-
-	bool finished = false;
-	int menu_return = 0;
-
 	/////////////////////UPDATED HUD
 	//identify positions for text
 	shared_ptr<dynamic_hud_array> work_description(new dynamic_hud_array("description", context, vec2(0.6f, 0.9f), 0.8f, 0.25f,
@@ -129,6 +123,16 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	bool inventory_displayed = true;
 
 	shared_ptr<rectangle> placement_preview = nullptr;
+
+
+	glfwSetTime(0);
+	float render_fps = 60.0f;
+	bool finished = false;
+	int menu_return = 0;
+
+	clock_t begin = clock();
+	//TODO put this in player class, determined by level/rep
+	bignum gallery_value_per_sec(".0005");
 
 	while (!finished)
 	{
@@ -222,16 +226,23 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 						if (wall_selected.second->validPlacement(painting_to_place, point_clicked))
 						{
+							clock_t end = clock();
+							int elapsed_secs = int(double(end - begin) / CLOCKS_PER_SEC);
+							bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * current_gallery->getGalleryValue();
+							current_player->addFunds(money_made);
+							begin = clock();
+
 							//TODO find a way to combine these to ensure players paintings are never added without updating player
 							painting_to_place->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
-							wall_selected.second->addArtwork(point_clicked, *painting_to_place);
+							current_gallery->addArtwork(wall_selected.second->getIndex(), painting_to_place, point_clicked);
+							//wall_selected.second->addArtwork(point_clicked, *painting_to_place);
 							current_player->addPaintingToDisplay(painting_to_place);
 
 							unsigned work_id = painting_to_place->getData()->getID();
 
 							if (!current_player->getPaintingFromInventory(work_id)->getProfited())
 							{
-								current_player->addFunds(lg->calcPlacementBonus(painting_to_place->getValue()));
+								//current_player->addFunds(lg->calcPlacementBonus(painting_to_place->getValue()));
 								current_player->getPaintingFromInventory(work_id)->setProfitedTEMP(true);
 							}
 
@@ -302,6 +313,12 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_DELETE, false)) && artwork_selected.second != nullptr)
 			{
+				clock_t end = clock();
+				int elapsed_secs = int(double(end - begin) / CLOCKS_PER_SEC);
+				bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * current_gallery->getGalleryValue();
+				current_player->addFunds(money_made);
+				begin = clock();
+
 				current_player->removePaintingFromDisplay(artwork_selected.second);
 				current_player->getGallery(0)->removeArtwork(artwork_selected.second);
 				artwork_selected = pair<float, shared_ptr<artwork> >(0.0f, nullptr);
@@ -318,6 +335,8 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					thumbnail->setDrawSelected(highlight, fullBrightness);
 					artwork_thumbnails->addElement(thumbnail);
 				}
+
+				begin = clock();
 			}
 
 			if (keys->checkPress(GLFW_KEY_COMMA, false) && inventory_displayed)
@@ -354,6 +373,12 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			glfwSetTime(0.0f);
 		}
 	}
+
+	clock_t end = clock();
+	int elapsed_secs = int(double(end - begin) / CLOCKS_PER_SEC);
+	bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * current_gallery->getGalleryValue();
+	current_player->addFunds(money_made);
+	begin = clock();
 
 	context->setBackgroundColor(original_background);
 	return menu_return;

@@ -48,7 +48,7 @@ public:
 	bignum getBankBalance() const { return bank; }
 	string getBankBalanceString(bool commas) const { return bank.getNumberString(commas, false, 2); }
 	void deductPayment(const bignum &bn) { bank -= bn; }
-	void addFunds(const bignum &bn) { bank += bn; }
+	void addFunds(const bignum &bn) { bank += bn; cout << "+ $" << bn.getNumberString(true, false, 2) << endl; }
 
 	shared_ptr<artwork> getPaintingFromInventory(unsigned int artwork_id) {
 		if (inventory.find(artwork_id) != inventory.end())

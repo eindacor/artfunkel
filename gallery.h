@@ -10,7 +10,7 @@ class display_wall
 public:
 	//class constructed with vec3's, then converts to vec2's with a model matrix to simplify raytracing
 	//first point is used as the wall origin, which is used to determing the painting location matrix
-	display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX);
+	display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX, int wall_index);
 	~display_wall(){}
 
 	bool validPlacement(const shared_ptr<artwork> &placed, const vec2 &position);
@@ -29,6 +29,8 @@ public:
 	vec4 getCursorPositionWorldspace() const { return wall_model_matrix * vec4(cursor_position.x, cursor_position.y, 0.0f, 1.0f); }
 	vec2 getCursorPositionWallspace() const { return cursor_position; }
 
+	int getIndex() const { return wall_index; }
+
 private:
 	//wall_edges is used to determine whether a point is inside or outside the wall
 	vector< pair<vec3, vec3> > wall_edges;
@@ -41,6 +43,9 @@ private:
 	//and incorporates the wall_model_matrix. position vector is stored separately for artwork collision purposes
 	vector< pair<vec2, shared_ptr<artwork> > >wall_contents;
 	mat4 wall_model_matrix;
+
+	//corresponds with index in gallery
+	int wall_index;
 
 	shared_ptr<jep::ogl_data> opengl_data;
 
@@ -66,6 +71,7 @@ public:
 	string getTemplateName() const { return template_name; }
 	string getOwnerName() const { return owner; }
 	const map <int, shared_ptr<display_wall> > getWalls() const { return display_walls; }
+	bignum getGalleryValue() const { return gallery_value; }
 
 	//work ID, position, wall index
 	const map< unsigned, pair<vec2, unsigned short> >  getWorkMap() const;
@@ -81,6 +87,7 @@ private:
 	float height;
 	//lines are for testing only
 	vector< shared_ptr<line> > lines;
+	bignum gallery_value;
 
 	vector< shared_ptr<jep::ogl_data> > environment_models;
 	//vector<player> players_present;

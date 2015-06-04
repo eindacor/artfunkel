@@ -80,7 +80,6 @@ void savePlayer(const string &data_path, const string player_name, const shared_
 	{
 		unsigned id = (unsigned)work.first;
 		writeToFile(save_file, id);
-		cout << "work id: " << id << "(" << work.second->getProfited() << ")" << endl;
 
 		bool profited = work.second->getProfited();
 		writeToFile(save_file, profited);
@@ -230,7 +229,7 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 	}
 }
 
-void saveGellery(const string &data_path, const shared_ptr<gallery> &toSave)
+void saveGallery(const string &data_path, const shared_ptr<gallery> &toSave)
 {
 	/*
 	string owner_name

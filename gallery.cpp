@@ -5,8 +5,9 @@
 //dislay walls first need their vertex data modified to be flat on the z-axis, so raytracing only needs to modify the ray created for click
 //detection, rather than matrix-translating all of the walls on-click
 
-display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX)
+display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX, int index)
 {
+	wall_index = index;
 	vector<float> vec_vertices = mesh.getInterleaveData();
 
 	//TODO make data collection more robust for bad model files
@@ -310,7 +311,7 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 		string texture_filename = display_wall_materials.at(i.getMaterialName()).getTextureFilename();
 		if (textures->getTexture(texture_filename) == nullptr)
 			textures->addTexture(texture_filename);
-		shared_ptr<display_wall> new_wall(new display_wall(context, i, textures->getTexture(texture_filename)));
+		shared_ptr<display_wall> new_wall(new display_wall(context, i, textures->getTexture(texture_filename), display_wall_counter));
 		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
 	}
 
@@ -450,7 +451,10 @@ shared_ptr<artwork> gallery::getClosestArtworkUnderCursor(shared_ptr<key_handler
 void gallery::addArtwork(int wall_index, const shared_ptr<artwork> &toAdd, vec2 position)
 {
 	if (display_walls.find(wall_index) != display_walls.end())
+	{
+		gallery_value += toAdd->getValue();
 		display_walls.at(wall_index)->addArtwork(position, *toAdd);
+	}
 }
 
 void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
@@ -458,7 +462,10 @@ void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
 	for (const auto &i : display_walls)
 	{
 		if (i.second->removeArtwork(to_remove))
+		{
+			gallery_value -= to_remove->getValue();
 			return;
+		}
 	}
 }
 
