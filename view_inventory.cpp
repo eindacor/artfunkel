@@ -232,7 +232,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				selected_painting = nullptr;
 			}
 
-			if (keys->checkPress(GLFW_KEY_EQUAL, false))
+			if (keys->checkPress(GLFW_KEY_EQUAL, false) && current_player->getName() == "EindacorDS")
 			{
 				current_player->addFunds(bignum("100000"));
 				bank_text->setText("Bank Balance: $" + current_player->getBankBalanceString(true));
