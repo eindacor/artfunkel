@@ -57,6 +57,7 @@ artwork::artwork()
 	p_frame = nullptr;
 	data = nullptr;
 	updateOverallDimensions();
+	profited = false;
 }
 
 artwork::artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, float work_condition)
@@ -67,6 +68,7 @@ artwork::artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, f
 	model_matrix = glm::translate(mat4(1.0f), vec3(0.0f, 0.0f, 0.0f));
 	p_frame = nullptr;
 	centerpoint = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+	profited = false;
 	setValue();
 	updateOverallDimensions();
 }
@@ -81,6 +83,7 @@ artwork::artwork(const artwork &original)
 	value = original.getValue();
 	data = original.getData();
 	updateOverallDimensions();
+	profited = original.getProfited();
 }
 
 void artwork::moveRelative(mat4 move_matrix) 

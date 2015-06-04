@@ -80,6 +80,10 @@ void savePlayer(const string &data_path, const string player_name, const shared_
 	{
 		unsigned id = (unsigned)work.first;
 		writeToFile(save_file, id);
+		cout << "work id: " << id << "(" << work.second->getProfited() << ")" << endl;
+
+		bool profited = work.second->getProfited();
+		writeToFile(save_file, profited);
 	}
 
 	map<int, shared_ptr<gallery> > galleries = (current_player->getGalleries());
@@ -162,6 +166,10 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 			unsigned work_id = getFromFile<unsigned>(load_file);
 			shared_ptr<artwork_data> work_data = database->getArtwork(work_id);
 			shared_ptr<artwork> work(new artwork(work_data, false, 1.0f));
+
+			bool profited = getFromFile<bool>(load_file);
+			work->setProfitedTEMP(profited);
+
 			generated_player->addWorkToInventory(work);
 		}
 

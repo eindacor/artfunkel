@@ -226,7 +226,13 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 							wall_selected.second->addArtwork(point_clicked, *painting_to_place);
 							current_player->addPaintingToDisplay(painting_to_place);
 
-							current_player->addFunds(painting_to_place->getValue() / 3);
+							unsigned work_id = painting_to_place->getData()->getID();
+
+							if (!current_player->getPaintingFromInventory(work_id)->getProfited())
+							{
+								current_player->addFunds(painting_to_place->getValue() / 3);
+								current_player->getPaintingFromInventory(work_id)->setProfitedTEMP(true);
+							}
 
 							not_displayed_copy = current_player->getNotDisplayedCopy();
 							artwork_thumbnails->clearElements();

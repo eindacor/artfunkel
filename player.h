@@ -50,6 +50,13 @@ public:
 	void deductPayment(const bignum &bn) { bank -= bn; }
 	void addFunds(const bignum &bn) { bank += bn; }
 
+	shared_ptr<artwork> getPaintingFromInventory(unsigned int artwork_id) {
+		if (inventory.find(artwork_id) != inventory.end())
+			return inventory.at(artwork_id);
+
+		else return nullptr;
+	}
+
 private:
 	string name;
 	//key corresponds to painting ID

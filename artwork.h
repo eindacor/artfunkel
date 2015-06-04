@@ -103,12 +103,17 @@ public:
 	bool isClicked(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
 		const pair<vec3, vec3> &ray, float &scale) const;
 
+	void setProfitedTEMP(bool b) { profited = b; }
+	bool getProfited() const { return profited; }
+
 private:
 	bignum value;
 	bool forgery;
 	float condition;
 	vec4 centerpoint;
 	mat4 model_matrix;
+
+	bool profited;
 
 	vec3 overall_dimensions;
 	//vector below stores faces to check for click selection;
