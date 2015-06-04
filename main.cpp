@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 		switch (menu_return)
 		{
 		//case -1: menu_return = menuTest(data_path, context, keys, current_player, loot, text, textures); break;
-		case 0: menu_return = editGallery(data_path, context, keys, current_player, text, textures); break;
+		case 0: menu_return = editGallery(data_path, context, keys, current_player, loot, text, textures); break;
 		case 1: menu_return = viewInventory(data_path, context, keys, current_player, text, textures); break;
 		case 2: menu_return = visitStore(data_path, context, keys, current_player, loot, text, textures); break;
 		}

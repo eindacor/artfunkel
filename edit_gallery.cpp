@@ -7,7 +7,8 @@
 #include "utility_funcs.h"
 
 int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> keys,
-	shared_ptr<player> &current_player, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
+	shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, const shared_ptr<text_handler> &text, 
+	shared_ptr<texture_handler> &textures)
 {
 	float eye_level = 1.65f;
 	shared_ptr<ogl_camera> camera(new ogl_camera_free(keys, context, vec3(0.0f, eye_level, 5.0f), 45.0f));
@@ -230,7 +231,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 							if (!current_player->getPaintingFromInventory(work_id)->getProfited())
 							{
-								current_player->addFunds(painting_to_place->getValue() / 3);
+								current_player->addFunds(lg->calcPlacementBonus(painting_to_place->getValue()));
 								current_player->getPaintingFromInventory(work_id)->setProfitedTEMP(true);
 							}
 

@@ -21,6 +21,8 @@ public:
 
 	bignum getCrateCost(rarity r, int count) const;
 
+	bignum calcPlacementBonus(const bignum &value) const { return value * bignum(".3"); }
+
 private:
 	shared_ptr<art_db> artist_database;
 	map<rarity, unsigned> default_rarity_map;
