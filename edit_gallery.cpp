@@ -124,7 +124,6 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 	shared_ptr<rectangle> placement_preview = nullptr;
 
-
 	glfwSetTime(0);
 	float render_fps = 60.0f;
 	bool finished = false;
@@ -132,7 +131,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 	clock_t begin = clock();
 	//TODO put this in player class, determined by level/rep
-	bignum gallery_value_per_sec(".0005");
+	bignum gallery_value_per_sec(".0001");
 
 	while (!finished)
 	{
@@ -351,6 +350,15 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				artwork_thumbnails->pageUp();
 				painting_to_place = nullptr;
 				placement_preview = nullptr;
+			}
+
+			if (keys->checkPress(GLFW_KEY_T, false))
+			{
+				clock_t end = clock();
+				int elapsed_secs = int(double(end - begin) / CLOCKS_PER_SEC);
+				bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * current_gallery->getGalleryValue();
+				current_player->addFunds(money_made);
+				begin = clock();
 			}
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_RIGHT, false))
