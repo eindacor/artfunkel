@@ -4,11 +4,13 @@
 #include "header.h"
 #include "artwork.h"
 
+//TODO create typedef for horizontal/vertical justifications
 //hud_element abstract class
 class hud_element
 {
 public:
-	hud_element(string identifier, const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type);
+	hud_element(const string &hud_identifier, const vec2 &anchor_point, const justpair &anchor_location, 
+		const vec2 &on_screen_dimensions, const hud_element_type &type);
 	~hud_element(){};
 
 	virtual bool itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position);
@@ -110,12 +112,13 @@ class dynamic_hud_array : public hud_element
 {
 public:
 	//TODO swap width with height in constructor
-	dynamic_hud_array(string identifier, const shared_ptr<ogl_context> &ogl_con, const vec2 centerpoint,
-		float on_screen_width, float on_screen_height, pair<horizontal_justification, vertical_justification> j, vec2 padding=vec2(0.0f, 0.0f))
-		: hud_element(identifier, centerpoint, on_screen_width, on_screen_height, ELEMENT_ARRAY)
+	dynamic_hud_array(string identifier, const shared_ptr<ogl_context> &ogl_con, const vec2 &anchor_point,
+		const justpair &anchor_location, const vec2 &on_screen_dimensions,
+		const justpair interior_justification, vec2 padding = vec2(0.0f, 0.0f))
+		: hud_element(identifier, anchor_point, anchor_location, on_screen_dimensions, ELEMENT_ARRAY)
 	{
 		context = ogl_con;
-		justification = j;
+		justification = interior_justification;
 		array_padding = padding;
 		setSelectable(false);
 	}
@@ -128,6 +131,8 @@ public:
 	bool setVisible(int page_number);
 	void pageUp() { deselectAllWithin();  setVisible(current_page + 1); }
 	void pageDown() { deselectAllWithin();  setVisible(current_page - 1); }
+	bool isLastPage() const { return page_map.find(current_page + 1) == page_map.end(); }
+	bool isFirstPage() const { return page_map.find(current_page) == page_map.begin(); }
 	void clearElements() { array_elements.clear(); visible_lines.clear(); }
 	//getSelectedWithinArray is design to recurse if it detects nested arrays
 	virtual shared_ptr<hud_element> getSelectedWithinArray(
@@ -146,7 +151,7 @@ private:
 	vector< shared_ptr<hud_element> > array_elements;
 	map <int, vector<shared_ptr<hud_element> > >visible_lines;
 	vec2 array_padding;
-	pair<horizontal_justification, vertical_justification> justification;
+	justpair justification;
 	vector< shared_ptr<line> > lines;
 
 	shared_ptr<ogl_context> context;
@@ -161,15 +166,15 @@ class text_area : public hud_element
 {
 public:
 	text_area(string identifier, std::string s, const shared_ptr<ogl_context> &ogl_con, const shared_ptr<text_handler> &th,
-		vec2 centerpoint, vec2 on_screen_area_dimensions, float on_screen_height, 
-		pair<horizontal_justification, vertical_justification> j, bool italics, glm::vec4 color, GLchar* text_enable_ID, 
+		const vec2 &anchor_point, const justpair &anchor_location, const vec2 &on_screen_area_dimensions, float on_screen_height,
+		const justpair interior_justification, bool italics, const glm::vec4 &color, GLchar* text_enable_ID,
 		GLchar* text_color_ID, vec2 element_Padding = vec2(0.0f, 0.0f), vec2 character_spacing_scale=vec2(1.0f, 1.0f)) :
-		hud_element(identifier, centerpoint, on_screen_area_dimensions.x, on_screen_area_dimensions.y, TEXT_AREA)
+		hud_element(identifier, anchor_point, anchor_location, on_screen_area_dimensions, TEXT_AREA)
 	{
 		//character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
 		character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
 		context = ogl_con;
-		justification = j;
+		justification = interior_justification;
 		element_padding = element_Padding;
 		xy_spacing_scale = character_spacing_scale;
 
@@ -206,7 +211,7 @@ private:
 	string raw_text;
 	bool ital;
 	shared_ptr<ogl_context> context;
-	pair<horizontal_justification, vertical_justification> justification;
+	justpair justification;
 	vec2 element_padding, xy_spacing_scale;
 	int lines_per_page;
 
@@ -225,16 +230,18 @@ private:
 	vec2 character_dimensions;
 };
 
+//TODO simplify constructors and purge unused
 class artwork_thumbnail : public hud_element
 {
 public:
 	//dimensions & position
 	artwork_thumbnail(string identifier, const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context, 
-		const vec2 centerpoint, 
-		const vec2 on_screen_dimensions,
+		const vec2 &anchor_point, 
+		const justpair &anchor_location,
+		const vec2 &on_screen_dimensions,
 		float padding)
-		: hud_element(identifier, centerpoint, on_screen_dimensions.x, on_screen_dimensions.y, THUMBNAIL)
+		: hud_element(identifier, anchor_point, anchor_location, on_screen_dimensions, THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;  
@@ -244,10 +251,13 @@ public:
 	//square & position
 	artwork_thumbnail(string identifier, const shared_ptr<artwork> &art,
 		const shared_ptr<ogl_context> &context,
-		const vec2 centerpoint,
+		const vec2 anchor_point,
 		float square_height, 
 		float padding)
-		: hud_element(identifier, centerpoint, square_height / context->getAspectRatio(), square_height, THUMBNAIL)
+		: hud_element(identifier, anchor_point, 
+		justpair(H_CENTER, V_MIDDLE),
+		vec2(square_height / context->getAspectRatio(), square_height), 
+		THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
@@ -259,7 +269,10 @@ public:
 		const shared_ptr<ogl_context> &context,
 		const vec2 on_screen_dimensions, 
 		float padding)
-		: hud_element(identifier, vec2(0.0f, 0.0f), on_screen_dimensions.x, on_screen_dimensions.y, THUMBNAIL)
+		: hud_element(identifier, vec2(0.0f, 0.0f), 
+		justpair(H_CENTER, V_MIDDLE),
+		on_screen_dimensions, 
+		THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;
@@ -271,7 +284,10 @@ public:
 		const shared_ptr<ogl_context> &context,
 		float on_screen_height, 
 		float padding = 0.0f)
-		: hud_element(identifier, vec2(0.0f, 0.0f), on_screen_height / context->getAspectRatio(), on_screen_height, THUMBNAIL)
+		: hud_element(identifier, vec2(0.0f, 0.0f), 
+		justpair(H_CENTER, V_MIDDLE),
+		vec2(on_screen_height / context->getAspectRatio(), on_screen_height), 
+		THUMBNAIL)
 	{
 		stored = art;
 		thumbnail_padding = padding;

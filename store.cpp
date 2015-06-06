@@ -24,19 +24,18 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 
 	//overall container of title and value elements
 	pair <horizontal_justification, vertical_justification> button_just(H_LEFT, V_MIDDLE);
-	shared_ptr<dynamic_hud_array> button(new dynamic_hud_array(button_id, context, vec2(0.0f), 0.5f, .15f, button_just, vec2(0.05f, 0.0f)));
+	shared_ptr<dynamic_hud_array> button(new dynamic_hud_array(button_id, context, vec2(0.0f), justpair(H_CENTER, V_MIDDLE), vec2(0.5f, .14f), button_just, vec2(0.05f, 0.0f)));
 
 	float crate_title_text_height(0.05f);
 	vec4 crate_title_color(0.8f, 0.8f, 0.8f, 1.0f);
-	vec2 crate_title_centerpoint(0.0f, 0.0f);
-	vec2 crate_title_element_dimensions(0.46f, 0.06f);
+	vec2 crate_title_element_dimensions(0.46f, 0.052f);
 	pair <horizontal_justification, vertical_justification> option_title_just(H_LEFT, V_MIDDLE);
 	bool crate_title_italics = false;
 	vec2 crate_title_element_padding(0.025f, 0.0f);
 	vec2 crate_title_spacing_scale(0.8f, 1.0f);
 
 	shared_ptr<text_area> crate_title_button(new text_area(button_id, button_id,
-		context, text, crate_title_centerpoint, crate_title_element_dimensions, crate_title_text_height, option_title_just, 
+		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), crate_title_element_dimensions, crate_title_text_height, option_title_just,
 		crate_title_italics, crate_title_color, "text", "text_color", crate_title_element_padding, crate_title_spacing_scale));
 
 	switch (r)
@@ -49,7 +48,6 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 
 	float crate_value_text_height(0.04f);
 	vec4 crate_value_color(0.8f, 0.8f, 0.8f, 1.0f);
-	vec2 crate_value_centerpoint(0.0f, 0.0f);
 	vec2 crate_value_element_dimensions(0.46f, 0.045f);
 	pair <horizontal_justification, vertical_justification> crate_value_just(H_LEFT, V_MIDDLE);
 	bool crate_value_italics = false;
@@ -57,7 +55,7 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 	vec2 crate_value_spacing_scale(0.8f, 1.0f);
 
 	shared_ptr<text_area> crate_value_button(new text_area(button_id, "$" + lg->getCrateCost(r, count).getNumberString(true, false, 0),
-		context, text, crate_value_centerpoint, crate_value_element_dimensions, crate_value_text_height, crate_value_just,
+		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), crate_value_element_dimensions, crate_value_text_height, crate_value_just,
 		crate_value_italics, crate_value_color, "text", "text_color", crate_value_element_padding, crate_value_spacing_scale));
 
 	if (current_player->getBankBalance() < lg->getCrateCost(r, count))
@@ -79,10 +77,57 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> &keys,
 	shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
 {
-	shared_ptr<dynamic_hud_array> crate_menu(new dynamic_hud_array("description", context, vec2(-.75f, 0.0f), 0.5f, 2.0f,
-		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
+	shared_ptr<dynamic_hud_array> crate_menu(new dynamic_hud_array("description", context, vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.5f, 1.75f),
+		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
 
 	crate_menu->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
+
+	shared_ptr<dynamic_hud_array> player_summary(new dynamic_hud_array("player_summary", context, vec2(-1.0f, -1.0f), justpair(H_LEFT, V_BOTTOM), vec2(1.0f, 0.25f),
+		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
+
+	player_summary->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.7f));
+
+	float username_text_height(0.045f);
+	vec4 username_color(1.0f, 1.0f, 1.0f, 1.0f);
+	vec2 username_element_dimensions(0.76f, 0.09f);
+	justpair username_just(H_LEFT, V_MIDDLE);
+	bool username_italics = true;
+	vec2 username_element_padding(0.015f, 0.0f / context->getAspectRatio());
+	vec2 username_spacing_scale(0.8f, 1.1f);
+
+	shared_ptr<text_area> username_text(new text_area("username_text", current_player->getName(),
+		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), username_element_dimensions, username_text_height, username_just, username_italics, username_color,
+		"text", "text_color", username_element_padding, username_spacing_scale));
+
+	float collection_text_height(0.03f);
+	vec4 collection_color(0.7f, 0.7f, 0.7f, 1.0f);
+	vec2 collection_element_dimensions(0.76f, 0.032f);
+	justpair collection_just(H_LEFT, V_MIDDLE);
+	bool collection_italics = false;
+	vec2 collection_element_padding(0.025f, 0.0f);
+	vec2 collection_spacing_scale(0.8f, 1.0f);
+
+	shared_ptr<text_area> collection_text(new text_area("collection_text",
+		"Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2), context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
+		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
+		"text", "text_color", collection_element_padding, collection_spacing_scale));
+
+	float bank_text_height(0.03f);
+	vec4 bank_color(0.7f, 0.7f, 0.7f, 1.0f);
+	vec2 bank_element_dimensions(0.76f, 0.032f);
+	justpair bank_just(H_LEFT, V_MIDDLE);
+	bool bank_italics = false;
+	vec2 bank_element_padding(0.025f, 0.0f);
+	vec2 bank_spacing_scale(0.8f, 1.0f);
+
+	shared_ptr<text_area> bank_text(new text_area("bank_text",
+		"Bank Balance: $" + current_player->getBankBalanceString(true), context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
+		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
+		"text", "text_color", collection_element_padding, collection_spacing_scale));
+
+	player_summary->addElement(username_text);
+	player_summary->addElement(collection_text);
+	player_summary->addElement(bank_text);
 
 	map<string, pair<rarity, int> >crate_map;
 
@@ -115,6 +160,7 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 
 			//background_image.draw(context, camera, true);
 			crate_menu->draw(context, camera);
+			player_summary->draw(context, camera);
 
 			vec2 cursor_position = keys->getCursorPosition();
 			hud_element_type selected_type;

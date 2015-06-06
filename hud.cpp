@@ -1,19 +1,59 @@
 #include "hud.h"
 
-hud_element::hud_element(string hud_id, const vec2 &item_centerpoint, float on_screen_width, float on_screen_height, hud_element_type type)
+hud_element::hud_element(const string &hud_identifier, const vec2 &anchor_point, const justpair &anchor_location,
+	const vec2 &on_screen_dimensions, const hud_element_type &type)
 {
-	height = on_screen_height;
-	width = on_screen_width;
-	centerpoint = item_centerpoint;
-	identifier = hud_id;
+	height = on_screen_dimensions.y;
+	width = on_screen_dimensions.x;
+	identifier = hud_identifier;
 
 	float half_height(height / 2.0f);
 	float half_width(width / 2.0f);
 
-	upper_left = vec2(centerpoint.x - half_width, centerpoint.y + half_height);
-	upper_right = vec2(centerpoint.x + half_width, centerpoint.y + half_height);
-	lower_left = vec2(centerpoint.x - half_width, centerpoint.y - half_height);
-	lower_right = vec2(centerpoint.x + half_width, centerpoint.y - half_height);
+	float upper, lower, left, right;
+
+	switch (anchor_location.first)
+	{
+	case H_LEFT: 
+		left = anchor_point.x; 
+		right = anchor_point.x + on_screen_dimensions.x;
+		centerpoint.x = anchor_point.x + half_width;
+		break;
+	case H_RIGHT: 
+		left = anchor_point.x - half_width; 
+		right = anchor_point.x + half_width; 
+		centerpoint.x = anchor_point.x - half_width;
+		break;
+	case H_CENTER: 
+		left = anchor_point.x - on_screen_dimensions.x; 
+		right = anchor_point.x; 
+		centerpoint.x = anchor_point.x;
+		break;
+	}
+
+	switch (anchor_location.second)
+	{
+	case V_TOP:
+		upper = anchor_point.y;
+		lower = anchor_point.y - on_screen_dimensions.y;
+		centerpoint.y = anchor_point.y - half_height;
+		break;
+	case V_BOTTOM:
+		upper = anchor_point.y - on_screen_dimensions.y;
+		lower = anchor_point.y;
+		centerpoint.y = anchor_point.y + half_height;
+		break;
+	case V_MIDDLE:
+		upper = anchor_point.y + half_height;
+		lower = anchor_point.y - half_height;
+		centerpoint.y = anchor_point.y;
+		break;
+	}
+
+	upper_left = vec2(left, upper);
+	upper_right = vec2(right, upper);
+	lower_left = vec2(left, lower);
+	lower_right = vec2(right, lower);
 
 	preDrawSelected = nullptr; 
 	postDrawSelected = nullptr;

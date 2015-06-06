@@ -40,8 +40,6 @@ class player;
 class gallery;
 class display_wall;
 class loot_generator;
-//class line;
-//class rectangle;
 class image;
 class hud_element;
 class hud;
@@ -84,6 +82,8 @@ using glm::vec4;
 using glm::vec3;
 using glm::vec2;
 using glm::mat4;
+
+typedef pair<horizontal_justification, vertical_justification> justpair;
 
 string getDateString(const date &d, bool include_day);
 string stringFromRarity(rarity r);
