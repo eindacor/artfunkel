@@ -652,6 +652,7 @@ void text_area::draw(const shared_ptr<ogl_context> &context, const shared_ptr<og
 	glEnable(GL_DEPTH_TEST);
 }
 
+/*
 bool dynamic_hud_array::handleClick(const vec2 &cursor_position, string &identifier)
 {
 	identifier = "";
@@ -702,20 +703,83 @@ bool dynamic_hud_array::handleClick(const vec2 &cursor_position, string &identif
 
 			else if (deselect_on_miss)
 			{
-				if (element->getType() == ELEMENT_ARRAY)
+				if (!element->isSelectable() && element->getType() == ELEMENT_ARRAY)
 				{
 					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
 					nested_array->deselectAllWithin();
 				}
 
-				else element->deselect();
+				else  element->deselect();
 			}		
 		}
 	}
 
 	return false;
 }
+*/
 
+shared_ptr<hud_element> dynamic_hud_array::getMouseoverElement(const vec2 &cursor_position, bool select)
+{
+	bool element_found = false;
+	for (const auto &line_info : visible_lines) {
+		for (const auto &element : line_info.second) {
+
+			//nested arrays inherit the selection rules of their host array. if an outer array forbids multiple selections, no inner arrays can have multiple selections
+
+			if (element->cursorIsOver(cursor_position))
+			{
+				if (element->isSelectable())
+				{
+					if (select)
+					{
+						element->select();
+
+						if (!select_multiple)
+						{
+							selected_items_within.clear();
+							deselectAllOthersWithin(element->getIdentifier());
+						}
+
+						if (std::find(selected_items_within.begin(), selected_items_within.end(), element->getIdentifier()) == selected_items_within.end())
+							selected_items_within.push_back(element->getIdentifier());
+					}
+
+					return element;
+				}
+
+				else if (element->getType() == ELEMENT_ARRAY)
+				{
+					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+					shared_ptr<hud_element> nested_element = nested_array->getMouseoverElement(cursor_position, select);
+
+					if (nested_element != nullptr)
+					{
+						if (!select_multiple && select)
+						{
+							selected_items_within.clear();
+							deselectAllOthersWithin(nested_element->getIdentifier());
+						}
+
+						return nested_element;
+					}
+				}
+			}
+
+			else if (deselect_on_miss && select)
+			{
+				if (!element->isSelectable() && element->getType() == ELEMENT_ARRAY)
+				{
+					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+					nested_array->deselectAllWithin();
+				}
+
+				else  element->deselect();
+			}
+		}
+	}
+
+	return nullptr;
+}
 
 shared_ptr<hud_element> dynamic_hud_array::getElementWithinByID(const string &ID) const
 {
@@ -773,7 +837,7 @@ void dynamic_hud_array::deselectAllOthersWithin(const string &exception)
 		else if (!element->isSelectable() && element->getType() == ELEMENT_ARRAY)
 		{
 			shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
-			deselectAllOthersWithin(exception);
+			nested_array->deselectAllOthersWithin(exception);
 		}
 	}
 }
@@ -783,12 +847,15 @@ void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const share
 	glDisable(GL_DEPTH_TEST);
 	drawBackground(context, camera);
 	//drawLines(context, camera);
-	for (const auto &i : visible_lines)
+	for (const auto &line_info : visible_lines)
 	{
-		for (const auto &j : i.second)
+		for (const auto &element : line_info.second)
 		{
-			j->draw(context, camera);
-			//j->drawLines(context, camera);
+			if (element->isVisible())
+				element->draw(context, camera);
+
+			if (element->drawLinesEnabled())
+				element->drawLines(context, camera);
 		}
 	}
 

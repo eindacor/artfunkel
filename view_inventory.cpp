@@ -69,6 +69,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(1.0f, 0.9f), 
 		justpair(H_RIGHT, V_TOP), vec2(1.2f, 1.65f), justpair(H_LEFT, V_TOP)));
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
+	artwork_thumbnails->setDeselectOnMiss(true);
 	vec2 thumbsize(0.2f, 0.2f);
 	float thumbpadding(0.04f);
 	refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
@@ -129,16 +130,12 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				finished = (menu_return != 1);
 			}
 			
+			vec2 cursor_position = keys->getCursorPosition();
+			shared_ptr<hud_element> selected_element = artwork_thumbnails->getMouseoverElement(cursor_position, true);
+
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
-				vec2 cursor_position = keys->getCursorPosition();
-				hud_element_type selected_type;
-				string identifier;
-				artwork_thumbnails->handleClick(cursor_position, identifier);
-				shared_ptr<hud_element> selected_element = artwork_thumbnails->getElementWithinByID(identifier);
-				//shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
-
-				if (selected_type == THUMBNAIL)
+				if (selected_element != nullptr && selected_element->getType() == THUMBNAIL)
 				{				
 					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("selected", selected_element->getStoredArt(), context,
 						vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.8f, 1.0f), 0.1f));
@@ -146,60 +143,66 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					setWorkInfoDescription(work_info, selected_painting->getStoredArt());
 				}
 
-				else selected_painting = nullptr;
-
-				bool new_selection = sort_buttons->handleClick(cursor_position, identifier);
-				cout << "identifier: " << identifier << endl;
-				if (identifier == "value_sort")
+				else
 				{
-					if (current_sort == VALUE)
-						ascending = !ascending;
+					selected_element = sort_buttons->getMouseoverElement(cursor_position, true);
 
-					else ascending = false;
+					if (selected_element != nullptr)
+					{
+						string identifier = selected_element->getIdentifier();
 
-					current_sort = VALUE;
-					sortArtVec(inventory_copy, VALUE, ascending);
-					refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
-					selected_painting = nullptr;
-				}
+						if (identifier == "value_sort")
+						{
+							if (current_sort == VALUE)
+								ascending = !ascending;
 
-				if (identifier == "rarity_sort")
-				{
-					if (current_sort == RARITY)
-						ascending = !ascending;
+							else ascending = false;
 
-					else ascending = false;
+							current_sort = VALUE;
+							sortArtVec(inventory_copy, VALUE, ascending);
+							refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
+							selected_painting = nullptr;
+						}
 
-					current_sort = RARITY;
-					sortArtVec(inventory_copy, RARITY, ascending);
-					refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
-					selected_painting = nullptr;
-				}
+						else if (identifier == "rarity_sort")
+						{
+							if (current_sort == RARITY)
+								ascending = !ascending;
 
-				if (identifier == "title_sort")
-				{
-					if (current_sort == TITLE)
-						ascending = !ascending;
+							else ascending = false;
 
-					else ascending = true;
+							current_sort = RARITY;
+							sortArtVec(inventory_copy, RARITY, ascending);
+							refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
+							selected_painting = nullptr;
+						}
 
-					current_sort = TITLE;
-					sortArtVec(inventory_copy, TITLE, ascending);
-					refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
-					selected_painting = nullptr;
-				}
+						else if (identifier == "title_sort")
+						{
+							if (current_sort == TITLE)
+								ascending = !ascending;
 
-				if (identifier == "artist_sort")
-				{
-					if (current_sort == ARTIST_NAME)
-						ascending = !ascending;
+							else ascending = true;
 
-					else ascending = true;
+							current_sort = TITLE;
+							sortArtVec(inventory_copy, TITLE, ascending);
+							refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
+							selected_painting = nullptr;
+						}
 
-					current_sort = ARTIST_NAME;
-					sortArtVec(inventory_copy, ARTIST_NAME, ascending);
-					refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
-					selected_painting = nullptr;
+						else if (identifier == "artist_sort")
+						{
+							if (current_sort == ARTIST_NAME)
+								ascending = !ascending;
+
+							else ascending = true;
+
+							current_sort = ARTIST_NAME;
+							sortArtVec(inventory_copy, ARTIST_NAME, ascending);
+							refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
+							selected_painting = nullptr;
+						}
+					}
 				}
 			}
 
@@ -228,6 +231,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 				inventory_copy.clear();
 				inventory_copy = current_player->getInventoryCopy();
+				sortArtVec(inventory_copy, current_sort, ascending);
 				refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
 				selected_painting = nullptr;
 			}

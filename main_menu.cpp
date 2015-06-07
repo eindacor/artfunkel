@@ -89,27 +89,23 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 			player_summary->draw(context, camera);
 
 			vec2 cursor_position = keys->getCursorPosition();
-			hud_element_type selected_type;
-			string identifier;
-			menu->handleClick(cursor_position, identifier);
-			shared_ptr<hud_element> selected = menu->getElementWithinByID(identifier);
-			//shared_ptr<hud_element> selected = menu->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
+			shared_ptr<hud_element> selected = menu->getMouseoverElement(cursor_position, true);
 
-			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
+			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false) && selected != nullptr)
 			{
-				if (identifier == "edit gallery")
+				if (selected->getIdentifier() == "edit gallery")
 					return 0;
 
-				if (identifier == "view inventory")
+				if (selected->getIdentifier() == "view inventory")
 					return 1;
 
-				if (identifier == "visit store")
+				if (selected->getIdentifier() == "visit store")
 					return 2;
 
 				//if (identifier == "options")
 					//return 3;
 
-				if (identifier == "exit game")
+				if (selected->getIdentifier() == "exit game")
 					return 4;
 			}
 

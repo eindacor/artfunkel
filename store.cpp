@@ -82,6 +82,7 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
 
 	crate_menu->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
+	crate_menu->setDeselectOnMiss(true);
 
 	shared_ptr<dynamic_hud_array> player_summary = generatePlayerInfo(context, text, current_player);
 
@@ -119,16 +120,13 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 			player_summary->draw(context, camera);
 
 			vec2 cursor_position = keys->getCursorPosition();
-			hud_element_type selected_type;
-			string identifier;
-			shared_ptr<hud_element> selected = crate_menu->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
+			shared_ptr<hud_element> selected_element = crate_menu->getMouseoverElement(cursor_position, true);
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
-				if (identifier != "")
+				if (selected_element != nullptr)
 				{
-					pair<rarity, int> crate_selected = crate_map.at(identifier);
-					cout << "selected: " << identifier << endl;
+					pair<rarity, int> crate_selected = crate_map.at(selected_element->getIdentifier());
 
 					if (lg->getCrateCost(crate_selected.first, crate_selected.second) <= current_player->getBankBalance())
 					{

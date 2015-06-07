@@ -128,13 +128,15 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
 				vec2 cursor_position = keys->getCursorPosition();
-				hud_element_type selected_type;
-				string identifier;
-				shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
+				//hud_element_type selected_type;
+				//string identifier;
+				//artwork_thumbnails->handleClick(cursor_position, identifier);
+				shared_ptr<hud_element> selected_element = artwork_thumbnails->getMouseoverElement(cursor_position, true);
+				//shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
 
-				if (selected_type == THUMBNAIL)
+				if (selected_element != nullptr && selected_element->getType() == THUMBNAIL)
 				{
-					painting_to_place = selected->getStoredArt();
+					painting_to_place = selected_element->getStoredArt();
 					vec2 painting_dimensions = vec2(painting_to_place->getOverallDimensions().x, painting_to_place->getOverallDimensions().y);
 					placement_preview = shared_ptr<rectangle>(new rectangle(vec2(0.0f, 0.0f), painting_dimensions, vec4(1.0f, 1.0f, 0.0f, 0.5f)));
 

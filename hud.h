@@ -81,8 +81,12 @@ public:
 	void setBackgroundColor(vec4 color);
 	void setBackgroundImage(const shared_ptr<image> &bi) { background_image = bi; }
 	void setBackgroundRec(const shared_ptr<rectangle> &br) { background_rec = br; }
-	void setSelectable(bool s) { selectable = s; }
+	void setSelectable(bool b) { selectable = b; }
 	bool isSelectable() const { return selectable; }
+	void setVisibility(bool b) { visible = b; }
+	bool isVisible() const { return visible; }
+	void setLineDraw(bool b) { draw_lines = b; }
+	bool drawLinesEnabled() const { return draw_lines; }
 
 	void clearBackgroundImage() { background_image = nullptr; }
 	void clearBackgroundColor() { background_rec = nullptr; }
@@ -108,6 +112,8 @@ private:
 	bool currently_selected;
 	bool currently_not_selected;
 	bool selectable = true;
+	bool visible = true;
+	bool draw_lines = false;
 };
 
 //TODO create first and last getters, change to a thumbnail-specific class
@@ -161,7 +167,8 @@ public:
 
 	void deselectAllWithin();
 	void deselectAllOthersWithin(const string &exception);
-	bool handleClick(const vec2 &cursor_position, string &identifier);
+	//bool handleClick(const vec2 &cursor_position, string &identifier);
+	shared_ptr<hud_element> getMouseoverElement(const vec2 &cursor_position, bool select);
 
 	void setSelectMultiple(bool b) { select_multiple = b; }
 	void setDeselectOnMiss(bool b) { deselect_on_miss = b; }
