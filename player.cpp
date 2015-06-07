@@ -30,7 +30,7 @@ player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<text
 
 bool player::addWorkToInventory(const shared_ptr<artwork> &work)
 {
-	if (inventory.size() < 60)
+	if (inventory.size() < 80)
 	{
 		collection_value += work->getValue();
 
@@ -210,13 +210,25 @@ void player::updateBank()
 
 	int elapsed_secs = difftime(current_time, last_balance_check);
 
-	bignum gallery_value_per_sec(".0001");
 	cout << "-----------" << endl;
 	cout << "previous balance: $" << bank.getNumberString(true, false, 2) << endl;
 	cout << "seconds passed: " << elapsed_secs << endl;
 	bignum total_gallery_value;
 	for (const auto &gallery : active_galleries)
 		total_gallery_value += gallery.second->getGalleryValue();
+
+	bignum max_gallery_value_per_sec(".0001");
+	bignum min_gallery_value_per_sec(".000001");
+
+	bignum bn_elapsed_time(elapsed_secs);
+	bignum hours_passed = bn_elapsed_time / bignum(3600);
+	hours_passed.roundToIndex(ONES_PLACE);
+	cout << "hours passed: " << hours_passed.getNumberString(true, false, 2) << endl;
+
+	bignum time_modifier = (hours_passed > bignum(0) ? jep::exponent(bignum(".5"), hours_passed) : bignum(1));
+	cout << "time modifier: " << time_modifier.getNumberString(true, false, 2) << endl;
+
+	bignum gallery_value_per_sec = (max_gallery_value_per_sec * time_modifier < min_gallery_value_per_sec ? min_gallery_value_per_sec : max_gallery_value_per_sec * time_modifier);
 
 	bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * total_gallery_value;
 	cout << "money made: $" << money_made.getNumberString(true, false, 2) << endl;

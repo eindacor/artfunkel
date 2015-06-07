@@ -248,7 +248,10 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			}
 
 			if (keys->checkPress(GLFW_KEY_T, false))
+			{
 				current_player->updateBank();
+				refreshPlayerInfo(player_summary, current_player);
+			}
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_RIGHT, false))
 			{

@@ -435,6 +435,7 @@ void saveGallery(const string &data_path, const shared_ptr<gallery> &toSave)
 	/*
 	string owner_name
 	string gallery_template_name
+	string gallery_name
 
 	unsigned short paintings_in_gallery
 		unsigned work_id
@@ -444,7 +445,7 @@ void saveGallery(const string &data_path, const shared_ptr<gallery> &toSave)
 	*/
 
 	cout << "SAVING GALLERY" << endl;
-	string file_path = data_path + "gamesave_data\\" + toSave->getOwnerName() + "_" + toSave->getTemplateName() + ".gal";
+	string file_path = data_path + "gamesave_data\\galleries\\" + toSave->getOwnerName() + "_" + toSave->getName() + ".gal";
 	const char* c_path = file_path.c_str();
 
 	std::ofstream save_file;
@@ -452,6 +453,7 @@ void saveGallery(const string &data_path, const shared_ptr<gallery> &toSave)
 
 	writeStringToFile(save_file, toSave->getOwnerName());
 	writeStringToFile(save_file, toSave->getTemplateName());
+	writeStringToFile(save_file, toSave->getName());
 
 	//work id, wall position, wall index
 	const map< unsigned, pair<vec2, unsigned short> > work_map(toSave->getWorkMap());
@@ -472,7 +474,7 @@ void saveGallery(const string &data_path, const shared_ptr<gallery> &toSave)
 	save_file.close();
 }
 
-shared_ptr<gallery> loadGallery(const string &data_path, const string &player_name, const string &template_name, 
+shared_ptr<gallery> loadGallery(const string &data_path, const pair<string, string> &owner_and_name, 
 	const shared_ptr<art_db> &database, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures)
 {
 	//TODO load/save frame data for each painting
@@ -489,7 +491,7 @@ shared_ptr<gallery> loadGallery(const string &data_path, const string &player_na
 	*/
 
 	cout << "LOADING GALLERY" << endl;
-	string file_path = data_path + "gamesave_data\\" + player_name + "_" + template_name + ".gal";
+	string file_path = data_path + "gamesave_data\\galleries\\" + owner_and_name.first + "_" + owner_and_name.second + ".gal";
 
 	if (fileExists(file_path))
 	{

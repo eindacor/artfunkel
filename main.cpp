@@ -35,12 +35,15 @@ int main(int argc, char* argv[])
 	shared_ptr<key_handler> keys(new key_handler(context));
 	shared_ptr<texture_handler> textures(new texture_handler(data_path + "\\" + "model_data"));
 	loadTextures(textures);
-	shared_ptr<text_handler> text(new text_handler(context, textures, "transparency_color", vec4(0.0f, 1.0f, 0.0f, 1.0f)));
+	shared_ptr<text_handler> text(new text_handler(context, textures->getTexture("text_template.bmp"), "transparency_color", vec4(0.0f, 1.0f, 0.0f, 1.0f)));
+
+	//string myriad_string = data_path + "\\" + "model_data\\myriad_pro.bmp";	
+	//text->addFont("myriad_pro", myriad_string.c_str());
+	//text->switchFont("myriad_pro");
 	
 	shared_ptr<art_db> artist_database(new art_db(artists_path.c_str(), paintings_path.c_str(), images_path.c_str()));
 	shared_ptr<loot_generator> loot(new loot_generator(artist_database));
 
-	//savePlayer(data_path, current_player->getName(), current_player);
 	shared_ptr<player> current_player = nullptr;
 	current_player = loadPlayer(data_path, username, artist_database, loot, context, textures);
 	savePlayer(data_path, current_player->getName(), current_player);
