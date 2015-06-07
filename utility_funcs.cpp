@@ -288,7 +288,7 @@ void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float spa
 }
 
 //TODO typdef vector of pairs
-vector< shared_ptr<artwork> >::iterator sortArtVec(vector< shared_ptr<artwork> > &art_vec, sort_options sort, bool ascending)
+vector< shared_ptr<artwork> >::iterator sortArtVec(vector< shared_ptr<artwork> > &art_vec, sort_option sort, bool ascending)
 {
 	switch (sort)
 	{

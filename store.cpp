@@ -6,6 +6,7 @@
 #include "menus.h"
 #include "gallery.h"
 #include "hud.h"
+#include "hud_common.h"
 
 //returns pair to add to crate map
 pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text,
@@ -82,52 +83,7 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 
 	crate_menu->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
 
-	shared_ptr<dynamic_hud_array> player_summary(new dynamic_hud_array("player_summary", context, vec2(-1.0f, -1.0f), justpair(H_LEFT, V_BOTTOM), vec2(1.0f, 0.25f),
-		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
-
-	player_summary->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.7f));
-
-	float username_text_height(0.045f);
-	vec4 username_color(1.0f, 1.0f, 1.0f, 1.0f);
-	vec2 username_element_dimensions(0.76f, 0.09f);
-	justpair username_just(H_LEFT, V_MIDDLE);
-	bool username_italics = true;
-	vec2 username_element_padding(0.015f, 0.0f / context->getAspectRatio());
-	vec2 username_spacing_scale(0.8f, 1.1f);
-
-	shared_ptr<text_area> username_text(new text_area("username_text", current_player->getName(),
-		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), username_element_dimensions, username_text_height, username_just, username_italics, username_color,
-		"text", "text_color", username_element_padding, username_spacing_scale));
-
-	float collection_text_height(0.03f);
-	vec4 collection_color(0.7f, 0.7f, 0.7f, 1.0f);
-	vec2 collection_element_dimensions(0.76f, 0.032f);
-	justpair collection_just(H_LEFT, V_MIDDLE);
-	bool collection_italics = false;
-	vec2 collection_element_padding(0.025f, 0.0f);
-	vec2 collection_spacing_scale(0.8f, 1.0f);
-
-	shared_ptr<text_area> collection_text(new text_area("collection_text",
-		"Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2), context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
-		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
-		"text", "text_color", collection_element_padding, collection_spacing_scale));
-
-	float bank_text_height(0.03f);
-	vec4 bank_color(0.7f, 0.7f, 0.7f, 1.0f);
-	vec2 bank_element_dimensions(0.76f, 0.032f);
-	justpair bank_just(H_LEFT, V_MIDDLE);
-	bool bank_italics = false;
-	vec2 bank_element_padding(0.025f, 0.0f);
-	vec2 bank_spacing_scale(0.8f, 1.0f);
-
-	shared_ptr<text_area> bank_text(new text_area("bank_text",
-		"Bank Balance: $" + current_player->getBankBalanceString(true), context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
-		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
-		"text", "text_color", collection_element_padding, collection_spacing_scale));
-
-	player_summary->addElement(username_text);
-	player_summary->addElement(collection_text);
-	player_summary->addElement(bank_text);
+	shared_ptr<dynamic_hud_array> player_summary = generatePlayerInfo(context, text, current_player);
 
 	map<string, pair<rarity, int> >crate_map;
 
@@ -176,6 +132,7 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 
 					if (lg->getCrateCost(crate_selected.first, crate_selected.second) <= current_player->getBankBalance())
 					{
+						refreshPlayerInfo(player_summary, current_player);
 						menu_return = openCrate(data_path, context, keys, current_player, lg, text, textures,
 							crate_selected.first, crate_selected.second);
 						finished = (menu_return != 2);

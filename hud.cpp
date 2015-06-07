@@ -126,15 +126,20 @@ void hud_element::updatePoints()
 	lines.push_back(center);
 }
 
-bool hud_element::itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position)
+bool hud_element::itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, bool deselect_if_false)
 {
-	if (cursor_position.x < upper_left.x || cursor_position.x > upper_right.x ||
-		cursor_position.y < lower_left.y || cursor_position.y > upper_left.y)
+	if ((cursor_position.x < upper_left.x || cursor_position.x > upper_right.x ||
+		cursor_position.y < lower_left.y || cursor_position.y > upper_left.y) && deselect_if_false)
 		currently_selected = false;
 
 	else currently_selected = true;
 
 	return currently_selected && selectable;
+}
+
+bool hud_element::cursorIsOver(const vec2 &cursor_position) const
+{
+	return !(cursor_position.x < upper_left.x || cursor_position.x > upper_right.x || cursor_position.y < lower_left.y || cursor_position.y > upper_left.y);
 }
 
 void hud_element::setBackgroundImage(const shared_ptr<ogl_context> &context, const char* image_path)
@@ -677,8 +682,146 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 	else
 	{
 		type = found->getType();
-		found->setBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.5f));
+		found->setBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.4f));
 		identifier = found->getIdentifier();
+	}
+
+	return found;
+}
+
+//this method is used when one of the elements shoudl always remain selected
+void dynamic_hud_array::updateSelectedWithin(const vec2 &cursor_position, bool deselect_others)
+{
+	for (const auto &line_info : visible_lines) {
+		for (const auto &element : line_info.second) {
+
+			if (element->cursorIsOver(cursor_position))
+			{
+				if (element->isSelectable())
+				{
+					if (deselect_others)
+						selected_items_within.clear();
+
+					if (std::find(selected_items_within.begin(), selected_items_within.end(), element->getIdentifier()) == selected_items_within.end())
+						selected_items_within.push_back(element->getIdentifier());
+				}
+
+				else if (element->getType() == ELEMENT_ARRAY)
+				{
+					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+					nested_array->updateSelectedWithin(cursor_position, deselect_others);
+				}
+			}
+		}
+	}
+}
+
+bool dynamic_hud_array::selectableElementHoveredWithin(const vec2 &cursor_position) const
+{
+	bool element_found = false;
+	for (const auto &line_info : visible_lines) {
+		for (const auto &element : line_info.second) {
+
+			if (element->cursorIsOver(cursor_position))
+			{
+				if (element->isSelectable())
+					return true;
+
+				else if (element->getType() == ELEMENT_ARRAY)
+				{
+					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+					element_found = nested_array->selectableElementHoveredWithin(cursor_position);
+				}
+
+				if (element_found)
+					return true;
+			}
+		}
+	}
+
+	return false;
+}
+bool dynamic_hud_array::handleClick(const vec2 &cursor_position, string &identifier)
+{
+	identifier = "";
+	bool element_found = false;
+	for (const auto &line_info : visible_lines) {
+		for (const auto &element : line_info.second) {
+
+			//nested arrays inherit the selection rules of their host array. if an outer array forbids multiple selections, no inner arrays can have multiple selections
+
+			if (element->cursorIsOver(cursor_position))
+			{
+				if (element->isSelectable())
+				{
+					element->select();
+
+					if (!select_multiple)
+					{
+						selected_items_within.clear();
+						deselectAllOthersWithin(element->getIdentifier());
+					}
+
+					if (std::find(selected_items_within.begin(), selected_items_within.end(), element->getIdentifier()) == selected_items_within.end())
+						selected_items_within.push_back(element->getIdentifier());
+
+					identifier = element->getIdentifier();
+					return true;
+				}
+
+				else if (element->getType() == ELEMENT_ARRAY)
+				{
+					string nested_identifier = "";
+					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+					element_found = nested_array->handleClick(cursor_position, nested_identifier);
+
+					if (element_found)
+					{
+						if (!select_multiple)
+						{
+							selected_items_within.clear();
+							deselectAllOthersWithin(nested_identifier);
+						}
+
+						identifier = nested_identifier;
+						return true;
+					}
+				}
+			}
+
+			else if (deselect_on_miss)
+			{
+				if (element->getType() == ELEMENT_ARRAY)
+				{
+					shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+					nested_array->deselectAllWithin();
+				}
+
+				else element->deselect();
+			}		
+		}
+	}
+
+	return false;
+}
+
+
+shared_ptr<hud_element> dynamic_hud_array::getElementWithinByID(const string &ID) const
+{
+	shared_ptr<hud_element> found = nullptr;
+	for (const auto &element : array_elements) 
+	{
+		if (element->getIdentifier() == ID)
+			return element;
+
+		else if (element->getType() == ELEMENT_ARRAY)
+		{
+			shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+			found = nested_array->getElementWithinByID(ID);
+		}
+
+		if (found != nullptr)
+			return found;
 	}
 
 	return found;
@@ -686,6 +829,8 @@ shared_ptr<hud_element> dynamic_hud_array::getSelectedWithinArray(
 
 void dynamic_hud_array::deselectAllWithin()
 {
+	selected_items_within.clear();
+
 	for (const auto &i : visible_lines) {
 		for (const auto &j : i.second) {
 			j->clearBackgroundColor();
@@ -697,6 +842,27 @@ void dynamic_hud_array::deselectAllWithin()
 			}
 
 			else j->deselect();
+		}
+	}
+	selected_items_within.clear();
+}
+
+void dynamic_hud_array::deselectAllOthersWithin(const string &exception)
+{
+	for (const auto &element : array_elements)
+	{
+		if (element->isSelectable() && element->getIdentifier() != exception)
+		{
+			element->deselect();
+			vector<string>::iterator found_in_selected = std::find(selected_items_within.begin(), selected_items_within.end(), element->getIdentifier());
+			if (found_in_selected != selected_items_within.end())
+				selected_items_within.erase(found_in_selected);
+		}
+
+		else if (!element->isSelectable() && element->getType() == ELEMENT_ARRAY)
+		{
+			shared_ptr<dynamic_hud_array> nested_array = boost::dynamic_pointer_cast<dynamic_hud_array>(element);
+			deselectAllOthersWithin(exception);
 		}
 	}
 }

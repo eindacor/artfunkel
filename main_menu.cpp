@@ -8,6 +8,7 @@
 #include "gallery.h"
 #include "hud.h"
 #include "fileman.h"
+#include "hud_common.h"
 
 vector< shared_ptr<text_area> > createMenuOptions(const vector<string> &options, const shared_ptr<ogl_context> &context,
 	const shared_ptr<text_handler> &text)
@@ -38,7 +39,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 {
 	savePlayer(data_path, current_player->getName(), current_player);
 
-	shared_ptr<dynamic_hud_array> menu(new dynamic_hud_array("description", context, vec2(-1.0f, 0.0f), justpair(H_LEFT, V_MIDDLE), vec2(0.5f, 2.0f),
+	shared_ptr<dynamic_hud_array> menu(new dynamic_hud_array("description", context, vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.5f, 1.75f),
 		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
 
 	string file_path = data_path + "images\\paintings\\murakami_727.bmp";
@@ -59,6 +60,8 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 		"text", "text_color", title_element_padding, title_spacing_scale));
 
 	title_text->setSelectable(false);
+
+	shared_ptr<dynamic_hud_array> player_summary = generatePlayerInfo(context, text, current_player);
 
 	vector<string> menu_items = { "edit gallery", "view inventory", "visit store", "options", "exit game" };
 	vector< shared_ptr<text_area> > menu_elements = createMenuOptions(menu_items, context, text);
@@ -83,6 +86,7 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 
 			background_image.draw(context, camera, true);
 			menu->draw(context, camera);
+			player_summary->draw(context, camera);
 
 			vec2 cursor_position = keys->getCursorPosition();
 			hud_element_type selected_type;

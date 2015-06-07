@@ -13,8 +13,12 @@ public:
 		const vec2 &on_screen_dimensions, const hud_element_type &type);
 	~hud_element(){};
 
-	virtual bool itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position);
-	void deselect() { currently_selected = false; }
+	//TODO Phase out itemSelected
+	virtual bool itemSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, bool deselect_if_false=true);
+
+	bool cursorIsOver(const vec2 &cursor_position) const;
+	void select() { currently_selected = true; setBackgroundColor(vec4(1.0f, 1.0f, 1.0f, 0.4f)); }
+	void deselect() { currently_selected = false; clearBackgroundColor(); }
 	virtual void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const = 0;
 
 	vec2 getUpperLeft() const { return upper_left; }
@@ -121,6 +125,8 @@ public:
 		justification = interior_justification;
 		array_padding = padding;
 		setSelectable(false);
+		deselect_on_miss = true;
+		select_multiple = false;
 	}
 	~dynamic_hud_array(){};
 
@@ -129,18 +135,47 @@ public:
 	void addElements(const vector< shared_ptr<hud_element> > &element_vec);
 	void setPageData();
 	bool setVisible(int page_number);
-	void pageUp() { deselectAllWithin();  setVisible(current_page + 1); }
-	void pageDown() { deselectAllWithin();  setVisible(current_page - 1); }
+	void pageUp() 
+	{ 
+		if (!isLastPage())
+		{
+			deselectAllWithin();
+			setVisible(current_page + 1);
+		}
+	}
+		
+	void pageDown()
+	{
+		if (!isFirstPage())
+		{
+			deselectAllWithin();
+			setVisible(current_page - 1);
+		}
+	}
+
 	bool isLastPage() const { return page_map.find(current_page + 1) == page_map.end(); }
 	bool isFirstPage() const { return page_map.find(current_page) == page_map.begin(); }
 	void clearElements() { array_elements.clear(); visible_lines.clear(); }
 	//getSelectedWithinArray is design to recurse if it detects nested arrays
 	virtual shared_ptr<hud_element> getSelectedWithinArray(
 		shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) const;
+	void updateSelectedWithin(const vec2 &cursor_position, bool deselect_others);
+	bool selectableElementHoveredWithin(const vec2 &cursor_position) const;
+	shared_ptr<hud_element> getElementWithinByID(const string &ID) const;
+	vector<string> getSelectedItemsWithin() const;
+
 	void deselectAllWithin();
+	void deselectAllOthersWithin(const string &exception);
+	bool handleClick(const vec2 &cursor_position, string &identifier);
+
+	void setSelectMultiple(bool b) { select_multiple = b; }
+	void setDeselectOnMiss(bool b) { deselect_on_miss = b; }
 
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;
 	void setLines();
+
+	float getAllowableWidth() const { return getWidth() - (array_padding.x * 2.0f); }
+	float getAllowableHeight() const { return getHeight() - (array_padding.y * 2.0f); }
 
 private:
 	//used during spacing of array
@@ -153,6 +188,10 @@ private:
 	vec2 array_padding;
 	justpair justification;
 	vector< shared_ptr<line> > lines;
+
+	vector<string> selected_items_within;
+	bool select_multiple;
+	bool deselect_on_miss;
 
 	shared_ptr<ogl_context> context;
 
@@ -170,6 +209,32 @@ public:
 		const justpair interior_justification, bool italics, const glm::vec4 &color, GLchar* text_enable_ID,
 		GLchar* text_color_ID, vec2 element_Padding = vec2(0.0f, 0.0f), vec2 character_spacing_scale=vec2(1.0f, 1.0f)) :
 		hud_element(identifier, anchor_point, anchor_location, on_screen_area_dimensions, TEXT_AREA)
+	{
+		//character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
+		character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
+		context = ogl_con;
+		justification = interior_justification;
+		element_padding = element_Padding;
+		xy_spacing_scale = character_spacing_scale;
+
+		raw_text = s;
+		text_enable_shader_ID = text_enable_ID;
+		text_color_shader_ID = text_color_ID;
+		text_color = color;
+
+		text = th;
+		ital = italics;
+
+		setPageData();
+
+		//TODO add code for setting text array
+	};
+
+	//disregards position(to be set in a dynamic array)
+	text_area(string identifier, std::string s, const shared_ptr<ogl_context> &ogl_con, const shared_ptr<text_handler> &th, const vec2 &on_screen_area_dimensions, float on_screen_height,
+		const justpair interior_justification, bool italics, const glm::vec4 &color, GLchar* text_enable_ID,
+		GLchar* text_color_ID, vec2 element_Padding = vec2(0.0f, 0.0f), vec2 character_spacing_scale = vec2(1.0f, 1.0f)) :
+		hud_element(identifier, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), on_screen_area_dimensions, TEXT_AREA)
 	{
 		//character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);
 		character_dimensions = vec2(on_screen_height / ogl_con->getAspectRatio(), on_screen_height);

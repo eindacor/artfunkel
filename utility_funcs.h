@@ -11,7 +11,7 @@ genre genreFromString(string s);
 rarity rarityFromString(string s);
 //this function takes a vector of instances and modifies their model matrices for proper display
 //void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float space_between = 2.0f, float eye_level = 1.65f, float starting_z = 0.0f, bool x_only = false);
-vector<shared_ptr<artwork> >::iterator sortArtVec(vector<shared_ptr<artwork> > &art_vec, sort_options sort, bool ascending = true);
+vector<shared_ptr<artwork> >::iterator sortArtVec(vector<shared_ptr<artwork> > &art_vec, sort_option sort, bool ascending = true);
 void printArtwork(const shared_ptr<artwork> &target);
 mat4 calcImageScale(const shared_ptr<artwork> &target, float width_max, float height_max);
 vector<vec2> getThumbnailLocations(const shared_ptr<ogl_context> &context, int thumbnail_count, float bottom_margin, float thumbnail_height);

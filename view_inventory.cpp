@@ -5,6 +5,50 @@
 #include "menus.h"
 #include "gallery.h"
 #include "hud.h"
+#include "hud_common.h"
+
+shared_ptr<dynamic_hud_array> generateSortButtons(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text)
+{
+	shared_ptr<dynamic_hud_array> sort_buttons(new dynamic_hud_array("sort_buttons", context, vec2(1.0f, 1.0f),
+		justpair(H_RIGHT, V_TOP), vec2(1.2f, 0.1f), justpair(H_CENTER, V_MIDDLE)));
+	sort_buttons->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
+
+	sort_buttons->setDeselectOnMiss(false);
+
+	float button_text_height(0.03f);
+	vec4 button_color(0.7f, 0.7f, 0.7f, 1.0f);
+	vec2 button_element_dimensions(0.24f, 0.075f);
+	justpair button_just(H_CENTER, V_MIDDLE);
+	bool button_italics = false;
+	vec2 button_element_padding(0.015f, 0.0f);
+	vec2 button_spacing_scale(0.8f, 1.0f);
+
+	shared_ptr<text_area> value_sort_button(new text_area("value_sort",
+		"by value", context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
+		button_element_dimensions, button_text_height, button_just, button_italics, button_color,
+		"text", "text_color", button_element_padding, button_spacing_scale));
+	sort_buttons->addElement(value_sort_button);
+
+	shared_ptr<text_area> rarity_sort_button(new text_area("rarity_sort",
+		"by rarity", context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
+		button_element_dimensions, button_text_height, button_just, button_italics, button_color,
+		"text", "text_color", button_element_padding, button_spacing_scale));
+	sort_buttons->addElement(rarity_sort_button);
+
+	shared_ptr<text_area> artist_sort_button(new text_area("artist_sort",
+		"by artist", context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
+		button_element_dimensions, button_text_height, button_just, button_italics, button_color,
+		"text", "text_color", button_element_padding, button_spacing_scale));
+	sort_buttons->addElement(artist_sort_button);
+
+	shared_ptr<text_area> title_sort_button(new text_area("title_sort",
+		"by title", context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
+		button_element_dimensions, button_text_height, button_just, button_italics, button_color,
+		"text", "text_color", button_element_padding, button_spacing_scale));
+	sort_buttons->addElement(title_sort_button);
+
+	return sort_buttons;
+}
 
 int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	shared_ptr<key_handler> &keys, shared_ptr<player> &current_player, 
@@ -15,132 +59,32 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	int display_count = 10;
 
+	shared_ptr<dynamic_hud_array> sort_buttons = generateSortButtons(context, text);
+	sort_option current_sort = NO_SORT;
+	bool ascending = false;
+
 	//TODO remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> >inventory_copy = current_player->getInventoryCopy();
-	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(1.0f, 1.0f), 
-		justpair(H_RIGHT, V_TOP), vec2(1.2f, 1.75f), justpair(H_LEFT, V_TOP)));
-
+	shared_ptr<dynamic_hud_array> artwork_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(1.0f, 0.9f), 
+		justpair(H_RIGHT, V_TOP), vec2(1.2f, 1.65f), justpair(H_LEFT, V_TOP)));
 	artwork_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
+	vec2 thumbsize(0.2f, 0.2f);
+	float thumbpadding(0.04f);
+	refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
 
 	//TODO equip dynamic array with function that generates thumbnails from artwork
 	//add player's default frames to each
-	for (int i = 0; i < inventory_copy.size(); i++)
-	{
-		string identifier = std::to_string(i) + "_" + inventory_copy.at(i)->getData()->getArtistName() + "_"
-			+ inventory_copy.at(i)->getData()->getTitle();
-		inventory_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-		shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, inventory_copy.at(i), context, vec2(0.2f, 0.3f), 0.04f));
-		thumbnail->setDrawSelected(highlight, fullBrightness);
-		artwork_thumbnails->addElement(thumbnail);
-	}
 
 	/////////////////////UPDATED HUD
 	//identify positions for text
-	shared_ptr<dynamic_hud_array> work_description(new dynamic_hud_array("description", context, vec2(-1.0f, -.75f), 
+	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(-1.0f, -.75f),
 		justpair(H_LEFT, V_BOTTOM), vec2(0.8f, 0.75f), justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
 
-	work_description->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
-
-	float title_text_height(0.045f);
-	vec4 title_color(1.0f, 1.0f, 1.0f, 1.0f);
-	vec2 title_element_dimensions(0.76f, 0.1f);
-	justpair title_just(H_LEFT, V_MIDDLE);
-	bool title_italics = true;
-	vec2 title_element_padding(0.015f, 0.0f / context->getAspectRatio());
-	vec2 title_spacing_scale(0.8f, 1.1f);
-
-	shared_ptr<text_area> title_text(new text_area("title_text", "not yet set",
-		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),  title_element_dimensions, title_text_height, title_just, title_italics, title_color,
-		"text", "text_color", title_element_padding, title_spacing_scale));
-
-	float rarity_text_height(0.03f);
-	vec4 rarity_color(1.0f, 1.0f, 1.0f, 1.0f);
-	vec2 rarity_element_dimensions(0.76f, 0.032f);
-	justpair rarity_just(H_LEFT, V_MIDDLE);
-	bool rarity_italics = false;
-	vec2 rarity_element_padding(0.025f, 0.0f);
-	vec2 rarity_spacing_scale(0.8f, 1.0f);
-
-	shared_ptr<text_area> rarity_text(new text_area("rarity_text", "not yet set",
-		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), rarity_element_dimensions, rarity_text_height, rarity_just, rarity_italics, rarity_color,
-		"text", "text_color", rarity_element_padding, rarity_spacing_scale));
-
-	float artist_text_height(0.03f);
-	vec4 artist_color(0.7f, 0.7f, 0.7f, 1.0f);
-	vec2 artist_element_dimensions(0.76f, 0.032f);
-	justpair artist_just(H_LEFT, V_MIDDLE);
-	bool artist_italics = false;
-	vec2 artist_element_padding(0.025f, 0.0f);
-	vec2 artist_spacing_scale(0.8f, 1.0f);
-
-	shared_ptr<text_area> artist_text(new text_area("artist_text", "not yet set",
-		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), artist_element_dimensions, artist_text_height, artist_just, artist_italics, artist_color,
-		"text", "text_color", artist_element_padding, artist_spacing_scale));
-
-	float value_text_height(0.03f);
-	vec4 value_color(0.7f, 0.7f, 0.7f, 1.0f);
-	vec2 value_element_dimensions(0.76f, 0.032f);
-	justpair value_just(H_LEFT, V_MIDDLE);
-	bool value_italics = false;
-	vec2 value_element_padding(0.025f, 0.0f);
-	vec2 value_spacing_scale(0.8f, 1.0f);
-
-	shared_ptr<text_area> value_text(new text_area("value_text", "not yet set",
-		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), value_element_dimensions, value_text_height, value_just, value_italics, value_color,
-		"text", "text_color", value_element_padding, value_spacing_scale));
-
-	work_description->addElement(title_text);
-	work_description->addElement(rarity_text);
-	work_description->addElement(artist_text);
-	work_description->addElement(value_text);
-
-	shared_ptr<dynamic_hud_array> player_summary(new dynamic_hud_array("player_summary", context, vec2(-1.0f, -1.0f), justpair(H_LEFT, V_BOTTOM), vec2(1.0f, 0.25f),
-		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
-
-	player_summary->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.7f));
-
-	float username_text_height(0.045f);
-	vec4 username_color(1.0f, 1.0f, 1.0f, 1.0f);
-	vec2 username_element_dimensions(0.76f, 0.09f);
-	justpair username_just(H_LEFT, V_MIDDLE);
-	bool username_italics = true;
-	vec2 username_element_padding(0.015f, 0.0f / context->getAspectRatio());
-	vec2 username_spacing_scale(0.8f, 1.1f);
-
-	shared_ptr<text_area> username_text(new text_area("username_text", current_player->getName(),
-		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), username_element_dimensions, username_text_height, username_just, username_italics, username_color,
-		"text", "text_color", username_element_padding, username_spacing_scale));
-
-	float collection_text_height(0.03f);
-	vec4 collection_color(0.7f, 0.7f, 0.7f, 1.0f);
-	vec2 collection_element_dimensions(0.76f, 0.032f);
-	justpair collection_just(H_LEFT, V_MIDDLE);
-	bool collection_italics = false;
-	vec2 collection_element_padding(0.025f, 0.0f);
-	vec2 collection_spacing_scale(0.8f, 1.0f);
-
-	shared_ptr<text_area> collection_text(new text_area("collection_text", 
-		"Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2), context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
-		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
-		"text", "text_color", collection_element_padding, collection_spacing_scale));
-
-	float bank_text_height(0.03f);
-	vec4 bank_color(0.7f, 0.7f, 0.7f, 1.0f);
-	vec2 bank_element_dimensions(0.76f, 0.032f);
-	justpair bank_just(H_LEFT, V_MIDDLE);
-	bool bank_italics = false;
-	vec2 bank_element_padding(0.025f, 0.0f);
-	vec2 bank_spacing_scale(0.8f, 1.0f);
-
-	shared_ptr<text_area> bank_text(new text_area("bank_text",
-		"Bank Balance: $" + current_player->getBankBalanceString(true), context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
-		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
-		"text", "text_color", collection_element_padding, collection_spacing_scale));
-
-	player_summary->addElement(username_text);
-	player_summary->addElement(collection_text);
-	player_summary->addElement(bank_text);
+	work_info->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
+	setWorkInfoFields(context, text, work_info);
+	
+	shared_ptr<dynamic_hud_array> player_summary = generatePlayerInfo(context, text, current_player);
 
 	shared_ptr<dynamic_hud_array> blank_element(new dynamic_hud_array("placeholder", context, vec2(1.0f, -1.0f), justpair(H_RIGHT, V_BOTTOM), vec2(1.0f, 0.25f),
 		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
@@ -167,14 +111,15 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	
 			player_summary->draw(context, camera);
 			artwork_thumbnails->draw(context, camera);
+			sort_buttons->draw(context, camera);
 
 			if (selected_painting != nullptr)
 			{
-				work_description->draw(context, camera);
+				work_info->draw(context, camera);
 				selected_painting->draw(context, camera);
 			}
 
-			else work_description->drawBackground(context, camera);
+			else work_info->drawBackground(context, camera);
 
 			context->swapBuffers();
 
@@ -196,23 +141,62 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("selected", selected->getStoredArt(), context, 
 						vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.8f, 1.0f), 0.1f));
 					
-					title_text->setText(selected_painting->getStoredArt()->getData()->getTitle());
-					artist_text->setText(selected_painting->getStoredArt()->getData()->getArtistName());
-					value_text->setText("$" + selected_painting->getStoredArt()->getValue().getNumberString(true, false, 2));
-					rarity_text->setText(stringFromRarity(selected_painting->getStoredArt()->getData()->getRarity()));
-
-					switch (selected_painting->getStoredArt()->getData()->getRarity())
-					{
-					case COMMON: rarity_text->setColor(vec4(0.6f, 0.9f, 0.6f, 1.0f)); break;
-					case UNCOMMON: rarity_text->setColor(vec4(0.6f, 0.6f, 0.9f, 1.0f)); break;
-					case RARE: rarity_text->setColor(vec4(0.9f, 0.9f, 0.6f, 1.0f)); break;
-					case LEGENDARY: rarity_text->setColor(vec4(1.0f, 0.75f, 0.6f, 1.0f)); break;
-					case MASTERPIECE: rarity_text->setColor(vec4(0.6f, 0.9f, 0.9f, 1.0f)); break;
-					}
+					setWorkInfoDescription(work_info, selected_painting->getStoredArt());
 				}
 
-				else
+				else selected_painting = nullptr;
+
+				bool new_selection = sort_buttons->handleClick(cursor_position, identifier);
+				cout << "identifier: " << identifier << endl;
+				if (identifier == "value_sort")
 				{
+					if (current_sort == VALUE)
+						ascending = !ascending;
+
+					else ascending = false;
+
+					current_sort = VALUE;
+					sortArtVec(inventory_copy, VALUE, ascending);
+					refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
+					selected_painting = nullptr;
+				}
+
+				if (identifier == "rarity_sort")
+				{
+					if (current_sort == RARITY)
+						ascending = !ascending;
+
+					else ascending = false;
+
+					current_sort = RARITY;
+					sortArtVec(inventory_copy, RARITY, ascending);
+					refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
+					selected_painting = nullptr;
+				}
+
+				if (identifier == "title_sort")
+				{
+					if (current_sort == TITLE)
+						ascending = !ascending;
+
+					else ascending = true;
+
+					current_sort = TITLE;
+					sortArtVec(inventory_copy, TITLE, ascending);
+					refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
+					selected_painting = nullptr;
+				}
+
+				if (identifier == "artist_sort")
+				{
+					if (current_sort == ARTIST_NAME)
+						ascending = !ascending;
+
+					else ascending = true;
+
+					current_sort = ARTIST_NAME;
+					sortArtVec(inventory_copy, ARTIST_NAME, ascending);
+					refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
 					selected_painting = nullptr;
 				}
 			}
@@ -232,31 +216,18 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			if (keys->checkPress(GLFW_KEY_EQUAL, false) && current_player->getName() == "EindacorDS")
 			{
 				current_player->addFunds(bignum("100000"));
-				bank_text->setText("Bank Balance: $" + current_player->getBankBalanceString(true));
+				refreshPlayerInfo(player_summary, current_player);
 			}
 
 			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_DELETE, false)) && selected_painting != nullptr)
 			{
 				current_player->removeWorkFromInventory(selected_painting->getStoredArt());
-
-				bank_text->setText("Bank Balance: $" + current_player->getBankBalanceString(true));
-				collection_text->setText("Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2));
-
-				artwork_thumbnails->clearElements();
+				refreshPlayerInfo(player_summary, current_player);
 
 				inventory_copy.clear();
 				inventory_copy = current_player->getInventoryCopy();
+				refreshThumbnails(context, textures, current_player, inventory_copy, artwork_thumbnails, thumbsize, thumbpadding);
 				selected_painting = nullptr;
-
-				for (int i = 0; i < inventory_copy.size(); i++)
-				{
-					string identifier = std::to_string(i) + "_" + inventory_copy.at(i)->getData()->getArtistName() + "_"
-						+ inventory_copy.at(i)->getData()->getTitle();
-					inventory_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-					shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, inventory_copy.at(i), context, vec2(0.2f, 0.3f), 0.04f));
-					thumbnail->setDrawSelected(highlight, fullBrightness);
-					artwork_thumbnails->addElement(thumbnail);
-				}
 			}
 
 			glfwSetTime(0.0f);
