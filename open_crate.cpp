@@ -225,10 +225,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 				//alert_text->draw(camera, context);
 
 			if (keys->checkPress(GLFW_KEY_ESCAPE, false) && crate_contents.size() == 0)
-			{
-				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
-				finished = true;
-			}
+				return 2;
 
 			if (keys->checkPress(GLFW_KEY_COMMA, false))
 			{

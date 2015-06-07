@@ -1,5 +1,6 @@
 #include "player.h"
 #include "artwork.h"
+#include "gallery.h"
 
 player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<ogl_context> ogl_con, 
 	shared_ptr<texture_handler> &textures, string data_path)
@@ -13,6 +14,7 @@ player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<
 
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, "frame_black.bmp", "white_matte.bmp", textures));
 	bank = bignum("500000");
+	time(&last_balance_check);
 }
 
 player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, unsigned long player_xp, unsigned short player_level, string balance)
@@ -21,6 +23,7 @@ player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<text
 	xp = player_xp;
 	level = player_level;
 	bank = bignum(balance);
+	time(&last_balance_check);
 
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, context, "frame_black.bmp", "white_matte.bmp", textures));
 }
@@ -198,4 +201,26 @@ void player::addGallery(const shared_ptr<gallery> &to_add)
 	}
 
 	active_galleries.insert(pair<int, shared_ptr<gallery> >(counter, to_add));
+}
+
+void player::updateBank()
+{
+	time_t current_time;
+	time(&current_time);
+
+	int elapsed_secs = difftime(current_time, last_balance_check);
+
+	bignum gallery_value_per_sec(".0001");
+	cout << "-----------" << endl;
+	cout << "previous balance: $" << bank.getNumberString(true, false, 2) << endl;
+	cout << "seconds passed: " << elapsed_secs << endl;
+	bignum total_gallery_value;
+	for (const auto &gallery : active_galleries)
+		total_gallery_value += gallery.second->getGalleryValue();
+
+	bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * total_gallery_value;
+	cout << "money made: $" << money_made.getNumberString(true, false, 2) << endl;
+	addFunds(money_made);
+	cout << "new balance: $" << bank.getNumberString(true, false, 2) << endl;
+	time(&last_balance_check);
 }

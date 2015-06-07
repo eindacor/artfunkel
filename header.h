@@ -19,6 +19,7 @@ enum horizontal_justification { H_LEFT, H_CENTER, H_RIGHT, H_STRETCH };
 #include <iterator>
 #include <list>
 #include <iostream>
+#include <time.h>
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include "jep_util.h"
 #include "jeploot.h"

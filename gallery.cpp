@@ -290,7 +290,7 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 */
 
 gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
-	string template_name_string, string owner_name)
+	string template_name_string, string owner_name, string gallery_name)
 {
 	template_name = template_name_string;
 	owner = owner_name;

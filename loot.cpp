@@ -195,6 +195,24 @@ vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, rarity 
 
 		shared_ptr<artwork> toAdd(new artwork(*it, false, 1.0f));
 		loot_vec.push_back(toAdd);
+
+		//disabled when not testing
+		if (i == 0 && false)
+		{
+			//index, times rolled
+			map<int, int> random_rolls;
+			for (int j = 0; j < rarity_selection.size(); j++)
+				random_rolls[j] = 0;
+
+			for (int j = 0; j < 10000; j++)
+			{
+				int test_random_int = jep::intRoll(0, (rarity_selection.size() - 1));
+				random_rolls[test_random_int] += 1;
+			}
+
+			for (int j = 0; j < random_rolls.size(); j++)
+				cout << j << ": " << random_rolls[j] << endl;
+		}
 	}
 
 	return loot_vec;

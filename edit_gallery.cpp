@@ -30,7 +30,8 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			data_path + "model_data\\",
 			data_path + "model_data\\",
 			"gallery_template_01",
-			current_player->getName()
+			current_player->getName(),
+			"created gallery"
 			)));
 	}
 
@@ -69,7 +70,6 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	bool finished = false;
 	int menu_return = 0;
 
-	clock_t begin = clock();
 	//TODO put this in player class, determined by level/rep
 	bignum gallery_value_per_sec(".0001");
 
@@ -162,11 +162,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 						if (wall_selected.second->validPlacement(painting_to_place, point_clicked))
 						{
-							clock_t end = clock();
-							int elapsed_secs = int(double(end - begin) / CLOCKS_PER_SEC);
-							bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * current_gallery->getGalleryValue();
-							current_player->addFunds(money_made);
-							begin = clock();
+							current_player->updateBank();
 
 							//TODO find a way to combine these to ensure players paintings are never added without updating player
 							painting_to_place->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
@@ -227,20 +223,14 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_DELETE, false)) && artwork_selected.second != nullptr)
 			{
-				clock_t end = clock();
-				int elapsed_secs = int(double(end - begin) / CLOCKS_PER_SEC);
-				bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * current_gallery->getGalleryValue();
-				current_player->addFunds(money_made);
-				begin = clock();
-
+				current_player->updateBank();
+				
 				current_player->removePaintingFromDisplay(artwork_selected.second);
 				current_player->getGallery(0)->removeArtwork(artwork_selected.second);
 				artwork_selected = pair<float, shared_ptr<artwork> >(0.0f, nullptr);
 
 				not_displayed_copy = current_player->getNotDisplayedCopy();
 				refreshThumbnails(context, textures, current_player, not_displayed_copy, artwork_thumbnails, thumbsize, thumbpadding);
-
-				begin = clock();
 			}
 
 			if (keys->checkPress(GLFW_KEY_COMMA, false) && inventory_displayed)
@@ -258,14 +248,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			}
 
 			if (keys->checkPress(GLFW_KEY_T, false))
-			{
-				clock_t end = clock();
-				int elapsed_secs = int(double(end - begin) / CLOCKS_PER_SEC);
-				bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * current_gallery->getGalleryValue();
-				current_player->addFunds(money_made);
-				refreshPlayerInfo(player_summary, current_player);
-				begin = clock();
-			}
+				current_player->updateBank();
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_RIGHT, false))
 			{
@@ -288,11 +271,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 		}
 	}
 
-	clock_t end = clock();
-	int elapsed_secs = int(double(end - begin) / CLOCKS_PER_SEC);
-	bignum money_made = gallery_value_per_sec * bignum(elapsed_secs) * current_gallery->getGalleryValue();
-	current_player->addFunds(money_made);
-	begin = clock();
+	current_player->updateBank();
 
 	context->setBackgroundColor(original_background);
 	return menu_return;

@@ -7,6 +7,7 @@
 class player
 {
 public:
+	//TODO set last check time immediately
 	player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<ogl_context> ogl_con, 
 		shared_ptr<texture_handler> &textures, string data_path);
 	player(string s, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, unsigned long player_xp, unsigned short player_level, string balance);
@@ -50,6 +51,10 @@ public:
 	void deductPayment(const bignum &bn) { bank -= bn; }
 	void addFunds(const bignum &bn) { bank += bn; cout << "+ $" << bn.getNumberString(true, false, 2) << endl; }
 
+	void updateBank();
+	void setLastBalanceCheck(time_t t) { last_balance_check = t; }
+	time_t getLastBalanceCheck() const { return last_balance_check; }
+
 	shared_ptr<artwork> getPaintingFromInventory(unsigned int artwork_id) {
 		if (inventory.find(artwork_id) != inventory.end())
 			return inventory.at(artwork_id);
@@ -67,6 +72,8 @@ private:
 
 	bignum bank;
 	bignum collection_value;
+
+	time_t last_balance_check;
 
 	unsigned long xp;
 	unsigned short level;

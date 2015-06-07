@@ -122,6 +122,12 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 			vec2 cursor_position = keys->getCursorPosition();
 			shared_ptr<hud_element> selected_element = crate_menu->getMouseoverElement(cursor_position, true);
 
+			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
+			{
+				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
+				finished = (menu_return != 2);
+			}
+
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
 				if (selected_element != nullptr)
@@ -131,17 +137,12 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 					if (lg->getCrateCost(crate_selected.first, crate_selected.second) <= current_player->getBankBalance())
 					{
 						refreshPlayerInfo(player_summary, current_player);
-						menu_return = openCrate(data_path, context, keys, current_player, lg, text, textures,
+						openCrate(data_path, context, keys, current_player, lg, text, textures,
 							crate_selected.first, crate_selected.second);
-						finished = (menu_return != 2);
+						finished = true;
+						menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 					}
 				}
-			}
-
-			if (keys->checkPress(GLFW_KEY_ESCAPE, false))
-			{
-				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
-				finished = (menu_return != 2);
 			}
 
 			context->swapBuffers();
