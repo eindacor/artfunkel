@@ -156,11 +156,6 @@ public:
 	bool isLastPage() const { return page_map.find(current_page + 1) == page_map.end(); }
 	bool isFirstPage() const { return page_map.find(current_page) == page_map.begin(); }
 	void clearElements() { array_elements.clear(); visible_lines.clear(); }
-	//getSelectedWithinArray is design to recurse if it detects nested arrays
-	virtual shared_ptr<hud_element> getSelectedWithinArray(
-		shared_ptr<key_handler> &keys, const vec2 &cursor_position, hud_element_type &type, string &identifier) const;
-	void updateSelectedWithin(const vec2 &cursor_position, bool deselect_others);
-	bool selectableElementHoveredWithin(const vec2 &cursor_position) const;
 	shared_ptr<hud_element> getElementWithinByID(const string &ID) const;
 	vector<string> getSelectedItemsWithin() const;
 

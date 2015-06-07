@@ -128,17 +128,19 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 				finished = (menu_return != 1);
 			}
-
+			
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
 				vec2 cursor_position = keys->getCursorPosition();
 				hud_element_type selected_type;
 				string identifier;
-				shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
+				artwork_thumbnails->handleClick(cursor_position, identifier);
+				shared_ptr<hud_element> selected_element = artwork_thumbnails->getElementWithinByID(identifier);
+				//shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
 
 				if (selected_type == THUMBNAIL)
-				{
-					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("selected", selected->getStoredArt(), context, 
+				{				
+					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("selected", selected_element->getStoredArt(), context,
 						vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.8f, 1.0f), 0.1f));
 					
 					setWorkInfoDescription(work_info, selected_painting->getStoredArt());

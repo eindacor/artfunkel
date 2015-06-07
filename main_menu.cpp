@@ -91,7 +91,9 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 			vec2 cursor_position = keys->getCursorPosition();
 			hud_element_type selected_type;
 			string identifier;
-			shared_ptr<hud_element> selected = menu->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
+			menu->handleClick(cursor_position, identifier);
+			shared_ptr<hud_element> selected = menu->getElementWithinByID(identifier);
+			//shared_ptr<hud_element> selected = menu->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{

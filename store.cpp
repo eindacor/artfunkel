@@ -27,7 +27,7 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 	pair <horizontal_justification, vertical_justification> button_just(H_LEFT, V_MIDDLE);
 	shared_ptr<dynamic_hud_array> button(new dynamic_hud_array(button_id, context, vec2(0.0f), justpair(H_CENTER, V_MIDDLE), vec2(0.5f, .14f), button_just, vec2(0.05f, 0.0f)));
 
-	float crate_title_text_height(0.05f);
+	float crate_title_text_height(0.042f);
 	vec4 crate_title_color(0.8f, 0.8f, 0.8f, 1.0f);
 	vec2 crate_title_element_dimensions(0.46f, 0.052f);
 	pair <horizontal_justification, vertical_justification> option_title_just(H_LEFT, V_MIDDLE);
