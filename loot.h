@@ -27,15 +27,15 @@ private:
 	shared_ptr<art_db> artist_database;
 	map<rarity, unsigned> default_rarity_map;
 
-	map<rarity, unsigned> common_rarity_map;
-	map<rarity, unsigned> uncommon_rarity_map;
-	map<rarity, unsigned> rare_rarity_map;
-	map<rarity, unsigned> legendary_rarity_map;
+	map<rarity, unsigned> bronze_rarity_map;
+	map<rarity, unsigned> silver_rarity_map;
+	map<rarity, unsigned> gold_rarity_map;
+	map<rarity, unsigned> platinum_rarity_map;
 
-	bignum average_common_crate_work_value;
-	bignum average_uncommon_crate_work_value;
-	bignum average_rare_crate_work_value;
-	bignum average_legendary_crate_work_value;
+	bignum average_bronze_crate_work_value;
+	bignum average_silver_crate_work_value;
+	bignum average_gold_crate_work_value;
+	bignum average_platinum_crate_work_value;
 };
 
 #endif

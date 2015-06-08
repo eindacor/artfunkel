@@ -29,31 +29,114 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 		default_rarity_map[MASTERPIECE] = 1;
 	}
 
-	common_rarity_map[COMMON] = 60;
-	common_rarity_map[UNCOMMON] = 12;
-	common_rarity_map[RARE] = 1;
+	bronze_rarity_map[COMMON] = 60;
+	bronze_rarity_map[UNCOMMON] = 12;
+	bronze_rarity_map[RARE] = 1;
 	
-	uncommon_rarity_map[COMMON] = 31;
-	uncommon_rarity_map[UNCOMMON] = 31;
-	uncommon_rarity_map[RARE] = 2;
+	silver_rarity_map[COMMON] = 31;
+	silver_rarity_map[UNCOMMON] = 31;
+	silver_rarity_map[RARE] = 2;
 
-	rare_rarity_map[UNCOMMON] =450;							
-	rare_rarity_map[RARE] = 150;								
-	rare_rarity_map[LEGENDARY] = 1;						
+	gold_rarity_map[UNCOMMON] =450;							
+	gold_rarity_map[RARE] = 150;
+	gold_rarity_map[LEGENDARY] = 1;
 
-	legendary_rarity_map[RARE] = 1500;
-	legendary_rarity_map[LEGENDARY] = 5;
-	legendary_rarity_map[MASTERPIECE] = 1;
+	platinum_rarity_map[RARE] = 1500;
+	platinum_rarity_map[LEGENDARY] = 5;
+	platinum_rarity_map[MASTERPIECE] = 1;
 
-	average_common_crate_work_value = calcAveragePaintingValue(common_rarity_map);
-	average_uncommon_crate_work_value = calcAveragePaintingValue(uncommon_rarity_map);
-	average_rare_crate_work_value = calcAveragePaintingValue(rare_rarity_map);
-	average_legendary_crate_work_value = calcAveragePaintingValue(legendary_rarity_map);
+	bool rare_in_bronze_found = false;
+	bool rare_in_silver_found = false;
+	bool legendary_in_gold_found = false;
+	bool legendary_in_platinum_found = false;
+	bool masterpiece_in_platinum_found = false;
 	
-	cout << "average work value, common crate: $" << average_common_crate_work_value.getNumberString(true, false, 2) << endl;
-	cout << "average work value, uncommon crate: $" << average_uncommon_crate_work_value.getNumberString(true, false, 2) << endl;
-	cout << "average work value, rare crate: $" << average_rare_crate_work_value.getNumberString(true, false, 2) << endl;
-	cout << "average work value, legendary crate: $" << average_legendary_crate_work_value.getNumberString(true, false, 2) << endl;
+	jep::avg_container rare_in_bronze_rolls, rare_in_silver_rolls, legendary_in_gold_rolls, 
+		legendary_in_platinum_rolls, masterpiece_in_platinum_rolls;
+
+	for (int count = 0; count < 100; count++)
+	{
+		for (int i = 0; i < 10000; i++)
+		{
+			if (rare_in_bronze_found && rare_in_silver_found && legendary_in_gold_found &&
+				legendary_in_platinum_found && masterpiece_in_platinum_found)
+			{
+				rare_in_bronze_found = false;
+				rare_in_silver_found = false;
+				legendary_in_gold_found = false;
+				legendary_in_platinum_found = false;
+				masterpiece_in_platinum_found = false;
+				break;
+			}
+
+			if (!rare_in_bronze_found)
+			{
+				rarity rarity_rolled = jep::catRoll(bronze_rarity_map);
+				if (rarity_rolled == RARE)
+				{
+					rare_in_bronze_found = true;
+					rare_in_bronze_rolls.addValue(i);
+				}
+			}
+
+			if (!rare_in_silver_found)
+			{
+				rarity rarity_rolled = jep::catRoll(silver_rarity_map);
+				if (rarity_rolled == RARE)
+				{
+					rare_in_silver_found = true;
+					rare_in_silver_rolls.addValue(i);
+				}
+			}
+
+			if (!legendary_in_gold_found)
+			{
+				rarity rarity_rolled = jep::catRoll(gold_rarity_map);
+				if (rarity_rolled == LEGENDARY)
+				{
+					legendary_in_gold_found = true;
+					legendary_in_gold_rolls.addValue(i);
+				}
+			}
+
+			if (!legendary_in_platinum_found)
+			{
+				rarity rarity_rolled = jep::catRoll(platinum_rarity_map);
+				if (rarity_rolled == LEGENDARY)
+				{
+					legendary_in_platinum_found = true;
+					legendary_in_platinum_rolls.addValue(i);
+				}
+			}
+
+			if (!masterpiece_in_platinum_found)
+			{
+				rarity rarity_rolled = jep::catRoll(platinum_rarity_map);
+				if (rarity_rolled == MASTERPIECE)
+				{
+					masterpiece_in_platinum_found = true;
+					masterpiece_in_platinum_rolls.addValue(i);
+				}
+			}
+		}
+	}
+	cout << "rolls for rare in bronze: " << rare_in_bronze_rolls.getCount() << endl;
+
+	cout << "average rolls for rare in bronze: " << rare_in_bronze_rolls.getAverage() << endl;
+	cout << "average rolls for rare in silver: " << rare_in_silver_rolls.getAverage() << endl;
+	cout << "average rolls for legendary in gold: " << legendary_in_gold_rolls.getAverage() << endl;
+	cout << "average rolls for legendary in platinum: " << legendary_in_platinum_rolls.getAverage() << endl;
+	cout << "average rolls for masterpiece in platinum: " << masterpiece_in_platinum_rolls.getAverage() << endl;
+
+	average_bronze_crate_work_value = calcAveragePaintingValue(bronze_rarity_map);
+	average_silver_crate_work_value = calcAveragePaintingValue(silver_rarity_map);
+	average_gold_crate_work_value = calcAveragePaintingValue(gold_rarity_map);
+	average_platinum_crate_work_value = calcAveragePaintingValue(platinum_rarity_map);
+
+	cout << "average work value, bronze crate: $" << average_bronze_crate_work_value.getNumberString(true, false, 2) << endl;
+	cout << "average work value, unbronze crate: $" << average_silver_crate_work_value.getNumberString(true, false, 2) << endl;
+	cout << "average work value, gold crate: $" << average_gold_crate_work_value.getNumberString(true, false, 2) << endl;
+	cout << "average work value, platinum crate: $" << average_platinum_crate_work_value.getNumberString(true, false, 2) << endl;
 }
 
 bignum loot_generator::calcAveragePaintingValue(const map<rarity, unsigned> &rarity_map) const
@@ -93,19 +176,19 @@ bignum loot_generator::getCrateCost(rarity r, int count) const
 	switch (r)
 	{
 	case COMMON: 
-		potential_value = average_common_crate_work_value + calcPlacementBonus(average_common_crate_work_value);
+		potential_value = average_bronze_crate_work_value + calcPlacementBonus(average_bronze_crate_work_value);
 		result = cost_modifier * potential_value * bignum(count) *  bignum(".8"); 
 		break;
 	case UNCOMMON: 
-		potential_value = average_uncommon_crate_work_value + calcPlacementBonus(average_uncommon_crate_work_value);
+		potential_value = average_silver_crate_work_value + calcPlacementBonus(average_silver_crate_work_value);
 		result = cost_modifier * potential_value * bignum(count) *  bignum("1.2");
 		break;
 	case RARE:
-		potential_value = average_rare_crate_work_value + calcPlacementBonus(average_rare_crate_work_value);
+		potential_value = average_gold_crate_work_value + calcPlacementBonus(average_gold_crate_work_value);
 		result = cost_modifier * potential_value * bignum(count) *  bignum("1.6");
 		break;
 	case LEGENDARY:
-		potential_value = average_legendary_crate_work_value + calcPlacementBonus(average_legendary_crate_work_value);
+		potential_value = average_platinum_crate_work_value + calcPlacementBonus(average_platinum_crate_work_value);
 		result = cost_modifier * potential_value * bignum(count) *  bignum("2.0");
 		break;
 	default: break;
@@ -171,10 +254,10 @@ vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, rarity 
 
 	switch (r)
 	{
-	case COMMON: rarity_proportions = common_rarity_map; break;
-	case UNCOMMON: rarity_proportions = uncommon_rarity_map; break;
-	case RARE: rarity_proportions = rare_rarity_map; break;
-	case LEGENDARY: rarity_proportions = legendary_rarity_map; break;
+	case COMMON: rarity_proportions = bronze_rarity_map; break;
+	case UNCOMMON: rarity_proportions = silver_rarity_map; break;
+	case RARE: rarity_proportions = gold_rarity_map; break;
+	case LEGENDARY: rarity_proportions = platinum_rarity_map; break;
 	}
 
 	vector<shared_ptr<artwork> > loot_vec;

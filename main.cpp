@@ -19,7 +19,8 @@ int main(int argc, char* argv[])
 	cout << "data_path: " << data_path << endl;
 	cout << "username: " << username << endl;
 
-	jep::init();
+	srand(time(NULL));
+	//jep::init();
 
 	int id_count = 0;
 	
