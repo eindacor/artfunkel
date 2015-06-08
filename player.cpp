@@ -218,7 +218,7 @@ void player::updateBank()
 		total_gallery_value += gallery.second->getGalleryValue();
 
 	bignum max_gallery_value_per_sec(".00002");
-	bignum min_gallery_value_per_sec(".000001");
+	bignum min_gallery_value_per_sec(".0000002");
 
 	bignum gallery_value_per_sec = max_gallery_value_per_sec;
 	bignum money_made;
