@@ -3,6 +3,8 @@
 void refreshThumbnails(const shared_ptr<ogl_context> &context, const shared_ptr<texture_handler> &textures, const shared_ptr<player> &current_player,
 	const vector<shared_ptr<artwork> > &source, shared_ptr<dynamic_hud_array> &container, const vec2 thumbnail_size, float thumbnail_padding, bool addframe)
 {
+	int previous_page_location = (container->isEmpty() ? 0 : container->getCurrentPage());
+
 	container->clearElements();
 	for (int i = 0; i < source.size(); i++)
 	{
@@ -16,6 +18,9 @@ void refreshThumbnails(const shared_ptr<ogl_context> &context, const shared_ptr<
 		thumbnail->setDrawSelected(highlight, fullBrightness);
 		container->addElement(thumbnail);
 	}
+
+	while (!container->setVisible(previous_page_location) && previous_page_location > 0)
+		previous_page_location--;
 }
 
 void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text, shared_ptr<dynamic_hud_array> &container, float scale_modifier)
@@ -167,21 +172,4 @@ void refreshPlayerInfo(const shared_ptr<dynamic_hud_array> &player_summary, cons
 	shared_ptr<hud_element> collection_element = player_summary->getElementWithinByID("collection_text");
 	shared_ptr<text_area> collection_text = boost::dynamic_pointer_cast<text_area>(collection_element);
 	collection_text->setText("Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2));
-}
-
-void generateHorizontalButtons(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text, shared_ptr<dynamic_hud_array> &container, const map<string, string> &text_and_id_map)
-{
-	container->clearElements();
-
-	float button_width = container->getAllowableWidth() / (float)text_and_id_map.size();
-	float button_height = container->getAllowableHeight();
-
-	for (const auto &button : text_and_id_map)
-	{
-		shared_ptr<text_area> button_element(new text_area(button.second, button.first, context, text, 
-			vec2(button_width, button_height), button_height * 0.8f,
-			justpair(H_CENTER, V_MIDDLE), false, vec4(1.0f), "text", "text_color", vec2(0.0f, 0.0f), vec2(0.8f, 1.0f)));
-
-		container->addElement(button_element);
-	}
 }

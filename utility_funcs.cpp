@@ -1,5 +1,6 @@
 #include "utility_funcs.h"
 #include "artwork.h"
+#include "player.h"
 
 string getDateString(const date &d, bool include_day)
 {
@@ -288,7 +289,7 @@ void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float spa
 }
 
 //TODO typdef vector of pairs
-vector< shared_ptr<artwork> >::iterator sortArtVec(vector< shared_ptr<artwork> > &art_vec, sort_option sort, bool ascending)
+vector< shared_ptr<artwork> >::iterator sortArtVec(vector< shared_ptr<artwork> > &art_vec, sort_option sort, const shared_ptr<player> &current_player, bool ascending)
 {
 	switch (sort)
 	{
@@ -351,6 +352,15 @@ vector< shared_ptr<artwork> >::iterator sortArtVec(vector< shared_ptr<artwork> >
 		{
 			return (ascending ? first_work->getData()->getDate() < second_work->getData()->getDate() :
 				first_work->getData()->getDate() > second_work->getData()->getDate());
+		});
+		break;
+
+	case IN_GALLERY:
+		std::sort(art_vec.begin(), art_vec.end(),
+			[&](shared_ptr<artwork> first_work, shared_ptr<artwork> second_work)
+		{
+			return (ascending ? current_player->isOnDisplay(first_work) || !current_player->isOnDisplay(second_work) :
+				!current_player->isOnDisplay(first_work) || current_player->isOnDisplay(second_work));
 		});
 		break;
 
