@@ -136,6 +136,7 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 			{
 				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 				finished = (menu_return != 2);
+				refreshPlayerInfo(player_summary, current_player);
 			}
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
@@ -146,11 +147,11 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 
 					if (lg->getCrateCost(crate_selected.first, crate_selected.second) <= current_player->getBankBalance())
 					{
-						refreshPlayerInfo(player_summary, current_player);
 						openCrate(data_path, context, keys, current_player, lg, text, textures,
 							crate_selected.first, crate_selected.second);
 						finished = true;
 						menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
+						refreshPlayerInfo(player_summary, current_player);
 					}
 				}
 			}

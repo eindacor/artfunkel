@@ -12,6 +12,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 	shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, 
 	const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures, rarity r, int count)
 {
+	current_player->updateBank();
 	cout << "opening crate" << endl;
 	vec4 original_background = context->getBackgroundColor();
 	context->setBackgroundColor(vec4(0.0f, 0.0f, 0.5f, 1.0f));

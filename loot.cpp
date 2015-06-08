@@ -29,20 +29,20 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 		default_rarity_map[MASTERPIECE] = 1;
 	}
 
-	common_rarity_map[COMMON] = 50;
-	common_rarity_map[UNCOMMON] = 13;
+	common_rarity_map[COMMON] = 60;
+	common_rarity_map[UNCOMMON] = 12;
 	common_rarity_map[RARE] = 1;
 	
-	uncommon_rarity_map[COMMON] = 30;
-	uncommon_rarity_map[UNCOMMON] = 30;
+	uncommon_rarity_map[COMMON] = 31;
+	uncommon_rarity_map[UNCOMMON] = 31;
 	uncommon_rarity_map[RARE] = 2;
 
-	rare_rarity_map[UNCOMMON] = 100;							
-	rare_rarity_map[RARE] = 27;								
+	rare_rarity_map[UNCOMMON] =450;							
+	rare_rarity_map[RARE] = 150;								
 	rare_rarity_map[LEGENDARY] = 1;						
 
-	legendary_rarity_map[RARE] = 1000;
-	legendary_rarity_map[LEGENDARY] = 23;
+	legendary_rarity_map[RARE] = 1500;
+	legendary_rarity_map[LEGENDARY] = 5;
 	legendary_rarity_map[MASTERPIECE] = 1;
 
 	average_common_crate_work_value = calcAveragePaintingValue(common_rarity_map);

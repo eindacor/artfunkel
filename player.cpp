@@ -217,6 +217,7 @@ void player::updateBank()
 	for (const auto &gallery : active_galleries)
 		total_gallery_value += gallery.second->getGalleryValue();
 
+	// .002% max, .0002% min
 	bignum max_gallery_value_per_sec(".00002");
 	bignum min_gallery_value_per_sec(".0000002");
 

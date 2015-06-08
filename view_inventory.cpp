@@ -167,6 +167,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 			{
 				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 				finished = (menu_return != 1);
+				refreshPlayerInfo(player_summary, current_player);
 			}
 			
 			vec2 cursor_position = keys->getCursorPosition();

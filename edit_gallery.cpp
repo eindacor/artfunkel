@@ -267,6 +267,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				menu_return = mainMenu(data_path, context, keys, current_player, text, textures);
 				if (menu_return != 0)
 					finished = true;
+				refreshPlayerInfo(player_summary, current_player);
 			}
 
 			context->swapBuffers();

@@ -37,6 +37,7 @@ vector< shared_ptr<text_area> > createMenuOptions(const vector<string> &options,
 int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> &keys,
 	shared_ptr<player> &current_player, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
 {
+	current_player->updateBank();
 	savePlayer(data_path, current_player->getName(), current_player);
 
 	shared_ptr<dynamic_hud_array> menu(new dynamic_hud_array("description", context, vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.5f, 1.75f),
@@ -94,19 +95,31 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false) && selected != nullptr)
 			{
 				if (selected->getIdentifier() == "edit gallery")
+				{
+					current_player->updateBank();
 					return 0;
+				}
 
 				if (selected->getIdentifier() == "view inventory")
+				{
+					current_player->updateBank();
 					return 1;
+				}
 
 				if (selected->getIdentifier() == "visit store")
+				{
+					current_player->updateBank();
 					return 2;
+				}
 
 				//if (identifier == "options")
 					//return 3;
 
 				if (selected->getIdentifier() == "exit game")
+				{
+					current_player->updateBank();
 					return 4;
+				}
 			}
 
 			context->swapBuffers();
@@ -114,5 +127,6 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 		}
 	}
 
+	current_player->updateBank();
 	return menu_return;
 }
