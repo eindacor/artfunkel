@@ -21,7 +21,17 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 
 	else crate_size = "Small";
 
-	string button_id = crate_size + " " + stringFromRarity(r) + " Crate";
+	string crate_quality;
+
+	switch (r)
+	{
+	case COMMON: crate_quality = "Bronze"; break;
+	case UNCOMMON: crate_quality = "Silver"; break;
+	case RARE: crate_quality = "Gold"; break;
+	case LEGENDARY: crate_quality = "Platinum"; break;
+	}
+
+	string button_id = crate_size + " " + crate_quality + " Crate";
 
 	//overall container of title and value elements
 	pair <horizontal_justification, vertical_justification> button_just(H_LEFT, V_MIDDLE);
@@ -41,10 +51,10 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 
 	switch (r)
 	{
-	case COMMON: crate_title_button->setColor(vec4(0.6f, 0.9f, 0.6f, 1.0f)); break;
-	case UNCOMMON: crate_title_button->setColor(vec4(0.6f, 0.6f, 0.9f, 1.0f)); break;
-	case RARE: crate_title_button->setColor(vec4(0.9f, 0.9f, 0.6f, 1.0f)); break;
-	case LEGENDARY: crate_title_button->setColor(vec4(1.0f, 0.75f, 0.6f, 1.0f)); break;
+	case COMMON: crate_title_button->setColor(vec4(0.9f, 0.6f, 0.35f, 1.0f)); break;
+	case UNCOMMON: crate_title_button->setColor(vec4(0.7f, 0.7f, 0.7f, 1.0f)); break;
+	case RARE: crate_title_button->setColor(vec4(0.9f, 0.85f, 0.27f, 1.0f)); break;
+	case LEGENDARY: crate_title_button->setColor(vec4(0.9f, 0.9f, 0.9f, 1.0f)); break;
 	}
 
 	float crate_value_text_height(0.04f);
