@@ -168,3 +168,20 @@ void refreshPlayerInfo(const shared_ptr<dynamic_hud_array> &player_summary, cons
 	shared_ptr<text_area> collection_text = boost::dynamic_pointer_cast<text_area>(collection_element);
 	collection_text->setText("Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2));
 }
+
+void generateHorizontalButtons(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text, shared_ptr<dynamic_hud_array> &container, const map<string, string> &text_and_id_map)
+{
+	container->clearElements();
+
+	float button_width = container->getAllowableWidth() / (float)text_and_id_map.size();
+	float button_height = container->getAllowableHeight();
+
+	for (const auto &button : text_and_id_map)
+	{
+		shared_ptr<text_area> button_element(new text_area(button.second, button.first, context, text, 
+			vec2(button_width, button_height), button_height * 0.8f,
+			justpair(H_CENTER, V_MIDDLE), false, vec4(1.0f), "text", "text_color", vec2(0.0f, 0.0f), vec2(0.8f, 1.0f)));
+
+		container->addElement(button_element);
+	}
+}

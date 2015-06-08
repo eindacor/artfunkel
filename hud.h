@@ -134,6 +134,18 @@ public:
 		deselect_on_miss = true;
 		select_multiple = false;
 	}
+
+	dynamic_hud_array(string identifier, const shared_ptr<ogl_context> &ogl_con, const vec2 &on_screen_dimensions,
+		const justpair interior_justification, vec2 padding = vec2(0.0f, 0.0f))
+		: hud_element(identifier, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), on_screen_dimensions, ELEMENT_ARRAY)
+	{
+		context = ogl_con;
+		justification = interior_justification;
+		array_padding = padding;
+		setSelectable(false);
+		deselect_on_miss = true;
+		select_multiple = false;
+	}
 	~dynamic_hud_array(){};
 
 	//TODO add methods for adding specific hud elements

@@ -17,4 +17,6 @@ shared_ptr<dynamic_hud_array> generatePlayerInfo(const shared_ptr<ogl_context> &
 
 void refreshPlayerInfo(const shared_ptr<dynamic_hud_array> &player_summary, const shared_ptr<player> &current_player);
 
+void generateHorizontalButtons(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text, shared_ptr<dynamic_hud_array> &container, const map<string, string> &text_and_id_map);
+
 

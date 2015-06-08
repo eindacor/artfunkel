@@ -37,6 +37,7 @@ public:
 
 	bool player::isOnDisplay(const shared_ptr<artwork> &to_find) const;
 
+	bool inventoryIsFull() const { return inventory.size() >= inventory_max; }
 	bool alreadyOwned(const shared_ptr<artwork> &to_find) const;
 	shared_ptr<gallery> getGallery(int n) const;
 	const map<int, shared_ptr<gallery> > getGalleries() const { return active_galleries; }
@@ -74,6 +75,8 @@ private:
 	bignum collection_value;
 
 	time_t last_balance_check;
+
+	int inventory_max = 80;
 
 	unsigned long xp;
 	unsigned short level;
