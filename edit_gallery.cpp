@@ -73,6 +73,9 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	//TODO put this in player class, determined by level/rep
 	bignum gallery_value_per_sec(".0001");
 
+	//test
+	bool brick = false;
+
 	while (!finished)
 	{
 		if (glfwGetTime() > 1.0f / render_fps)
@@ -128,11 +131,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
 				vec2 cursor_position = keys->getCursorPosition();
-				//hud_element_type selected_type;
-				//string identifier;
-				//artwork_thumbnails->handleClick(cursor_position, identifier);
 				shared_ptr<hud_element> selected_element = artwork_thumbnails->getMouseoverElement(cursor_position, true);
-				//shared_ptr<hud_element> selected = artwork_thumbnails->getSelectedWithinArray(keys, cursor_position, selected_type, identifier);
 
 				if (selected_element != nullptr && selected_element->getType() == THUMBNAIL)
 				{
@@ -251,6 +250,26 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 			{
 				current_player->updateBank();
 				refreshPlayerInfo(player_summary, current_player);
+			}
+
+			if (keys->checkPress(GLFW_KEY_B, false))
+			{
+				map<unsigned short, shared_ptr<display_wall> > gallery_walls = current_gallery->getWalls();
+				if (brick)
+				{
+					for (auto &wall : gallery_walls)
+						wall.second->setTexture("plaster.bmp", textures);
+
+					brick = false;
+				}
+
+				else
+				{
+					for (auto &wall : gallery_walls)
+						wall.second->setTexture("brick.bmp", textures);
+
+					brick = true;
+				}
 			}
 
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_RIGHT, false))

@@ -5,8 +5,10 @@
 //dislay walls first need their vertex data modified to be flat on the z-axis, so raytracing only needs to modify the ray created for click
 //detection, rather than matrix-translating all of the walls on-click
 
-display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX, int index)
+display_wall::display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, 
+	const shared_ptr<GLuint> &TEX, string texture_filename, unsigned short index)
 {
+	tex_filename = texture_filename;
 	wall_index = index;
 	vector<float> vec_vertices = mesh.getInterleaveData();
 
@@ -169,6 +171,15 @@ void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr
 	glBindVertexArray(0);
 }
 
+void display_wall::setTexture(string texture_filename, const shared_ptr<texture_handler> &textures)
+{
+	if (textures->getTexture(texture_filename) != nullptr)
+	{
+		opengl_data->overrideTEX(textures->getTexture(texture_filename));
+		tex_filename = texture_filename;
+	}
+}
+
 bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera,
 	const pair<vec3, vec3> &ray, float &scale)
 {
@@ -202,93 +213,6 @@ bool display_wall::cursorTouches(shared_ptr<key_handler> &keys, const shared_ptr
 	return false;
 }
 
-/*
-gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path, 
-	string display_model_filename, string filler_model_filename, string display_material_filename, string filler_material_filename, 
-	string template_name_string, string owner_name)
-{
-	template_name = template_name_string;
-	owner = owner_name;
-
-	string display_model_path = model_path + display_model_filename;
-	string filler_model_path = model_path + filler_model_filename;
-	string display_material_path = material_path + display_material_filename;
-	string filler_material_path = material_path + filler_material_filename;
-
-	vector<mesh_data> display_wall_meshes = generateMeshes(display_model_path.c_str());
-	map<string, material_data> display_wall_materials = generateMaterials(display_material_path.c_str());
-
-	int display_wall_counter = 0;
-	
-	for (const auto &i : display_wall_meshes)
-	{
-		//string full_texture_path = material_path + display_wall_materials.at(i.getMaterialName()).getTextureFilename();
-		string texture_filename = display_wall_materials.at(i.getMaterialName()).getTextureFilename();
-		if (textures->getTexture(texture_filename) == nullptr)
-			textures->addTexture(texture_filename);
-		shared_ptr<display_wall> new_wall(new display_wall(context, i, textures->getTexture(texture_filename)));
-		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
-	}
-
-	vector<mesh_data> environment_meshes = generateMeshes(filler_model_path.c_str());
-	map<string, material_data> environment_materials = generateMaterials(filler_material_path.c_str());
-
-	for (const auto &i : environment_meshes)
-	{
-		vector<unsigned short> mesh_indices;
-		vector<float> vertex_data = i.getIndexedVertexData(mesh_indices);
-		//string full_texture_path = material_path + environment_materials.at(i.getMaterialName()).getTextureFilename();
-		string texture_filename = environment_materials.at(i.getMaterialName()).getTextureFilename();
-		if (textures->getTexture(texture_filename) == nullptr)
-			textures->addTexture(texture_filename);
-		shared_ptr<jep::ogl_data> env_mesh(new jep::ogl_data(
-			context,
-			textures->getTexture(texture_filename),
-			GL_STATIC_DRAW,
-			mesh_indices,
-			vertex_data,
-			i.getVSize(),
-			i.getVTSize(),
-			i.getVNSize()
-			));
-		environment_models.push_back(env_mesh);
-	}
-
-	bool draw_grid = false;
-
-	if (draw_grid)
-	{
-		int lines_x = 10;
-		int lines_z = 10;
-		float line_spacing = 4.0f;
-		float x_start = ((float)lines_x * line_spacing) / -2.0f;
-		float z_start = ((float)lines_z * line_spacing) / -2.0f;
-		for (int i = 0; i <= lines_x; i++)
-		{
-			float z_end = z_start * -1.0f;
-			vec4 start(((float)i * line_spacing) + x_start, 0.0f, z_start, 1.0f);
-			vec4 end(((float)i * line_spacing) + x_start, 0.0f, z_end, 1.0f);
-			lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
-		}
-
-		for (int i = 0; i <= lines_z; i++)
-		{
-			float x_end = x_start * -1.0f;
-			vec4 start(x_start, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
-			vec4 end(x_end, 0.0f, ((float)i * line_spacing) + z_start, 1.0f);
-			//lines.push_back(shared_ptr<line>(new line(start, end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
-		}
-
-		vec4 origin_start(0.0f, 1.0f, 0.0f, 1.0f);
-		vec4 origin_end(0.0f, -1.0f, 0.0f, 1.0f);
-		//lines.push_back(shared_ptr<line>(new line(origin_start, origin_end, vec4(0.1f, 0.1f, 0.1f, 0.5f))));
-	}
-
-	//TODO add code for filler geometry
-	//TODO add code for floor model
-}
-*/
-
 gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
 	string template_name_string, string owner_name, string gallery_name)
 {
@@ -303,7 +227,7 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 	vector<mesh_data> display_wall_meshes = generateMeshes(display_model_path.c_str());
 	map<string, material_data> display_wall_materials = generateMaterials(display_material_path.c_str());
 
-	int display_wall_counter = 0;
+	unsigned short display_wall_counter = 0;
 
 	for (const auto &i : display_wall_meshes)
 	{
@@ -311,8 +235,9 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 		string texture_filename = display_wall_materials.at(i.getMaterialName()).getTextureFilename();
 		if (textures->getTexture(texture_filename) == nullptr)
 			textures->addTexture(texture_filename);
-		shared_ptr<display_wall> new_wall(new display_wall(context, i, textures->getTexture(texture_filename), display_wall_counter));
-		display_walls.insert(pair<int, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
+		shared_ptr<display_wall> new_wall(new display_wall(context, i, textures->getTexture(texture_filename), 
+			texture_filename, display_wall_counter));
+		display_walls.insert(pair<unsigned short, shared_ptr<display_wall> >(display_wall_counter++, new_wall));
 	}
 
 	vector<mesh_data> environment_meshes = generateMeshes(filler_model_path.c_str());
@@ -336,7 +261,8 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 			i.getVTSize(),
 			i.getVNSize()
 			));
-		environment_models.push_back(env_mesh);
+
+		environment_mesh_data.push_back(env_mesh);
 	}
 
 	bool draw_grid = false;
@@ -378,7 +304,7 @@ void gallery::renderGallery(const shared_ptr<ogl_context> &context, const shared
 	for (const auto &i : display_walls)
 		i.second->draw(context, camera);
 
-	for (const auto &mesh : environment_models)
+	for (const auto &mesh : environment_mesh_data)
 	{
 		glBindVertexArray(*(mesh->getVAO()));
 		glEnableVertexAttribArray(0);
@@ -467,6 +393,13 @@ void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
 			return;
 		}
 	}
+}
+
+shared_ptr<display_wall> gallery::getWall(int index)
+{
+	if (display_walls.find(index) != display_walls.end())
+		return display_walls.at(index);
+	else return nullptr;
 }
 
 //painting id, position, wall index

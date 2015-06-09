@@ -132,6 +132,10 @@ void savePlayer(const string &data_path, const string player_name, const shared_
 		string gallery_template_name
 		string gallery_name
 
+		unsigned num_walls
+			unsigned short wall index
+			string texture name
+
 		unsigned short paintings_in_gallery
 			unsigned work_id
 			float position_x
@@ -152,7 +156,6 @@ void savePlayer(const string &data_path, const string player_name, const shared_
 	writeStringToFile(save_file, current_player->getBankBalanceString(false));
 	
 	current_player->updateBank();
-	cout << "last_balance_check saved: " << current_player->getLastBalanceCheck() << endl;
 	writeToFile(save_file, current_player->getLastBalanceCheck());
 
 	const map<unsigned int, shared_ptr<artwork> > inventory(current_player->getInventory());
@@ -178,6 +181,15 @@ void savePlayer(const string &data_path, const string player_name, const shared_
 		writeToFile(save_file, gallery_pair.first);
 		writeStringToFile(save_file, gallery_pair.second->getTemplateName());
 		writeStringToFile(save_file, gallery_pair.second->getName());
+
+		map<unsigned short, shared_ptr<display_wall> > gallery_walls = gallery_pair.second->getWalls();
+		writeToFile(save_file, (unsigned short)gallery_walls.size());
+
+		for (const auto &wall : gallery_walls)
+		{
+			writeToFile(save_file, wall.second->getIndex());
+			writeStringToFile(save_file, wall.second->getTextureFilename());
+		}
 
 		//work id, wall position, wall index
 		const map< unsigned, pair<vec2, unsigned short> > work_map(gallery_pair.second->getWorkMap());
@@ -216,6 +228,9 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 		int gallery_index
 		string gallery_template_name
 		string gallery_name
+		unsigned num_walls
+			unsigned wall index
+			string texture name
 
 		unsigned short paintings_in_gallery
 			unsigned work_id
@@ -237,6 +252,142 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 	cout << "LOADING PLAYER" << endl;
 	file_path = data_path + "\\gamesave_data\\" + player_name + ".sav";
 	
+	if (fileExists(file_path))
+	{
+		std::ifstream load_file;
+		load_file.open(file_path.c_str(), std::ios::in | std::ios::binary);
+
+		string loaded_player_name = getStringFromFile(load_file);
+
+		unsigned long xp = getFromFile<unsigned long>(load_file);
+		unsigned short level = getFromFile<unsigned short>(load_file);
+		string bank_balance_string = getStringFromFile(load_file);
+
+		//TODO make new constructor using the loaded parameters
+		shared_ptr<player> generated_player(new player(loaded_player_name, context, textures, xp, level, bank_balance_string));
+		time_t last_balance_check = getFromFile<time_t>(load_file);
+		generated_player->setLastBalanceCheck(last_balance_check);
+		cout << "last_balance_check loaded: " << generated_player->getLastBalanceCheck() << endl;
+
+		unsigned short inventory_size = getFromFile<unsigned short>(load_file);
+
+		vector<unsigned> inventory;
+
+		for (int i = 0; i < inventory_size; i++)
+		{
+			unsigned work_id = getFromFile<unsigned>(load_file);
+			shared_ptr<artwork_data> work_data = database->getArtwork(work_id);
+			shared_ptr<artwork> work(new artwork(work_data, false, 1.0f));
+
+			bool profited = getFromFile<bool>(load_file);
+			work->setProfitedTEMP(profited);
+
+			generated_player->addWorkToInventory(work);
+		}
+
+		unsigned short num_galleries = getFromFile<unsigned short>(load_file);
+
+		for (int i = 0; i < num_galleries; i++)
+		{
+			int gallery_index = getFromFile<int>(load_file);
+			string gallery_template_name = getStringFromFile(load_file);
+			string gallery_name = getStringFromFile(load_file);
+
+			shared_ptr<gallery> loaded_gallery(new gallery(
+				context, textures,
+				data_path + "model_data\\",
+				data_path + "model_data\\",
+				gallery_template_name,
+				generated_player->getName(),
+				gallery_name
+				));
+
+			//unsigned short num_walls
+				//unsigned short wall index
+				//string texture name
+
+			unsigned short num_walls = getFromFile<unsigned short>(load_file);
+
+			for (int j = 0; j < num_walls; j++)
+			{
+				unsigned short wall_index = getFromFile<unsigned short>(load_file);
+				string texture_filename = getStringFromFile(load_file);
+				loaded_gallery->getWall(wall_index)->setTexture(texture_filename, textures);
+			}
+
+			unsigned short paintings_in_gallery = getFromFile<unsigned short>(load_file);
+
+			for (int j = 0; j < paintings_in_gallery; j++)
+			{
+				unsigned work_id = getFromFile<unsigned>(load_file);
+				float position_x = getFromFile<float>(load_file);
+				float position_y = getFromFile<float>(load_file);
+				unsigned short wall_index = getFromFile<unsigned short>(load_file);
+
+				shared_ptr<artwork_data> work_data = database->getArtwork(work_id);
+				shared_ptr<artwork> work(new artwork(work_data, false, 1.0f));
+				work->applyFrameTemplate(context, textures, *(generated_player->getDefaultFrame()));
+
+				generated_player->addPaintingToDisplay(work);
+				loaded_gallery->addArtwork(wall_index, work, vec2(position_x, position_y));
+			}
+
+			generated_player->addGallery(loaded_gallery);
+		}
+
+		load_file.close();
+		generated_player->updateBank();
+		return generated_player;
+	}
+
+	else
+	{
+		shared_ptr<player> generated_player(new player(player_name, loot, context, textures, data_path));
+
+		generated_player->addGallery(shared_ptr<gallery>(new gallery(
+			context, textures,
+			data_path + "model_data\\",
+			data_path + "model_data\\",
+			"gallery_template_01",
+			generated_player->getName(),
+			"default gallery"
+			)));
+
+		savePlayer(data_path, player_name, generated_player);
+		return generated_player;
+	}
+}
+
+shared_ptr<player> loadAndUpdate(const string &data_path, string player_name, const shared_ptr<art_db> &database, const shared_ptr<loot_generator> &loot,
+	const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures)
+{
+	/*
+	string loaded_player_name
+	unsigned long xp
+	unsigned short level
+	string bank_balance_string
+	time_t last_balance_check
+
+	unsigned short inventory_size
+		unsigned work_id
+
+	unsigned short num_galleries
+		int gallery_index
+		string gallery_template_name
+		string gallery_name
+
+		unsigned short paintings_in_gallery
+			unsigned work_id
+			float position_x
+			float position_y
+			unsigned short wall_index
+	*/
+
+	//plaster.bmp
+
+	cout << "LOADING PLAYER" << endl;
+	string file_path = data_path + "\\gamesave_data\\" + player_name + "_old.sav";
+
 	if (fileExists(file_path))
 	{
 		std::ifstream load_file;
@@ -326,106 +477,6 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 			)));
 
 		savePlayer(data_path, player_name, generated_player);
-		return generated_player;
-	}
-}
-
-shared_ptr<player> loadAndUpdate(const string &data_path, string player_name, const shared_ptr<art_db> &database, const shared_ptr<loot_generator> &loot,
-	const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures)
-{
-	/*
-	string loaded_player_name
-	unsigned long xp
-	unsigned short level
-	string bank_balance_string
-	***time_t last_balance_check
-
-	unsigned short inventory_size
-		unsigned work_id
-
-	unsigned short num_galleries
-		int gallery_index
-		string gallery_template_name
-		***string gallery_name
-
-		unsigned short paintings_in_gallery
-			unsigned work_id
-			float position_x
-			float position_y
-			unsigned short wall_index
-	*/
-
-	cout << "LOADING OLD PLAYER FILE" << endl;
-	string file_path = data_path + "\\gamesave_data\\" + player_name + "_old.sav";
-
-	if (fileExists(file_path))
-	{
-		std::ifstream load_file;
-		load_file.open(file_path.c_str(), std::ios::in | std::ios::binary);
-
-		string loaded_player_name = getStringFromFile(load_file);
-
-		unsigned long xp = getFromFile<unsigned long>(load_file);
-		unsigned short level = getFromFile<unsigned short>(load_file);
-
-		string bank_balance_string = getStringFromFile(load_file);
-
-		//TODO make new constructor using the loaded parameters
-		shared_ptr<player> generated_player(new player(loaded_player_name, context, textures, xp, level, bank_balance_string));
-
-		unsigned short inventory_size = getFromFile<unsigned short>(load_file);
-
-		vector<unsigned> inventory;
-
-		for (int i = 0; i < inventory_size; i++)
-		{
-			unsigned work_id = getFromFile<unsigned>(load_file);
-			shared_ptr<artwork_data> work_data = database->getArtwork(work_id);
-			shared_ptr<artwork> work(new artwork(work_data, false, 1.0f));
-
-			bool profited = getFromFile<bool>(load_file);
-			work->setProfitedTEMP(profited);
-
-			generated_player->addWorkToInventory(work);
-		}
-
-		unsigned short num_galleries = getFromFile<unsigned short>(load_file);
-
-		for (int i = 0; i < num_galleries; i++)
-		{
-			int gallery_index = getFromFile<int>(load_file);
-			string gallery_template_name = getStringFromFile(load_file);
-
-			shared_ptr<gallery> loaded_gallery(new gallery(
-				context, textures,
-				data_path + "model_data\\",
-				data_path + "model_data\\",
-				gallery_template_name,
-				generated_player->getName(),
-				"created gallery"					//<---------ADDED DATA
-				));
-
-			unsigned short paintings_in_gallery = getFromFile<unsigned short>(load_file);
-
-			for (int j = 0; j < paintings_in_gallery; j++)
-			{
-				unsigned work_id = getFromFile<unsigned>(load_file);
-				float position_x = getFromFile<float>(load_file);
-				float position_y = getFromFile<float>(load_file);
-				unsigned short wall_index = getFromFile<unsigned short>(load_file);
-
-				shared_ptr<artwork_data> work_data = database->getArtwork(work_id);
-				shared_ptr<artwork> work(new artwork(work_data, false, 1.0f));
-				work->applyFrameTemplate(context, textures, *(generated_player->getDefaultFrame()));
-
-				generated_player->addPaintingToDisplay(work);
-				loaded_gallery->addArtwork(wall_index, work, vec2(position_x, position_y));
-			}
-
-			generated_player->addGallery(loaded_gallery);
-		}
-
-		load_file.close();
 		return generated_player;
 	}
 }

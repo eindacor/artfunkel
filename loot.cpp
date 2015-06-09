@@ -120,8 +120,7 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 			}
 		}
 	}
-	cout << "rolls for rare in bronze: " << rare_in_bronze_rolls.getCount() << endl;
-
+	
 	cout << "average rolls for rare in bronze: " << rare_in_bronze_rolls.getAverage() << endl;
 	cout << "average rolls for rare in silver: " << rare_in_silver_rolls.getAverage() << endl;
 	cout << "average rolls for legendary in gold: " << legendary_in_gold_rolls.getAverage() << endl;

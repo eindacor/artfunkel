@@ -10,7 +10,8 @@ class display_wall
 public:
 	//class constructed with vec3's, then converts to vec2's with a model matrix to simplify raytracing
 	//first point is used as the wall origin, which is used to determing the painting location matrix
-	display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX, int wall_index);
+	display_wall(const shared_ptr<ogl_context> &context, mesh_data mesh, const shared_ptr<GLuint> &TEX, 
+		string texture_filename, unsigned short wall_index);
 	~display_wall(){}
 
 	bool validPlacement(const shared_ptr<artwork> &placed, const vec2 &position);
@@ -29,7 +30,9 @@ public:
 	vec4 getCursorPositionWorldspace() const { return wall_model_matrix * vec4(cursor_position.x, cursor_position.y, 0.0f, 1.0f); }
 	vec2 getCursorPositionWallspace() const { return cursor_position; }
 
-	int getIndex() const { return wall_index; }
+	unsigned short getIndex() const { return wall_index; }
+	string getTextureFilename() const { return tex_filename; }
+	void setTexture(string texture_filename, const shared_ptr<texture_handler> &textures);
 
 private:
 	//wall_edges is used to determine whether a point is inside or outside the wall
@@ -45,7 +48,8 @@ private:
 	mat4 wall_model_matrix;
 
 	//corresponds with index in gallery
-	int wall_index;
+	unsigned short wall_index;
+	string tex_filename;
 
 	shared_ptr<jep::ogl_data> opengl_data;
 
@@ -56,9 +60,6 @@ private:
 class gallery
 {
 public:
-	//gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path,
-		//string display_model_filename, string filler_model_filename, string display_material_filename, 
-		//string filler_material_filename, string template_name_string, string owner);
 	gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, string model_path, string material_path, 
 		string template_name_string, string owner, string gallery_name);
 	~gallery(){};
@@ -72,7 +73,8 @@ public:
 	string getOwnerName() const { return owner; }
 	void setName(string s) { gallery_name = s; }
 	string getName() { return gallery_name; }
-	const map <int, shared_ptr<display_wall> > getWalls() const { return display_walls; }
+	const map <unsigned short, shared_ptr<display_wall> > getWalls() const { return display_walls; }
+	shared_ptr<display_wall> getWall(int index);
 	bignum getGalleryValue() const { return gallery_value; }
 
 	//work ID, position, wall index
@@ -85,14 +87,14 @@ private:
 	string gallery_name;
 	int max_paintings;
 	map <int, mat4> work_positions;
-	map <int, shared_ptr<display_wall> > display_walls;
+	map <unsigned short, shared_ptr<display_wall> > display_walls;
 	float width;
 	float height;
 	//lines are for testing only
 	vector< shared_ptr<line> > lines;
 	bignum gallery_value;
 
-	vector< shared_ptr<jep::ogl_data> > environment_models;
+	vector< shared_ptr<jep::ogl_data> > environment_mesh_data;
 	//vector<player> players_present;
 };
 
