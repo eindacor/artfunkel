@@ -13,10 +13,10 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 	const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, rarity r, int count, shared_ptr<dynamic_hud_array> &crates)
 {
 	string crate_size;
-	if (count / 5 > 2)
+	if (count / 4 > 2)
 		crate_size = "Mega";
 
-	else if (count / 5 > 1)
+	else if (count / 4 > 1)
 		crate_size = "Large";
 
 	else crate_size = "Small";
@@ -98,18 +98,18 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 
 	map<string, pair<rarity, int> >crate_map;
 
-	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, 5, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, 10, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, 15, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON, 5, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON, 10, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON, 15, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, 5, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, 10, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, 15, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, 5, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, 10, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, 15, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, 4, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, 8, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, 12, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON,4, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON, 8, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON, 12, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, 4, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, 8, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, 12, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, 4, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, 8, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, 12, crate_menu));
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 

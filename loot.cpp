@@ -176,19 +176,19 @@ bignum loot_generator::getCrateCost(rarity r, int count) const
 	{
 	case COMMON: 
 		potential_value = average_bronze_crate_work_value + calcPlacementBonus(average_bronze_crate_work_value);
-		result = cost_modifier * potential_value * bignum(count) *  bignum(".8"); 
+		result = cost_modifier * potential_value * bignum(count) *  bignum("1.2345"); 
 		break;
 	case UNCOMMON: 
 		potential_value = average_silver_crate_work_value + calcPlacementBonus(average_silver_crate_work_value);
-		result = cost_modifier * potential_value * bignum(count) *  bignum("1.2");
+		result = cost_modifier * potential_value * bignum(count) *  bignum("1.6049");
 		break;
 	case RARE:
 		potential_value = average_gold_crate_work_value + calcPlacementBonus(average_gold_crate_work_value);
-		result = cost_modifier * potential_value * bignum(count) *  bignum("1.6");
+		result = cost_modifier * potential_value * bignum(count) *  bignum("1.975");
 		break;
 	case LEGENDARY:
 		potential_value = average_platinum_crate_work_value + calcPlacementBonus(average_platinum_crate_work_value);
-		result = cost_modifier * potential_value * bignum(count) *  bignum("2.0");
+		result = cost_modifier * potential_value * bignum(count) *  bignum("2.345");
 		break;
 	default: break;
 	}
