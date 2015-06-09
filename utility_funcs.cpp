@@ -30,23 +30,23 @@ bignum lookupValue(rarity work_rarity, bignum work_rarity_scale)
 	{
 	case COMMON:
 		min = bignum("5000");
-		max = bignum("15000");
+		max = bignum("25000");
 		break;
 	case UNCOMMON:
-		min = bignum("15000");
-		max = bignum("45000");
+		min = bignum("25000");
+		max = bignum("65000");
 		break;
 	case RARE:
-		min = bignum("45000");
-		max = bignum("165000");
+		min = bignum("65000");
+		max = bignum("225000");
 		break;
 	case LEGENDARY:
-		min = bignum("645000");
-		max = bignum("2565000");
+		min = bignum("225000");
+		max = bignum("1505000");
 		break;
 	case MASTERPIECE:
-		min = bignum("2565000");
-		max = bignum("10245000");
+		min = bignum("1505000");
+		max = bignum("21985000");
 		break;
 	}
 
