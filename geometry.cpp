@@ -602,6 +602,35 @@ image::image(vec2 centerpoint, vec2 dimensions, const shared_ptr<ogl_context> &c
 	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, texture_path, GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
 }
 
+image::image(vec2 centerpoint, vec2 dimensions, const shared_ptr<ogl_context> &context, const shared_ptr<GLuint> &TEX)
+{
+	float half_width = dimensions.x / 2.0f;
+	float half_height = dimensions.y / 2.0f;
+
+	vec3 upper_left(centerpoint.x - half_width, centerpoint.y + half_height, 0.0f);
+	vec3 upper_right(centerpoint.x + half_width, centerpoint.y + half_height, 0.0f);
+	vec3 lower_left(centerpoint.x - half_width, centerpoint.y - half_height, 0.0f);
+	vec3 lower_right(centerpoint.x + half_width, centerpoint.y - half_height, 0.0f);
+
+	vector<float> vec_vertices{
+		lower_left.x, lower_left.y, 0.0f,
+		0.0f, 0.0f,
+		upper_left.x, upper_left.y, 0.0f,
+		0.0f, 1.0f,
+		upper_right.x, upper_right.y, 0.0f,
+		1.0f, 1.0f,
+		lower_left.x, lower_left.y, 0.0f,
+		0.0f, 0.0f,
+		upper_right.x, upper_right.y, 0.0f,
+		1.0f, 1.0f,
+		lower_right.x, lower_right.y, 0.0f,
+		1.0f, 0.0f
+	};
+
+	opengl_data = shared_ptr<jep::ogl_data>(new jep::ogl_data(context, TEX, 
+		GL_STATIC_DRAW, vec_vertices, 3, 2, 5 * sizeof(float), 3 * sizeof(float)));
+}
+
 void image::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute) const
 {
 	glBindVertexArray(*(opengl_data->getVAO()));
@@ -621,7 +650,7 @@ void image::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_ca
 	glBindTexture(GL_TEXTURE_2D, *(opengl_data->getTEX()));
 
 	//TODO modify values passed to be more explicit in code (currently enumerated in ogl_tools)
-	camera->setMVP(context, model_matrix, (absolute ? (render_type)2 : (render_type)0));
+	camera->setMVP(context, model_matrix, (absolute ? ABSOLUTE : NORMAL));
 
 	glDrawArrays(GL_TRIANGLES, 0, opengl_data->getVertexCount());
 	glBindTexture(GL_TEXTURE_2D, 0);

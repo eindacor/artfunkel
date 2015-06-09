@@ -63,6 +63,9 @@ public:
 		else return nullptr;
 	}
 
+	map<string, string> getAvailableWallFinishes() const { return available_wall_finishes; }
+	void addAvailableWallFinish(string finish_name, string finish_filename) { available_wall_finishes[finish_name] = finish_filename; }
+
 private:
 	string name;
 	//key corresponds to painting ID
@@ -82,6 +85,9 @@ private:
 	unsigned short level;
 
 	map<int, shared_ptr<gallery> > active_galleries;
+
+	//texture name, texture filename
+	map<string, string> available_wall_finishes;
 };
 
 #endif

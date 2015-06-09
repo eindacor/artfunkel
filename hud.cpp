@@ -179,15 +179,18 @@ mat4 artwork_thumbnail::calcScaleMatrix(const shared_ptr<ogl_context> &context) 
 
 void artwork_thumbnail::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
-	drawBackground(context, camera);
-	if (isCurrentlySelected() && preDrawSelected != nullptr)
-		preDrawSelected(context, camera);
+	if (isVisible())
+	{
+		drawBackground(context, camera);
+		if (isCurrentlySelected() && preDrawSelected != nullptr)
+			preDrawSelected(context, camera);
 
-	mat4 aspect_matrix = glm::scale(mat4(1.0f), vec3(1.0f / context->getAspectRatio(), 1.0f, 1.0f));
-	stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix * aspect_matrix);
+		mat4 aspect_matrix = glm::scale(mat4(1.0f), vec3(1.0f / context->getAspectRatio(), 1.0f, 1.0f));
+		stored->draw2D(context, camera, getTranslationMatrix() * scale_matrix * aspect_matrix);
 
-	if (isCurrentlySelected() && postDrawSelected != nullptr)
-		postDrawSelected(context, camera);
+		if (isCurrentlySelected() && postDrawSelected != nullptr)
+			postDrawSelected(context, camera);
+	}
 }
 
 bool artwork_thumbnail::isSelected(shared_ptr<key_handler> &keys, const vec2 &cursor_position, shared_ptr<artwork> &selected)
@@ -200,6 +203,22 @@ bool artwork_thumbnail::isSelected(shared_ptr<key_handler> &keys, const vec2 &cu
 	}
 
 	else return false;
+}
+
+void finish_thumbnail::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
+{
+	if (isVisible())
+	{
+		drawBackground(context, camera);
+		if (isCurrentlySelected() && preDrawSelected != nullptr)
+			preDrawSelected(context, camera);
+
+		mat4 aspect_matrix = glm::scale(mat4(1.0f), vec3(1.0f / context->getAspectRatio(), 1.0f, 1.0f));
+		stored_image->draw(context, camera, getTranslationMatrix(), true);
+
+		if (isCurrentlySelected() && postDrawSelected != nullptr)
+			postDrawSelected(context, camera);
+	}
 }
 
 bool hud::addElement(string identifier, const shared_ptr<hud_element> &to_add)
@@ -634,22 +653,25 @@ bool text_area::setVisible(int first_line_index)
 
 void text_area::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
-	glDisable(GL_DEPTH_TEST);
-	drawBackground(context, camera);
-	//drawLines(context, camera);
+	if (isVisible())
+	{
+		glDisable(GL_DEPTH_TEST);
+		drawBackground(context, camera);
+		//drawLines(context, camera);
 
-	glUniform1i(context->getShaderGLint(text_enable_shader_ID), true);
+		glUniform1i(context->getShaderGLint(text_enable_shader_ID), true);
 
-	//set text color
-	glUniform4f(context->getShaderGLint(text_color_shader_ID),
-		text_color.x, text_color.y, text_color.z, text_color.w);
+		//set text color
+		glUniform4f(context->getShaderGLint(text_color_shader_ID),
+			text_color.x, text_color.y, text_color.z, text_color.w);
 
-	for (const auto &c : visible_characters)
-		c->draw(context, camera);
+		for (const auto &c : visible_characters)
+			c->draw(context, camera);
 
-	glUniform1i(context->getShaderGLint(text_enable_shader_ID), false);
+		glUniform1i(context->getShaderGLint(text_enable_shader_ID), false);
 
-	glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
+	}
 }
 
 shared_ptr<hud_element> dynamic_hud_array::getMouseoverElement(const vec2 &cursor_position, bool select)
@@ -778,25 +800,28 @@ void dynamic_hud_array::deselectAllOthersWithin(const string &exception)
 
 void dynamic_hud_array::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const
 {
-	glDisable(GL_DEPTH_TEST);
-	drawBackground(context, camera);
-	//drawLines(context, camera);
-	for (const auto &line_info : visible_lines)
+	if (isVisible())
 	{
-		for (const auto &element : line_info.second)
+		glDisable(GL_DEPTH_TEST);
+		drawBackground(context, camera);
+		//drawLines(context, camera);
+		for (const auto &line_info : visible_lines)
 		{
-			if (element->isVisible())
-				element->draw(context, camera);
+			for (const auto &element : line_info.second)
+			{
+				if (element->isVisible())
+					element->draw(context, camera);
 
-			if (element->drawLinesEnabled())
-				element->drawLines(context, camera);
+				if (element->drawLinesEnabled())
+					element->drawLines(context, camera);
+			}
 		}
+
+		for (const auto &i : lines)
+			i->draw(context, camera, true);
+
+		glEnable(GL_DEPTH_TEST);
 	}
-
-	for (const auto &i : lines)
-		i->draw(context, camera, true);
-
-	glEnable(GL_DEPTH_TEST);
 }
 
 void dynamic_hud_array::setLines()

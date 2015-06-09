@@ -65,51 +65,11 @@ private:
 	float painting_to_wall_dimension;
 };
 
-/*
-class line
-{
-public:
-	line(vec4 first, vec4 second, vec4 c);
-	~line();
-
-	void moveFirstRelative(mat4 translation) { p1 = translation * p1; }
-	void moveFirstAbsolute(vec4 new_point) { p1 = new_point; }
-	void moveSecondRelative(mat4 translation) { p2 = translation * p2; }
-	void moveSecondAbsolute(vec4 new_point) { p2 = new_point; }
-
-	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute = false) const;
-
-private:
-	vec4 p1;
-	vec4 p2;
-
-	shared_ptr<GLuint> VBO;
-	shared_ptr<GLuint> VAO;
-	vec4 color;
-};
-
-class rectangle
-{
-public:
-	rectangle(vec2 centerpoint, vec2 dimensions, vec4 c);
-	~rectangle();
-
-	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute = false) const;
-	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, const mat4 &model_matrix, bool absolute = false) const;
-	void setColor(vec4 c) { color = c; }
-
-private:
-	vector<float> vec_vertices;
-	shared_ptr<GLuint> VBO;
-	shared_ptr<GLuint> VAO;
-	vec4 color;
-};
-*/
-
 class image
 {
 public:
 	image(vec2 centerpoint, vec2 dimensions, const shared_ptr<ogl_context> &context, const char* texture_path);
+	image(vec2 centerpoint, vec2 dimensions, const shared_ptr<ogl_context> &context, const shared_ptr<GLuint> &TEX);
 	~image(){};
 
 	void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera, bool absolute = false) const;

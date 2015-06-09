@@ -108,7 +108,6 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 	//TODO equip dynamic array with function that generates thumbnails from artwork
 	//add player's default frames to each
 
-	/////////////////////UPDATED HUD
 	//identify positions for text
 	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(-1.0f, -.75f),
 		justpair(H_LEFT, V_BOTTOM), vec2(0.8f, 0.5f), justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));

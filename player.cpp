@@ -15,6 +15,9 @@ player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, "frame_black.bmp", "white_matte.bmp", textures));
 	bank = bignum("500000");
 	time(&last_balance_check);
+
+	addAvailableWallFinish("plaster", "plaster.bmp");
+	addAvailableWallFinish("brick", "brick.bmp");
 }
 
 player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, unsigned long player_xp, unsigned short player_level, string balance)
@@ -26,6 +29,9 @@ player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<text
 	time(&last_balance_check);
 
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, context, "frame_black.bmp", "white_matte.bmp", textures));
+
+	addAvailableWallFinish("plaster", "plaster.bmp");
+	addAvailableWallFinish("brick", "brick.bmp");
 }
 
 bool player::addWorkToInventory(const shared_ptr<artwork> &work)

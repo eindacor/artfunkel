@@ -389,6 +389,48 @@ private:
 	float thumbnail_padding;
 };
 
+class finish_thumbnail : public hud_element
+{
+public:
+	finish_thumbnail(string identifier, string tex_filename, string fin_name, const shared_ptr<GLuint> &TEX,
+		const shared_ptr<ogl_context> &context, const vec2 &anchor_point, const justpair &anchor_location,
+		const vec2 &on_screen_dimensions, vec2 padding)
+		: hud_element(identifier, anchor_point, anchor_location, on_screen_dimensions, FINISH_THUMBNAIL)
+	{
+		finish_name = fin_name;
+		stored_TEX = TEX;
+		texture_filename = tex_filename;
+
+		vec2 actual_on_screen_image_dimensions(getWidth() - (padding.x * 2.0f), getHeight() - (padding.y * 2.0f));
+		
+		stored_image = shared_ptr<image>(new image(anchor_point, actual_on_screen_image_dimensions, context, TEX));
+	}
+
+	finish_thumbnail(string identifier, string tex_filename, string fin_name, const shared_ptr<GLuint> &TEX,
+		const shared_ptr<ogl_context> &context, const vec2 &on_screen_dimensions, vec2 padding)
+		: hud_element(identifier, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), on_screen_dimensions, FINISH_THUMBNAIL)
+	{
+		finish_name = fin_name;
+		stored_TEX = TEX;
+		texture_filename = tex_filename;
+
+		vec2 actual_on_screen_image_dimensions(getWidth() - (padding.x * 2.0f), getHeight() - (padding.y * 2.0f));
+		stored_image = shared_ptr<image>(new image(vec2(0.0f, 0.0f), actual_on_screen_image_dimensions, context, TEX));
+	}
+	~finish_thumbnail(){};
+
+	shared_ptr<GLuint> getStoredTEX() const { return stored_TEX; }
+	virtual void draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera) const;
+	string getFinishName() const { return finish_name; }
+	string getTextureFilename() const { return texture_filename; }
+
+private:
+	shared_ptr<GLuint> stored_TEX;
+	string finish_name;
+	string texture_filename;
+	shared_ptr<image> stored_image;
+};
+
 /*
 
 class button : public hud_element

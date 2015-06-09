@@ -47,6 +47,23 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	float thumbpadding(0.01f);
 	refreshThumbnails(context, textures, current_player, not_displayed_copy, artwork_thumbnails, thumbsize, thumbpadding);
 
+	shared_ptr<dynamic_hud_array> finish_thumbnails(new dynamic_hud_array("thumbnails", context, vec2(1.0f, -1.0f), justpair(H_RIGHT, V_BOTTOM), vec2(1.5f, 0.25f),
+		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE)));
+	finish_thumbnails->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.4f));
+	finish_thumbnails->setVisibility(false);
+
+	map<string, string> finish_map = current_player->getAvailableWallFinishes();
+	for (const auto &finish_data : finish_map)
+	{
+		string identifier = finish_data.first + "_thumb";
+		string texture_filename = finish_data.second;
+		string finish_name = finish_data.first;
+		shared_ptr<finish_thumbnail> finish_thumb(new finish_thumbnail(identifier, texture_filename, finish_name,
+			textures->getTexture(texture_filename), context, thumbsize, vec2(thumbpadding)));
+
+		finish_thumbnails->addElement(finish_thumb);
+	}
+
 	/////////////////////UPDATED HUD
 	//identify positions for text
 	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(1.0f, 1.0f), justpair(H_RIGHT, V_TOP), vec2(0.8f, 0.25f),
@@ -58,6 +75,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	////////////////////////////////
 
 	shared_ptr<artwork> painting_to_place(nullptr);
+	shared_ptr<finish_thumbnail> selected_finish = nullptr;
 	pair<float, shared_ptr<artwork> > artwork_selected(0.0f, nullptr);
 	pair<float, shared_ptr<display_wall> > wall_selected(0.0f, nullptr);
 
@@ -87,8 +105,8 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			current_gallery->renderGallery(context, camera);
 
-			if (inventory_displayed)
-				artwork_thumbnails->draw(context, camera);
+			artwork_thumbnails->draw(context, camera);
+			finish_thumbnails->draw(context, camera);
 
 			if (painting_to_place != nullptr || artwork_selected.second != nullptr)
 				work_info->draw(context, camera);
@@ -97,53 +115,43 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			if (keys->checkPress(GLFW_KEY_I, false))
 			{
-				inventory_displayed = !inventory_displayed;
+				artwork_thumbnails->setVisibility(!artwork_thumbnails->isVisible());
+				finish_thumbnails->setVisibility(!finish_thumbnails->isVisible());
 
-				//TEXT BELOW UNLOADS INVENTORY WHEN IT IS HIDDEN
-				/*
-				if (inventory_displayed)
-				{
-					artwork_thumbnails->clearElements();
-					inventory_displayed = false;
-					artwork_selected = pair<float, shared_ptr<artwork> >(0.0f, nullptr);
-				}
-
-				else
-				{
-					inventory_displayed = true;
-
-					artwork_thumbnails->clearElements();
-					for (int i = 0; i < not_displayed_copy.size(); i++)
-					{
-						string identifier = std::to_string(i) + "_" + not_displayed_copy.at(i)->getData()->getArtistName() + "_"
-							+ not_displayed_copy.at(i)->getData()->getTitle();
-						not_displayed_copy.at(i)->applyFrameTemplate2D(context, textures, *(current_player->getDefaultFrame()));
-						shared_ptr<artwork_thumbnail> thumbnail(new artwork_thumbnail(identifier, not_displayed_copy.at(i), context,
-							vec2(0.3f, 0.25f), 0.01f));
-						thumbnail->setDrawSelected(highlight, fullBrightness);
-						artwork_thumbnails->addElement(thumbnail);
-					}
-				}
-				*/
+				painting_to_place = nullptr;
+				selected_finish = nullptr;
 			}
 
-			bool new_selection = false;
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_LEFT, false))
 			{
 				vec2 cursor_position = keys->getCursorPosition();
-				shared_ptr<hud_element> selected_element = artwork_thumbnails->getMouseoverElement(cursor_position, true);
-
-				if (selected_element != nullptr && selected_element->getType() == THUMBNAIL)
+				shared_ptr<hud_element> selected_element = nullptr;
+				
+				if (artwork_thumbnails->isVisible())
 				{
-					painting_to_place = selected_element->getStoredArt();
-					vec2 painting_dimensions = vec2(painting_to_place->getOverallDimensions().x, painting_to_place->getOverallDimensions().y);
-					placement_preview = shared_ptr<rectangle>(new rectangle(vec2(0.0f, 0.0f), painting_dimensions, vec4(1.0f, 1.0f, 0.0f, 0.5f)));
+					selected_element = artwork_thumbnails->getMouseoverElement(cursor_position, true);
 
-					new_selection = true;
-					setWorkInfoDescription(work_info, painting_to_place);
+					if (selected_element != nullptr && selected_element->getType() == THUMBNAIL)
+					{
+						shared_ptr<artwork_thumbnail> thumbnail_selected = boost::dynamic_pointer_cast<artwork_thumbnail>(selected_element);
+
+						painting_to_place = thumbnail_selected->getStoredArt();
+						vec2 painting_dimensions = vec2(painting_to_place->getOverallDimensions().x, painting_to_place->getOverallDimensions().y);
+						placement_preview = shared_ptr<rectangle>(new rectangle(vec2(0.0f, 0.0f), painting_dimensions, vec4(1.0f, 1.0f, 0.0f, 0.5f)));
+						setWorkInfoDescription(work_info, painting_to_place);
+					}
 				}
 
-				if (!new_selection)
+				else if (finish_thumbnails->isVisible())
+				{
+					selected_element = finish_thumbnails->getMouseoverElement(cursor_position, true);
+
+					if (selected_element != nullptr && selected_element->getType() == FINISH_THUMBNAIL)
+						selected_finish = boost::dynamic_pointer_cast<finish_thumbnail>(selected_element);
+				}
+
+				//new_selection being false means a click was made that is not in either of the inventory options, no new thumbnail was selected
+				if (selected_element == nullptr)
 				{
 					//first float indicates scale of the ray from bary coordinates (result.z)
 					//the smaller the scale, the closer the object is. closest object indicates intended target
@@ -155,37 +163,41 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 						(artwork_selected.second == nullptr || artwork_selected.first > wall_selected.first));
 					bool artwork_was_selected = artwork_selected.second != nullptr && !wall_was_selected;
 
-					if (wall_was_selected && painting_to_place != nullptr)
+					if (wall_was_selected)
 					{
-						vec2 point_clicked = wall_selected.second->getCursorPositionWallspace();
-
-						if (wall_selected.second->validPlacement(painting_to_place, point_clicked))
+						if (painting_to_place != nullptr)
 						{
-							current_player->updateBank();
+							vec2 point_clicked = wall_selected.second->getCursorPositionWallspace();
 
-							//TODO find a way to combine these to ensure players paintings are never added without updating player
-							painting_to_place->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
-							current_gallery->addArtwork(wall_selected.second->getIndex(), painting_to_place, point_clicked);
-							//wall_selected.second->addArtwork(point_clicked, *painting_to_place);
-							current_player->addPaintingToDisplay(painting_to_place);
-
-							unsigned work_id = painting_to_place->getData()->getID();
-
-							if (!current_player->getPaintingFromInventory(work_id)->getProfited())
+							if (wall_selected.second->validPlacement(painting_to_place, point_clicked))
 							{
-								//current_player->addFunds(lg->calcPlacementBonus(painting_to_place->getValue()));
-								current_player->getPaintingFromInventory(work_id)->setProfitedTEMP(true);
+								current_player->updateBank();
+
+								//TODO find a way to combine these to ensure players paintings are never added without updating player
+								painting_to_place->applyFrameTemplate(context, textures, *(current_player->getDefaultFrame()));
+								current_gallery->addArtwork(wall_selected.second->getIndex(), painting_to_place, point_clicked);
+								//wall_selected.second->addArtwork(point_clicked, *painting_to_place);
+								current_player->addPaintingToDisplay(painting_to_place);
+
+								unsigned work_id = painting_to_place->getData()->getID();
+
+								if (!current_player->getPaintingFromInventory(work_id)->getProfited())
+								{
+									//current_player->addFunds(lg->calcPlacementBonus(painting_to_place->getValue()));
+									current_player->getPaintingFromInventory(work_id)->setProfitedTEMP(true);
+								}
+
+								not_displayed_copy = current_player->getNotDisplayedCopy();
+								refreshThumbnails(context, textures, current_player, not_displayed_copy, artwork_thumbnails, thumbsize, thumbpadding);
 							}
 
-							not_displayed_copy = current_player->getNotDisplayedCopy();
-							refreshThumbnails(context, textures, current_player, not_displayed_copy, artwork_thumbnails, thumbsize, thumbpadding);
+							painting_to_place = nullptr;
+							placement_preview = nullptr;
 						}
 
-						else cout << "position not valid" << endl;
-
-						painting_to_place = nullptr;
-						placement_preview = nullptr;
-					}
+						if (selected_finish != nullptr)
+							current_gallery->getWall(wall_selected.second->getIndex())->setTexture(selected_finish->getTextureFilename(), textures);
+					}			
 
 					if (artwork_was_selected)
 					{
@@ -252,30 +264,11 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				refreshPlayerInfo(player_summary, current_player);
 			}
 
-			if (keys->checkPress(GLFW_KEY_B, false))
-			{
-				map<unsigned short, shared_ptr<display_wall> > gallery_walls = current_gallery->getWalls();
-				if (brick)
-				{
-					for (auto &wall : gallery_walls)
-						wall.second->setTexture("plaster.bmp", textures);
-
-					brick = false;
-				}
-
-				else
-				{
-					for (auto &wall : gallery_walls)
-						wall.second->setTexture("brick.bmp", textures);
-
-					brick = true;
-				}
-			}
-
 			if (keys->checkMouse(GLFW_MOUSE_BUTTON_RIGHT, false))
 			{
 				painting_to_place = nullptr;
 				placement_preview = nullptr;
+				selected_finish = nullptr;
 				artwork_selected.second = nullptr;
 				artwork_thumbnails->deselectAllWithin();
 			}
