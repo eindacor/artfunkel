@@ -283,7 +283,7 @@ void player::updateBank()
 	bignum money_made;
 
 	//for each hour
-	for (int i = 0; i < elapsed_secs / 3600; i++)
+	for (int i = 0; i < elapsed_secs / 7200; i++)
 	{
 		if (gallery_value_per_sec > min_gallery_value_per_sec)
 			gallery_value_per_sec *= bignum("0.5");
