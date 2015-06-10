@@ -282,11 +282,11 @@ void player::updateBank()
 	bignum gallery_value_per_sec = max_gallery_value_per_sec;
 	bignum money_made;
 
-	//for each hour
+	//for every 2 hours
 	for (int i = 0; i < elapsed_secs / 7200; i++)
 	{
 		if (gallery_value_per_sec > min_gallery_value_per_sec)
-			gallery_value_per_sec *= bignum("0.5");
+			gallery_value_per_sec *= bignum("0.75");
 
 		else gallery_value_per_sec = min_gallery_value_per_sec;
 
