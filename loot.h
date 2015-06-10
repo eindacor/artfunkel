@@ -23,6 +23,8 @@ public:
 
 	bignum calcPlacementBonus(const bignum &value) const { return value * bignum(".3"); }
 
+	unsigned short getCrateSizeModule() const { return crate_size_module; }
+
 private:
 	shared_ptr<art_db> artist_database;
 	map<rarity, unsigned> default_rarity_map;
@@ -36,6 +38,8 @@ private:
 	bignum average_silver_crate_work_value;
 	bignum average_gold_crate_work_value;
 	bignum average_platinum_crate_work_value;
+
+	unsigned short crate_size_module = 4;
 };
 
 #endif

@@ -31,10 +31,10 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 
 	bronze_rarity_map[COMMON] = 60;
 	bronze_rarity_map[UNCOMMON] = 12;
-	bronze_rarity_map[RARE] = 1;
+	//bronze_rarity_map[RARE] = 0;
 	
-	silver_rarity_map[COMMON] = 31;
-	silver_rarity_map[UNCOMMON] = 31;
+	silver_rarity_map[COMMON] = 24;
+	silver_rarity_map[UNCOMMON] = 38;
 	silver_rarity_map[RARE] = 2;
 
 	gold_rarity_map[UNCOMMON] =450;							
@@ -161,7 +161,7 @@ bignum loot_generator::getCrateCost(rarity r, int count) const
 {
 	bignum quantity_discount(1);
 	
-	for (int i = 0; i < count / 4 ; i++)
+	for (int i = 0; i < count / crate_size_module ; i++)
 		quantity_discount *= (bignum)".90";
 
 	bignum result;
