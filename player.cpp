@@ -16,34 +16,8 @@ player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<
 	bank = bignum("500000");
 	time(&last_balance_check);
 
-	addAvailableWallFinish("white plaster", "plaster.bmp");
+	addAvailableWallFinish("plaster", "plaster.bmp");
 	addAvailableWallFinish("brick", "brick.bmp");
-	addAvailableWallFinish("plaster (green)", "plaster_green.bmp");
-	addAvailableWallFinish("plaster (dark green)", "plaster_dark_green.bmp");
-	addAvailableWallFinish("plaster (blue)", "plaster_blue.bmp");
-	addAvailableWallFinish("plaster (red)", "plaster_red.bmp");
-	addAvailableWallFinish("plaster (orange)", "plaster_orange.bmp");
-	addAvailableWallFinish("plaster (purple)", "plaster_purple.bmp");
-	addAvailableWallFinish("plaster (yellow)", "plaster_yellow.bmp");
-	addAvailableWallFinish("plaster (black)", "plaster_black.bmp");
-	addAvailableWallFinish("plaster (navy)", "plaster_navy.bmp");
-	addAvailableWallFinish("wall covering 01", "wall_covering_01.bmp");
-	addAvailableWallFinish("wall covering 02", "wall_covering_02.bmp");
-	addAvailableWallFinish("wall covering 03", "wall_covering_03.bmp");
-	addAvailableWallFinish("wall covering 04", "wall_covering_04.bmp");
-	addAvailableWallFinish("wall covering 05", "wall_covering_05.bmp");
-	addAvailableWallFinish("wall covering 06", "wall_covering_06.bmp");
-	addAvailableWallFinish("wall covering 07", "wall_covering_07.bmp");
-	addAvailableWallFinish("wall covering 08", "wall_covering_08.bmp");
-	addAvailableWallFinish("wall covering 09", "wall_covering_09.bmp");
-	addAvailableWallFinish("wall covering 10", "wall_covering_10.bmp");
-	addAvailableWallFinish("wall covering 11", "wall_covering_11.bmp");
-	addAvailableWallFinish("wall covering 12", "wall_covering_12.bmp");
-	addAvailableWallFinish("wall covering 13", "wall_covering_13.bmp");
-	addAvailableWallFinish("wall covering 14", "wall_covering_14.bmp");
-	addAvailableWallFinish("old brick, white", "old_brick_white.bmp");
-	addAvailableWallFinish("brick(white)", "brick_white.bmp");
-	addAvailableWallFinish("brick(black)", "brick_black.bmp");
 }
 
 player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<texture_handler> &textures, unsigned long player_xp, unsigned short player_level, string balance)
@@ -56,34 +30,8 @@ player::player(string s, const shared_ptr<ogl_context> &context, shared_ptr<text
 
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, context, "frame_black.bmp", "white_matte.bmp", textures));
 
-	addAvailableWallFinish("white plaster", "plaster.bmp");
+	addAvailableWallFinish("plaster", "plaster.bmp");
 	addAvailableWallFinish("brick", "brick.bmp");
-	addAvailableWallFinish("plaster (green)", "plaster_green.bmp");
-	addAvailableWallFinish("plaster (dark green)", "plaster_dark_green.bmp");
-	addAvailableWallFinish("plaster (blue)", "plaster_blue.bmp");
-	addAvailableWallFinish("plaster (red)", "plaster_red.bmp");
-	addAvailableWallFinish("plaster (orange)", "plaster_orange.bmp");
-	addAvailableWallFinish("plaster (purple)", "plaster_purple.bmp");
-	addAvailableWallFinish("plaster (yellow)", "plaster_yellow.bmp");
-	addAvailableWallFinish("plaster (black)", "plaster_black.bmp");
-	addAvailableWallFinish("plaster (navy)", "plaster_navy.bmp");
-	addAvailableWallFinish("wall covering 01", "wall_covering_01.bmp");
-	addAvailableWallFinish("wall covering 02", "wall_covering_02.bmp");
-	addAvailableWallFinish("wall covering 03", "wall_covering_03.bmp");
-	addAvailableWallFinish("wall covering 04", "wall_covering_04.bmp");
-	addAvailableWallFinish("wall covering 05", "wall_covering_05.bmp");
-	addAvailableWallFinish("wall covering 06", "wall_covering_06.bmp");
-	addAvailableWallFinish("wall covering 07", "wall_covering_07.bmp");
-	addAvailableWallFinish("wall covering 08", "wall_covering_08.bmp");
-	addAvailableWallFinish("wall covering 09", "wall_covering_09.bmp");
-	addAvailableWallFinish("wall covering 10", "wall_covering_10.bmp");
-	addAvailableWallFinish("wall covering 11", "wall_covering_11.bmp");
-	addAvailableWallFinish("wall covering 12", "wall_covering_12.bmp");
-	addAvailableWallFinish("wall covering 13", "wall_covering_13.bmp");
-	addAvailableWallFinish("wall covering 14", "wall_covering_14.bmp");
-	addAvailableWallFinish("old brick, white", "old_brick_white.bmp");
-	addAvailableWallFinish("brick(white)", "brick_white.bmp");
-	addAvailableWallFinish("brick(black)", "brick_black.bmp");
 }
 
 bool player::addWorkToInventory(const shared_ptr<artwork> &work)

@@ -59,36 +59,20 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 		string texture_filename = finish_data.second;
 		string finish_name = finish_data.first;
 		shared_ptr<finish_thumbnail> finish_thumb(new finish_thumbnail(identifier, texture_filename, finish_name,
-			textures->getTexture(texture_filename), context, vec2(0.2f / context->getAspectRatio(), 0.2f), vec2(thumbpadding)));
+			textures->getTexture(texture_filename), context, thumbsize, vec2(thumbpadding)));
 
 		finish_thumbnails->addElement(finish_thumb);
 	}
 
+	/////////////////////UPDATED HUD
+	//identify positions for text
 	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(1.0f, 1.0f), justpair(H_RIGHT, V_TOP), vec2(0.8f, 0.25f),
 		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
 	work_info->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
 	setWorkInfoFields(context, text, work_info);
 
-	shared_ptr<dynamic_hud_array> finish_info(new dynamic_hud_array("finish_info", context, vec2(1.0f, 1.0f), justpair(H_RIGHT, V_TOP), vec2(0.8f, 0.25f),
-		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
-	finish_info->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
-
-	float finish_text_height(0.045f);
-	vec4 finish_color(1.0f, 1.0f, 1.0f, 1.0f);
-	vec2 finish_element_dimensions(finish_info->getAllowableWidth(), 0.1f);
-	pair <horizontal_justification, vertical_justification> finish_just(H_LEFT, V_MIDDLE);
-	bool finish_italics = true;
-	vec2 finish_element_padding(0.015f, 0.0f);
-	vec2 finish_spacing_scale(0.8f, 1.1f);
-
-	shared_ptr<text_area> finish_text(new text_area("title_text", "not yet set",
-		context, text, finish_element_dimensions, finish_text_height, finish_just, finish_italics, finish_color,
-		"text", "text_color", finish_element_padding, finish_spacing_scale));
-
-	finish_info->addElement(finish_text);
-	finish_info->setVisibility(false);
-
 	shared_ptr<dynamic_hud_array> player_summary = generatePlayerInfo(context, text, current_player);
+	////////////////////////////////
 
 	shared_ptr<artwork> painting_to_place(nullptr);
 	shared_ptr<finish_thumbnail> selected_finish = nullptr;
@@ -123,9 +107,6 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 			artwork_thumbnails->draw(context, camera);
 			finish_thumbnails->draw(context, camera);
-
-			finish_info->setVisibility(selected_finish != nullptr);
-			finish_info->draw(context, camera);
 
 			if (painting_to_place != nullptr || artwork_selected.second != nullptr)
 				work_info->draw(context, camera);
@@ -166,10 +147,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 					selected_element = finish_thumbnails->getMouseoverElement(cursor_position, true);
 
 					if (selected_element != nullptr && selected_element->getType() == FINISH_THUMBNAIL)
-					{
 						selected_finish = boost::dynamic_pointer_cast<finish_thumbnail>(selected_element);
-						finish_text->setText(selected_finish->getFinishName());
-					}
 				}
 
 				//new_selection being false means a click was made that is not in either of the inventory options, no new thumbnail was selected
@@ -221,13 +199,12 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 							current_gallery->getWall(wall_selected.second->getIndex())->setTexture(selected_finish->getTextureFilename(), textures);
 					}			
 
-					else if (artwork_was_selected)
+					if (artwork_was_selected)
 					{
 						shared_ptr<artwork> selected = artwork_selected.second;
 						setWorkInfoDescription(work_info, selected);
 
 						//remove from display
-						selected_finish = nullptr;
 						painting_to_place = nullptr;
 						placement_preview = nullptr;
 					}
@@ -267,22 +244,16 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 				refreshThumbnails(context, textures, current_player, not_displayed_copy, artwork_thumbnails, thumbsize, thumbpadding);
 			}
 
-			if (keys->checkPress(GLFW_KEY_COMMA, false))
+			if (keys->checkPress(GLFW_KEY_COMMA, false) && inventory_displayed)
 			{
-				if (artwork_thumbnails->isVisible())
-					artwork_thumbnails->pageDown();
-				if (finish_thumbnails->isVisible())
-					finish_thumbnails->pageDown();
+				artwork_thumbnails->pageDown();
 				painting_to_place = nullptr;
 				placement_preview = nullptr;
 			}
 
-			if (keys->checkPress(GLFW_KEY_PERIOD, false))
+			if (keys->checkPress(GLFW_KEY_PERIOD, false) && inventory_displayed)
 			{
-				if (artwork_thumbnails->isVisible())
-					artwork_thumbnails->pageUp();
-				if (finish_thumbnails->isVisible())
-					finish_thumbnails->pageUp();
+				artwork_thumbnails->pageUp();
 				painting_to_place = nullptr;
 				placement_preview = nullptr;
 			}
