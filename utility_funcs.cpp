@@ -800,6 +800,32 @@ void loadTextures(shared_ptr<texture_handler> &textures)
 	textures->addTexture("poured_concrete.bmp");
 	textures->addTexture("white_matte.bmp");
 	textures->addTexture("text_template.bmp");
+	textures->addTexture("plaster_green.bmp");
+	textures->addTexture("plaster_dark_green.bmp");
+	textures->addTexture("plaster_blue.bmp");
+	textures->addTexture("plaster_red.bmp");
+	textures->addTexture("plaster_yellow.bmp");
+	textures->addTexture("plaster_orange.bmp");
+	textures->addTexture("plaster_purple.bmp");
+	textures->addTexture("plaster_black.bmp");
+	textures->addTexture("plaster_navy.bmp");
+	textures->addTexture("wall_covering_01.bmp");
+	textures->addTexture("wall_covering_02.bmp");
+	textures->addTexture("wall_covering_03.bmp");
+	textures->addTexture("wall_covering_04.bmp");
+	textures->addTexture("wall_covering_05.bmp");
+	textures->addTexture("wall_covering_06.bmp");
+	textures->addTexture("wall_covering_07.bmp");
+	textures->addTexture("wall_covering_08.bmp");
+	textures->addTexture("wall_covering_09.bmp");
+	textures->addTexture("wall_covering_10.bmp");
+	textures->addTexture("wall_covering_11.bmp");
+	textures->addTexture("wall_covering_12.bmp");
+	textures->addTexture("wall_covering_13.bmp");
+	textures->addTexture("wall_covering_14.bmp");
+	textures->addTexture("old_brick_white.bmp");
+	textures->addTexture("brick_white.bmp");
+	textures->addTexture("brick_black.bmp");
 }
 
 void readConfigFile(string &data_path, string &username)

@@ -79,7 +79,7 @@ private:
 
 	time_t last_balance_check;
 
-	int inventory_max = 80;
+	int inventory_max = 60;
 
 	unsigned long xp;
 	unsigned short level;
