@@ -8,7 +8,7 @@ player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<
 	name = s;
 	xp = 0;
 	level = 0;
-	vector< shared_ptr<artwork> > generated_works = lg->generateArtworks(10, COMMON);
+	vector< shared_ptr<artwork> > generated_works = lg->generateArtworks(15, COMMON);
 	for (auto i : generated_works)
 		addWorkToInventory(i);
 
