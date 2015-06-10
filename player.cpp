@@ -290,10 +290,10 @@ void player::updateBank()
 
 		else gallery_value_per_sec = min_gallery_value_per_sec;
 
-		money_made += gallery_value_per_sec * bignum(3600) * total_gallery_value;
+		money_made += gallery_value_per_sec * bignum(7200) * total_gallery_value;
 	}
 
-	int seconds_remaining = elapsed_secs % 3600;
+	int seconds_remaining = elapsed_secs % 7200;
 	money_made += gallery_value_per_sec * bignum(seconds_remaining) * total_gallery_value;
 
 	cout << "money made: $" << money_made.getNumberString(true, false, 2) << endl;
