@@ -8,12 +8,12 @@ player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<
 	name = s;
 	xp = 0;
 	level = 0;
-	vector< shared_ptr<artwork> > generated_works = lg->generateArtworks(5, 1.0f);
+	vector< shared_ptr<artwork> > generated_works = lg->generateArtworks(10, COMMON);
 	for (auto i : generated_works)
 		addWorkToInventory(i);
 
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, "frame_black.bmp", "white_matte.bmp", textures));
-	bank = bignum("1000000");
+	bank = bignum("500000");
 	time(&last_balance_check);
 
 	addAvailableWallFinish("white plaster", "plaster.bmp");
