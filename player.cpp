@@ -13,7 +13,7 @@ player::player(string s, const shared_ptr<loot_generator> &lg, const shared_ptr<
 		addWorkToInventory(i);
 
 	default_frame = shared_ptr<frame_model>(new frame_model(2.0f, 2.0f, ogl_con, "frame_black.bmp", "white_matte.bmp", textures));
-	bank = bignum("500000");
+	bank = bignum("1000000");
 	time(&last_balance_check);
 
 	addAvailableWallFinish("white plaster", "plaster.bmp");
@@ -268,9 +268,6 @@ void player::updateBank()
 
 	int elapsed_secs = difftime(current_time, last_balance_check);
 
-	cout << "-----------" << endl;
-	cout << "previous balance: $" << bank.getNumberString(true, false, 2) << endl;
-	cout << "seconds passed: " << elapsed_secs << endl;
 	bignum total_gallery_value;
 	for (const auto &gallery : active_galleries)
 		total_gallery_value += gallery.second->getGalleryValue();
@@ -296,8 +293,6 @@ void player::updateBank()
 	int seconds_remaining = elapsed_secs % 7200;
 	money_made += gallery_value_per_sec * bignum(seconds_remaining) * total_gallery_value;
 
-	cout << "money made: $" << money_made.getNumberString(true, false, 2) << endl;
 	addFunds(money_made);
-	cout << "new balance: $" << bank.getNumberString(true, false, 2) << endl;
 	time(&last_balance_check);
 }

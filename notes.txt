@@ -67,12 +67,15 @@ increased xp from painting for friends
 
 
 ---------------------------mechanics---------------------------
-players have a museum
-within the museum is a permanent collection and gallery spaces
-the permanent collection is persistent, and can be modified at any time
+***OLD***players have a museum
+***OLD***within the museum is a permanent collection and gallery spaces
+***OLD***the permanent collection is persistent, and can be modified at any time
 the galleries are arranged by the player and set for a specific duration (1 hour, 6 hours, 12 hours, 24 hours)
 the first x% of the gallery duration is the "opening event", which grants special bonuses for visitors
 players cannot modify paintings within a gallery until the end of the event
 forcing a gallery to close reduces rep considerably and the player incurs a penalty
 
 players can contact gallery owners to purchase works, setting can be turned off by gallery owner
+
+----------------------------gallery spaces---------------------
+players can own multiple gallery spaces and either display their own paintings, or offer their space to other players for displaying their work. the owner in return gets a cut of the profits. the owner fills it with furniture, finishes, etc. 

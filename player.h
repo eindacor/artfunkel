@@ -50,7 +50,7 @@ public:
 	bignum getBankBalance() const { return bank; }
 	string getBankBalanceString(bool commas) const { return bank.getNumberString(commas, false, 2); }
 	void deductPayment(const bignum &bn) { bank -= bn; }
-	void addFunds(const bignum &bn) { bank += bn; cout << "+ $" << bn.getNumberString(true, false, 2) << endl; }
+	void addFunds(const bignum &bn) { bank += bn; }
 
 	void updateBank();
 	void setLastBalanceCheck(time_t t) { last_balance_check = t; }
@@ -79,7 +79,7 @@ private:
 
 	time_t last_balance_check;
 
-	int inventory_max = 60;
+	int inventory_max = 64;
 
 	unsigned long xp;
 	unsigned short level;

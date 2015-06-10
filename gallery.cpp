@@ -143,8 +143,8 @@ bool display_wall::removeArtwork(const shared_ptr<artwork> &to_remove)
 
 void display_wall::draw(const shared_ptr<ogl_context> &context, const shared_ptr<ogl_camera> &camera)
 {
-	for (const auto &i : lines)
-		i->draw(context, camera);
+	//for (const auto &i : lines)
+		//i->draw(context, camera);
 
 	for (const auto &i : wall_contents)
 		i.second->draw(context, camera);
@@ -328,8 +328,8 @@ void gallery::renderGallery(const shared_ptr<ogl_context> &context, const shared
 		glBindVertexArray(0);
 	}
 
-	for (const auto &i : lines)
-		i->draw(context, camera);
+	//for (const auto &i : lines)
+		//i->draw(context, camera);
 }
 
 shared_ptr<display_wall> gallery::getClosestWallUnderCursor(shared_ptr<key_handler> &keys, const shared_ptr<ogl_camera> &camera, float &distance)

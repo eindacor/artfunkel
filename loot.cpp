@@ -45,6 +45,7 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	platinum_rarity_map[LEGENDARY] = 5;
 	platinum_rarity_map[MASTERPIECE] = 1;
 
+	/*
 	bool rare_in_bronze_found = false;
 	bool rare_in_silver_found = false;
 	bool legendary_in_gold_found = false;
@@ -126,16 +127,12 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	cout << "average rolls for legendary in gold: " << legendary_in_gold_rolls.getAverage() << endl;
 	cout << "average rolls for legendary in platinum: " << legendary_in_platinum_rolls.getAverage() << endl;
 	cout << "average rolls for masterpiece in platinum: " << masterpiece_in_platinum_rolls.getAverage() << endl;
+	*/
 
 	average_bronze_crate_work_value = calcAveragePaintingValue(bronze_rarity_map);
 	average_silver_crate_work_value = calcAveragePaintingValue(silver_rarity_map);
 	average_gold_crate_work_value = calcAveragePaintingValue(gold_rarity_map);
 	average_platinum_crate_work_value = calcAveragePaintingValue(platinum_rarity_map);
-
-	cout << "average work value, bronze crate: $" << average_bronze_crate_work_value.getNumberString(true, false, 2) << endl;
-	cout << "average work value, unbronze crate: $" << average_silver_crate_work_value.getNumberString(true, false, 2) << endl;
-	cout << "average work value, gold crate: $" << average_gold_crate_work_value.getNumberString(true, false, 2) << endl;
-	cout << "average work value, platinum crate: $" << average_platinum_crate_work_value.getNumberString(true, false, 2) << endl;
 }
 
 bignum loot_generator::calcAveragePaintingValue(const map<rarity, unsigned> &rarity_map) const
@@ -162,10 +159,10 @@ bignum loot_generator::calcAveragePaintingValue(const map<rarity, unsigned> &rar
 
 bignum loot_generator::getCrateCost(rarity r, int count) const
 {
-	bignum cost_modifier(1);
+	bignum quantity_discount(1);
 	
-	for (int i = 0; i < count / 5 ; i++)
-		cost_modifier *= (bignum)".90";
+	for (int i = 0; i < count / 4 ; i++)
+		quantity_discount *= (bignum)".90";
 
 	bignum result;
 
@@ -176,19 +173,19 @@ bignum loot_generator::getCrateCost(rarity r, int count) const
 	{
 	case COMMON: 
 		potential_value = average_bronze_crate_work_value + calcPlacementBonus(average_bronze_crate_work_value);
-		result = cost_modifier * potential_value * bignum(count) *  bignum("1.2345"); 
+		result = quantity_discount * potential_value * bignum(count) *  bignum("1.2345");
 		break;
 	case UNCOMMON: 
 		potential_value = average_silver_crate_work_value + calcPlacementBonus(average_silver_crate_work_value);
-		result = cost_modifier * potential_value * bignum(count) *  bignum("1.6049");
+		result = quantity_discount * potential_value * bignum(count) *  bignum("1.6049");
 		break;
 	case RARE:
 		potential_value = average_gold_crate_work_value + calcPlacementBonus(average_gold_crate_work_value);
-		result = cost_modifier * potential_value * bignum(count) *  bignum("1.975");
+		result = quantity_discount * potential_value * bignum(count) *  bignum("1.975");
 		break;
 	case LEGENDARY:
 		potential_value = average_platinum_crate_work_value + calcPlacementBonus(average_platinum_crate_work_value);
-		result = cost_modifier * potential_value * bignum(count) *  bignum("2.345");
+		result = quantity_discount * potential_value * bignum(count) *  bignum("2.345");
 		break;
 	default: break;
 	}

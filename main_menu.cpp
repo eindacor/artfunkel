@@ -78,10 +78,18 @@ int mainMenu(string data_path, const shared_ptr<ogl_context> &context, shared_pt
 	bool finished = false;
 	int menu_return = 0;
 
+	clock_t start = clock();
 	while (!finished)
 	{
 		if (glfwGetTime() > 1.0f / render_fps)
 		{
+			if ((clock() - start) / CLOCKS_PER_SEC > 2.0f)
+			{
+				current_player->updateBank();
+				refreshPlayerInfo(player_summary, current_player);
+				start = clock();
+			}
+
 			glfwPollEvents();
 			context->clearBuffers();
 
