@@ -37,7 +37,7 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	silver_rarity_map[UNCOMMON] = 38;
 	silver_rarity_map[RARE] = 2;
 
-	gold_rarity_map[UNCOMMON] =450;							
+	gold_rarity_map[UNCOMMON] = 450;							
 	gold_rarity_map[RARE] = 150;
 	gold_rarity_map[LEGENDARY] = 1;
 
