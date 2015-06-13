@@ -49,8 +49,8 @@ art_db::art_db(const char* artists_path,
 
 		bignum work_base_value = lookupValue(work_rarity, work_value_scale);
 
-		//string image_path = image_directory + work_image_name;
-		string image_path = image_directory + string("thumbnails\\thumb_") + work_image_name;
+		string image_path = image_directory + work_image_name;
+		//string image_path = image_directory + string("thumbnails\\thumb_") + work_image_name;
 
 		shared_ptr<artwork_data> new_data(new artwork_data(work_id, work_title, work_artist, work_genre, work_rarity,
 			work_height, work_width, image_path, work_date, work_base_value));
