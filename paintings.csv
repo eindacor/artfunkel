@@ -399,7 +399,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Value Scale,Height (cm),Width (cm),Imag
 397,Petra Cortright,vampire masquerade CD-ROM GaMez,2013????,CONTEMPORARY,UNCOMMON,Digital,0.95,121.92,162.56,cortright_vampire.bmp,no
 398,Petra Cortright,reflectingpool_black,2015????,CONTEMPORARY,UNCOMMON,Digital,0.37,91.44,152.4,cortright_reflectingpool.bmp,no
 399,Liang Wei,Untitled,2004????,CONTEMPORARY,UNCOMMON,Oil,0.77,112.4,146.05,wei_untitled.bmp,no
-400,Ange Leccia,La Mer,2014????,CONTEMPORARY,UNCOMMON,Print,0.09,39.37,22.15,leccia_la.bmp,no
+400,Ange Leccia,La Mer,2014????,CONTEMPORARY,UNCOMMON,Print,0.09,56.25,100,leccia_la.bmp,no
 401,Josh Reames,Houseplant,2013????,CONTEMPORARY,UNCOMMON,"Acrylic, Oil",0.21,91.44,101.6,reames_houseplant.bmp,no
 402,Josh Reames,Juiced,2014????,CONTEMPORARY,UNCOMMON,Acrylic,0.16,116.84,137.16,reames_juiced.bmp,no
 403,Josh Reames,(Untitled),2014????,CONTEMPORARY,UNCOMMON,Acrylic,0.51,40.64,30.48,reames_untitled.bmp,no
@@ -420,3 +420,7 @@ ID,Artist,Title,Date,Genre,Rarity,Medium,Value Scale,Height (cm),Width (cm),Imag
 418,Zhang Xiaogang,My Hope,2003????,CONTEMPORARY,UNCOMMON,Lithography,0.951,46.99,38.1,xiaogang_my.bmp,no
 419,Zhang Xiaogang,Siblings,2014????,CONTEMPORARY,UNCOMMON,Mixed,0.926,50,60,xiaogang_siblings.bmp,no
 420,Zhang Xiaogang,My Memory No. 1,2002????,CONTEMPORARY,UNCOMMON,Lithography,0.032,116.84,132.08,xiaogang_memory.bmp,no
+421,Matthew Ritchie,Office of the Dawn,2012????,CONTEMPORARY,COMMON,"Ink, Pencil",,83.82,62.5,ritchie_office.bmp,no
+422,Matthew Ritchie,The Fourth Office,2011????,CONTEMPORARY,COMMON,"Ink, Pencil",,86.36,66.04,ritchie_fourth.bmp,no
+423,Matthew Ritchie,Untitled (from The Morning Line),2008????,CONTEMPORARY,COMMON,"Ink, Pencil",,30.48,40.64,ritchie_untitled.bmp,no
+424,Matthew Ritchie,The Lighting of the Lamps,2012????,CONTEMPORARY,COMMON,"Ink, Pencil",,83.82,63.5,ritchie_lighting.bmp,no
