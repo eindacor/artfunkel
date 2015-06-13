@@ -205,11 +205,8 @@ vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count,
 	{
 		rarity random_rarity= jep::catRoll<rarity>(rarity_proportions);
 		list< shared_ptr<artwork_data> > rarity_selection = artist_database->getWorksByRarity(random_rarity);
-		cout << "possible " << stringFromRarity(random_rarity) << " paintings: " << rarity_selection.size() << endl;
 
 		int random_int = jep::intRoll(0, (rarity_selection.size() - 1));
-		cout << "random roll: " << random_int << endl;
-
 		list< shared_ptr<artwork_data> >::const_iterator it = rarity_selection.begin();
 		for (int i = 0; i < random_int; i++)
 			it++;
@@ -263,10 +260,8 @@ vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, rarity 
 	{
 		rarity random_rarity = jep::catRoll<rarity>(rarity_proportions);
 		list< shared_ptr<artwork_data> > rarity_selection = artist_database->getWorksByRarity(random_rarity);
-		cout << "possible " << stringFromRarity(random_rarity) << " paintings: " << rarity_selection.size() << endl;
 
 		int random_int = jep::intRoll(0, (rarity_selection.size() - 1));
-		cout << "random roll: " << random_int << endl;
 
 		list< shared_ptr<artwork_data> >::const_iterator it = rarity_selection.begin();
 		for (int i = 0; i < random_int; i++)

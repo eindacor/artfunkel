@@ -31,6 +31,8 @@ int main(int argc, char* argv[])
 	string vert_file = data_path + "vertex_shader.glsl";
 	string frag_file = data_path + "fragment_shader.glsl";
 
+	getAvailableGalleries("J:\\GitHub\\artfunkel\\gamesave_data\\galleries", nullptr);
+
 	float eye_level = 1.65f;
 	shared_ptr<ogl_context> context(new ogl_context("Artfunkel", vert_file.c_str(), frag_file.c_str(), 1280, 720));
 	shared_ptr<key_handler> keys(new key_handler(context));

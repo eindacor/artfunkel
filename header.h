@@ -22,6 +22,7 @@ enum finish_type { FLOOR_FINISH, WALL_FINISH };
 #include <iostream>
 #include <time.h>
 #include <boost/smart_ptr/shared_ptr.hpp>
+#include <boost/filesystem.hpp>
 #include "jep_util.h"
 #include "jeploot.h"
 #include "ogl_tools.h"
@@ -46,6 +47,7 @@ class image;
 class hud_element;
 class hud;
 class artwork_thumbnail;
+class gallery_stub;
 
 using std::vector;
 using std::list;
@@ -57,6 +59,7 @@ using std::multimap;
 using std::pair;
 
 using boost::shared_ptr;
+using namespace boost::filesystem;
 
 using jep::ogl_context;
 using jep::ogl_camera;
