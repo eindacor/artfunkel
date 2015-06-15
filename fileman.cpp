@@ -590,15 +590,17 @@ shared_ptr<gallery> loadGallery(const string &data_path, const pair<string, stri
 
 vector<gallery_stub> getAvailableGalleries(string directory_path, const shared_ptr<player> &current_player)
 {
-	directory_iterator end_itr;
+	//directory_iterator end_itr;
 	vector<gallery_stub> galleries;
 
+	/*
 	for (directory_iterator itr(directory_path); itr != end_itr; ++itr)
 	{
 		string file_path;
 		file_path = itr->path().string();
 		cout << "file_path: " << file_path << endl;
 	}
+	*/
 
 	return galleries;
 }
