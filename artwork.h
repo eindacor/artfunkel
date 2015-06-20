@@ -82,12 +82,10 @@ public:
 	//rolls current primary attribute to have a new value
 	void rollPrimaryValue(primary_attribute pa, npc_type nt = NULL_NPC_TYPE);
 
-	//rolls current secondary attribute to be a new primary attribute
-	void rollSecondary(secondary_attribute sa);
-	//rolls current secondary attribute to have a new value
-	void rollSecondaryValue(secondary_attribute sa);
-	//rolls current spawn chance for a particular npc type to a new spawn chance
-	void rollSpawnChance(npc_type nt);
+	//replaces stored attribute aa with a new attribute and new value
+	void rollNewAttribute(artwork_attribute aa);
+	//rolls a new value for stored attribute aa
+	void rollNewValue(artwork_attribute aa);
 
 	//these methods return the number of times a particular attribute or attribute value have been rolled
 	int getRollBaseVisitorXPCount() const { return roll_base_visitor_xp_count; }
@@ -99,6 +97,10 @@ public:
 	int getRollSpawnChanceCount(npc_type nt) const;
 
 private:
+	bool attributeIsPrimary(artwork_attribute aa);
+	bool attributeIsSecondary(artwork_attribute aa);
+	bool attributeIsDefault(artwork_attribute aa);
+
 	bignum getRandomPrimaryValue(primary_attribute pa) const;
 	bignum getRandomSecondaryValue(secondary_attribute sa) const;
 	//----------FEATURED (benefit the visitor)
@@ -121,11 +123,6 @@ private:
 	//this data keeps track of the number of times a particular attribute has been rolled
 	int roll_base_visitor_xp_count = 0;
 	int roll_base_visitor_xp_duration_count = 0;
-	map<primary_attribute, int> roll_primary_counts;
-	map<primary_attribute, int> roll_primary_value_counts;
-	map<secondary_attribute, int> roll_secondary_counts;
-	map<secondary_attribute, int> roll_secondary_value_counts;
-	map<npc_type, int> roll_spawn_chance_counts;
 };
 
 class artwork

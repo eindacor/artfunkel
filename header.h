@@ -39,51 +39,54 @@ enum secondary_attribute {
 	NULL_SECONDARY_ATTRIBUTE
 };
 
+//default attributes cannot be rolled to a new attribute
+//primary attributes can only be rolled to other primary attributes
+//secondary attributes can only be rolled to other secondary attributes
 enum artwork_attribute {
-	BASE_INCOME_PER_SEC,
-	BASE_XP_EARNED,
-	BASE_XP_DURATION,
+	BASE_XP_EARNED,									//bignum, default
+	BASE_XP_DURATION,								//bignum, default
 
-	NPC_AUCTIONEER_BASE,
-	NPC_DEALER_BASE,
-	NPC_COLLECTOR_BASE,
-	NPC_DONOR_BASE,
-	NPC_BENEFACTOR_BASE,
-	NPC_ENTHUSIAST_BASE,
-	NPC_DESIGNER_BASE,
-	NPC_FORGER_BASE,
-	NPC_ART_EXPERT_BASE,
-	NPC_HISTORIAN_BASE,
-	NPC_PRESERVATIONIST_BASE,
-	NPC_MARKET_EXPERT_BASE,
+	NPC_AUCTIONEER_BASE,							//float, default
+	NPC_DEALER_BASE,								//float, default								
+	NPC_COLLECTOR_BASE,								//float, default
+	NPC_DONOR_BASE,									//float, default
+	NPC_BENEFACTOR_BASE,							//float, default
+	NPC_ENTHUSIAST_BASE,							//float, default
+	NPC_DESIGNER_BASE,								//float, default
+	NPC_FORGER_BASE,								//float, default
+	NPC_ART_EXPERT_BASE,							//float, default
+	NPC_HISTORIAN_BASE,								//float, default
+	NPC_PRESERVATIONIST_BASE,						//float, default
+	NPC_MARKET_EXPERT_BASE,							//float, default
 
-	ENTRY_FEE_REDUCTION_VISITORS,
-	XP_FROM_SET_WORKS_INCREASE_VISITORS,
-	XP_FROM_WORKS_INCREASE_VISITORS,
-	XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS,
-	XP_DURATION_FOR_WORKS_DECREASE_VISITORS,
+	ENTRY_FEE_REDUCTION_VISITORS,					//bignum, primary
+	XP_FROM_SET_WORKS_INCREASE_VISITORS,			//bignum, primary
+	XP_FROM_WORKS_INCREASE_VISITORS,				//bignum, primary
+	XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS,	//bignum, primary
+	XP_DURATION_FOR_WORKS_DECREASE_VISITORS,		//bignum, primary
 
-	NPC_AUCTIONEER_BOOST,
-	NPC_DEALER_BOOST,
-	NPC_COLLECTOR_BOOST,
-	NPC_DONOR_BOOST,
-	NPC_BENEFACTOR_BOOST,
-	NPC_ENTHUSIAST_BOOST,
-	NPC_DESIGNER_BOOST,
-	NPC_FORGER_BOOST,
-	NPC_ART_EXPERT_BOOST,
-	NPC_HISTORIAN_BOOST,
-	NPC_PRESERVATIONIST_BOOST,
-	NPC_MARKET_EXPERT_BOOST,
+	NPC_AUCTIONEER_BOOST,							//float, primary
+	NPC_DEALER_BOOST,								//float, primary
+	NPC_COLLECTOR_BOOST,							//float, primary
+	NPC_DONOR_BOOST,								//float, primary
+	NPC_BENEFACTOR_BOOST,							//float, primary
+	NPC_ENTHUSIAST_BOOST,							//float, primary
+	NPC_DESIGNER_BOOST,								//float, primary
+	NPC_FORGER_BOOST,								//float, primary
+	NPC_ART_EXPERT_BOOST,							//float, primary
+	NPC_HISTORIAN_BOOST,							//float, primary
+	NPC_PRESERVATIONIST_BOOST,						//float, primary
+	NPC_MARKET_EXPERT_BOOST,						//float, primary
 
-	ENTRY_FEE_REDUCTION_MEMBERS,
-	XP_FROM_SET_WORKS_INCREASE_MEMBERS,
-	XP_FROM_WORKS_INCREASE_MEMBERS,
-	XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS,
-	XP_DURATION_FOR_WORKS_DECREASE_MEMBERS,
+	ENTRY_FEE_REDUCTION_MEMBERS,					//bignum, secondary
+	XP_FROM_SET_WORKS_INCREASE_MEMBERS,				//bignum, secondary
+	XP_FROM_WORKS_INCREASE_MEMBERS,					//bignum, secondary
+	XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS,		//bignum, secondary
+	XP_DURATION_FOR_WORKS_DECREASE_MEMBERS,			//bignum, secondary
+	XP_GAIN_PER_VISITOR_INTERACTION,				//bignum, secondary
+	MONEY_GAIN_PER_VISITOR_INTERACTION,				//bignum, secondary
 
-	XP_GAIN_FOR_PLAYER_INTERACTION,
-	MONEY_GAIN_FOR_PLAYER_INTERACTION
+	NULL_ATTRIBUTE
 };
 
 #include <string>
