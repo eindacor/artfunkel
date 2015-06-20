@@ -47,6 +47,140 @@ void artwork_data::loadData(const shared_ptr<ogl_context> &ogl_con, const shared
 	surface = work_surface;
 }
 
+work_attributes::work_attributes(rarity r)
+{
+	rollBaseVisitorXP();
+}
+
+work_attributes::work_attributes(const work_attributes &other)
+{
+	
+}
+
+void work_attributes::rollBaseVisitorXP()
+{
+	roll_base_visitor_xp_count++;
+	base_visitor_xp_earned = jep::randomNumberAddPrecision(bignum(".00001"), bignum(".00002"), 2);
+}
+void work_attributes::rollBaseVisitorXPDuration()
+{
+	roll_base_visitor_xp_duration_count++;
+	base_visitor_xp_earning_duration = jep::randomNumberAddPrecision(bignum("20"), bignum("60"), 2);
+}
+
+//rolls current primary attribute to be a new primary attribute
+void work_attributes::rollPrimary(primary_attribute attribute_to_reroll)
+{
+	vector<primary_attribute> rollable_attributes;
+
+	for (int i = 0; i != int(NULL_PRIMARY_ATTRIBUTE); i++)
+	{
+		primary_attribute att = (primary_attribute)i;
+		if (att != attribute_to_reroll && primary_attributes.find(att) == primary_attributes.end())
+			rollable_attributes.push_back(att);
+	}
+
+	int random_index = rand() % rollable_attributes.size();
+
+	rollPrimaryValue
+}
+
+//rolls current primary attribute to have a new value
+void work_attributes::rollPrimaryValue(primary_attribute pa, npc_type nt)
+{
+	if (primary_attributes.find(pa) != primary_attributes.end())
+	{
+		switch (pa)
+		{
+		case ENTRY_FEE_REDUCITON:
+			primary_attributes.at(pa) = jep::randomNumberAddPrecision(bignum(".00002"), bignum(".0002"), 2);
+			return;
+
+		case NPC_SPAWN_CHANCE_INCREASE:
+			npc_spawn_boosts.at(nt) = jep::randomNumberAddPrecision(bignum(".00002"), bignum(".0002"), 2);
+			return;
+
+		case INCREASE_XP_FROM_SET_PAINTINGS_FOR_VISITORS:
+			primary_attributes.at(pa) = jep::randomNumberAddPrecision(bignum(".00002"), bignum(".0002"), 2);
+			return;
+
+		case INCREASE_XP_FROM_GALLERY_PAINTINGS_FOR_VISITORS:
+			primary_attributes.at(pa) = jep::randomNumberAddPrecision(bignum(".00002"), bignum(".0002"), 2);
+			return;
+
+		case EARNING_DURATION_REDUCTION_FROM_SET_PAINTINGS_FOR_VISITORS:
+			primary_attributes.at(pa) = jep::randomNumberAddPrecision(bignum(".00002"), bignum(".0002"), 2);
+			return;
+
+		case EARNING_DURATION_REDUCTION_FROM_GALLERY_PAINTINGS_FOR_VISITORS:
+			primary_attributes.at(pa) = jep::randomNumberAddPrecision(bignum(".00002"), bignum(".0002"), 2);
+			return;
+
+		default: return;
+		}
+	}
+}
+
+
+
+//rolls current secondary attribute to be a new primary attribute
+void work_attributes::rollSecondary(secondary_attribute sa)
+{
+
+}
+
+//rolls current secondary attribute to have a new value
+void work_attributes::rollSecondaryValue(secondary_attribute sa)
+{
+
+}
+
+//rolls current spawn chance for a particular npc type to a new spawn chance
+void work_attributes::rollSpawnChance(npc_type nt)
+{
+
+}
+
+int work_attributes::getRollPrimaryCount(primary_attribute pa) const
+{
+	if (roll_primary_counts.find(pa) == roll_primary_counts.end())
+		return -1;
+
+	else return roll_primary_counts.at(pa);
+}
+
+int work_attributes::getRollPrimaryValueCount(primary_attribute pa) const
+{
+	if (roll_primary_value_counts.find(pa) == roll_primary_value_counts.end())
+		return -1;
+
+	else return roll_primary_value_counts.at(pa);
+}
+
+int work_attributes::getRollSecondaryCount(secondary_attribute sa) const
+{
+	if (roll_secondary_counts.find(sa) == roll_secondary_counts.end())
+		return -1;
+
+	else return roll_secondary_counts.at(sa);
+}
+
+int work_attributes::getRollSecondaryValueCount(secondary_attribute sa) const
+{
+	if (roll_secondary_value_counts.find(sa) == roll_secondary_value_counts.end())
+		return -1;
+
+	else return roll_secondary_value_counts.at(sa);
+}
+
+int work_attributes::getRollSpawnChanceCount(npc_type nt) const
+{
+	if (roll_spawn_chance_counts.find(nt) == roll_spawn_chance_counts.end())
+		return -1;
+
+	else return roll_spawn_chance_counts.at(nt);
+}
+
 artwork::artwork()
 {
 	value = 0;
@@ -60,7 +194,7 @@ artwork::artwork()
 	profited = false;
 }
 
-artwork::artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, float work_condition)
+artwork::artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, float work_condition) : attributes(work_data->getRarity())
 {
 	data = work_data;
 	forgery = work_forgery;
@@ -73,7 +207,7 @@ artwork::artwork(const shared_ptr<artwork_data> &work_data, bool work_forgery, f
 	updateOverallDimensions();
 }
 
-artwork::artwork(const artwork &original)
+artwork::artwork(const artwork &original) : attributes(original.getWorkAttributes())
 {
 	forgery = original.isForgery();
 	condition = original.getCondition();

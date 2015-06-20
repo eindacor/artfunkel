@@ -175,7 +175,7 @@ public:
 	bool isLastPage() const { return page_map.find(current_page + 1) == page_map.end(); }
 	bool isFirstPage() const { return page_map.find(current_page) == page_map.begin(); }
 	bool isEmpty() const { return array_elements.size() == 0; }
-	void clearElements() { array_elements.clear(); visible_lines.clear(); }
+	void clearElements() { array_elements.clear(); visible_lines.clear(); current_page = 0; }
 	shared_ptr<hud_element> getElementWithinByID(const string &ID) const;
 	vector<string> getSelectedItemsWithin() const;
 

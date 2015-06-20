@@ -19,7 +19,7 @@ void refreshThumbnails(const shared_ptr<ogl_context> &context, const shared_ptr<
 		container->addElement(thumbnail);
 	}
 
-	while (!container->setVisible(previous_page_location) && previous_page_location > 0)
+	while (!container->isEmpty() && !container->setVisible(previous_page_location) && previous_page_location > 0)
 		previous_page_location--;
 }
 
