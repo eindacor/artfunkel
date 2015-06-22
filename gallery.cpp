@@ -381,6 +381,8 @@ void gallery::addArtwork(int wall_index, const shared_ptr<artwork> &toAdd, vec2 
 		gallery_value += toAdd->getValue();
 		display_walls.at(wall_index)->addArtwork(position, *toAdd);
 	}
+
+	calcAttributeTotals();
 }
 
 void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
@@ -390,6 +392,7 @@ void gallery::removeArtwork(const shared_ptr<artwork> &to_remove)
 		if (i.second->removeArtwork(to_remove))
 		{
 			gallery_value -= to_remove->getValue();
+			calcAttributeTotals();
 			return;
 		}
 	}
@@ -425,4 +428,34 @@ const map< unsigned, pair<vec2, unsigned short> > gallery::getWorkMap() const
 	}
 
 	return all_works;
+}
+
+void gallery::calcAttributeTotals()
+{
+	attribute_totals.clear();
+
+	for (const auto &wall : display_walls)
+	{
+		for (const auto &work : wall.second->getWallContents())
+		{
+			map<artwork_attribute, float> work_atts = work.second->getWorkAttributes().getAttributes();
+
+			for (const auto &att : work_atts)
+			{
+				if (attribute_totals.find(att.first) == attribute_totals.end())
+					attribute_totals[att.first] = att.second;
+
+				else attribute_totals.at(att.first) += att.second;
+			}
+		}
+	}
+}
+
+void gallery::printAttributeTotals() const
+{
+	string attributes_string = "";
+	for (const auto &att : attribute_totals)
+		attributes_string += stringFromAttribute(att.first) + ": " + std::to_string(att.second) + "\n";
+
+	cout << attributes_string << endl;
 }

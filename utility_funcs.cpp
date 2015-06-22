@@ -151,6 +151,58 @@ string stringFromRarity(rarity r)
 	}
 }
 
+string stringFromAttribute(artwork_attribute aa)
+{
+	switch (aa)
+	{
+	case BASE_XP_EARNED: return "Quality";
+	case BASE_XP_DURATION: return "Accessibility";
+
+	case NPC_AUCTIONEER_BASE: return "Auctioneer rating";
+	case NPC_DEALER_BASE: return "Art Dealer rating";
+	case NPC_COLLECTOR_BASE: return "Art Collector rating";
+	case NPC_DONOR_BASE: return "Art Donor rating";
+	case NPC_BENEFACTOR_BASE: return "Benefactor rating";
+	case NPC_ENTHUSIAST_BASE: return "Enthusiast rating";
+	case NPC_DESIGNER_BASE: return "Designer rating";
+	case NPC_FORGER_BASE: return "Forger rating";
+	case NPC_ART_EXPERT_BASE: return "Art Expert rating";
+	case NPC_HISTORIAN_BASE: return "Art Historian rating";
+	case NPC_PRESERVATIONIST_BASE: return "Preservationist rating";
+	case NPC_MARKET_EXPERT_BASE: return "Market Expert rating";
+
+	case ENTRY_FEE_REDUCTION_VISITORS: return "Visitor discount";
+	case XP_FROM_SET_WORKS_INCREASE_VISITORS: return "Set bonus (visitors)";
+	case XP_FROM_WORKS_INCREASE_VISITORS: return "Gallery bonus (visitors)";
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS: return "Set accessibility bonus (visitors)";
+	case XP_DURATION_FOR_WORKS_DECREASE_VISITORS: return "Gallery accessibility bonus (visitors)";
+
+	case NPC_AUCTIONEER_BOOST: return "Auctioneer boost";
+	case NPC_DEALER_BOOST: return "Art Dealer boost";
+	case NPC_COLLECTOR_BOOST: return "Art Collector boost";
+	case NPC_DONOR_BOOST: return "Art Donor boost";
+	case NPC_BENEFACTOR_BOOST: return "Benefactor boost";
+	case NPC_ENTHUSIAST_BOOST: return "Enthusiast boost";
+	case NPC_DESIGNER_BOOST: return "Designer boost";
+	case NPC_FORGER_BOOST: return "Forger boost";
+	case NPC_ART_EXPERT_BOOST: return "Art Expert boost";
+	case NPC_HISTORIAN_BOOST: return "Art Historian boost";
+	case NPC_PRESERVATIONIST_BOOST: return "Preservationist boost";
+	case NPC_MARKET_EXPERT_BOOST: return "Market Expert boost";
+
+	case ENTRY_FEE_REDUCTION_MEMBERS: return "Member discount";
+	case XP_FROM_SET_WORKS_INCREASE_MEMBERS: return "Set bonus (members)";
+	case XP_FROM_WORKS_INCREASE_MEMBERS: return "Gallery bonus (members)";
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS: return "Set accessibility bonus (members)";
+	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS: return "Gallery accessibility bonus (members)";
+
+	case XP_GAIN_PER_VISITOR_INTERACTION: return "Owner interaction bonus";
+	case MONEY_GAIN_PER_VISITOR_INTERACTION: return "Owner interaction profit";
+
+	default: return "undefined attribute";
+	}
+}
+
 float getDelta(vec3 first, vec3 second, char axis)
 {
 	switch (axis)
@@ -865,6 +917,104 @@ bool fileExists(string filename)
 	const char *c_name = filename.c_str();
 	std::ifstream infile(c_name);
 	return infile.good();
+}
+
+pair<float, float> getAttributeMinMax(artwork_attribute aa)
+{
+	switch (aa)
+	{
+	case NPC_AUCTIONEER_BASE:
+	case NPC_DEALER_BASE:
+	case NPC_COLLECTOR_BASE:
+	case NPC_DONOR_BASE:
+	case NPC_BENEFACTOR_BASE:
+	case NPC_ENTHUSIAST_BASE:
+	case NPC_DESIGNER_BASE:
+	case NPC_FORGER_BASE:
+	case NPC_ART_EXPERT_BASE:
+	case NPC_HISTORIAN_BASE:
+	case NPC_PRESERVATIONIST_BASE:
+	case NPC_MARKET_EXPERT_BASE: return pair<float, float>(0.0002f, 0.001f);
+
+	case NPC_AUCTIONEER_BOOST:
+	case NPC_DEALER_BOOST:
+	case NPC_COLLECTOR_BOOST:
+	case NPC_DONOR_BOOST:
+	case NPC_BENEFACTOR_BOOST:
+	case NPC_ENTHUSIAST_BOOST:
+	case NPC_DESIGNER_BOOST:
+	case NPC_FORGER_BOOST:
+	case NPC_ART_EXPERT_BOOST:
+	case NPC_HISTORIAN_BOOST:
+	case NPC_PRESERVATIONIST_BOOST:
+	case NPC_MARKET_EXPERT_BOOST: return pair<float, float>(0.001f, 0.002f);
+
+	case BASE_XP_EARNED: return pair<float, float>(10.0f, 20.0f);
+	case BASE_XP_DURATION: return pair<float, float>(30.0f, 60.0f);
+	case ENTRY_FEE_REDUCTION_VISITORS: return pair<float, float>(0.002f, 0.008f);
+	case XP_FROM_SET_WORKS_INCREASE_VISITORS: return pair<float, float>(0.006f, 0.012f);
+	case XP_FROM_WORKS_INCREASE_VISITORS: return pair<float, float>(0.002f, 0.008f);
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS: return pair<float, float>(0.006f, 0.012f);
+	case XP_DURATION_FOR_WORKS_DECREASE_VISITORS: return pair<float, float>(0.002f, 0.008f);
+	case ENTRY_FEE_REDUCTION_MEMBERS: return pair<float, float>(0.006f, 0.012f);
+	case XP_FROM_SET_WORKS_INCREASE_MEMBERS: return pair<float, float>(0.008f, 0.016f);
+	case XP_FROM_WORKS_INCREASE_MEMBERS: return pair<float, float>(0.006f, 0.012f);
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS: return pair<float, float>(0.008f, 0.016f);
+	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS: return pair<float, float>(0.006f, 0.012f);
+	case XP_GAIN_PER_VISITOR_INTERACTION: return pair<float, float>(2.0f, 8.0f);
+	case MONEY_GAIN_PER_VISITOR_INTERACTION: return pair<float, float>(2.0f, 8.0f);
+
+	default: return pair<float, float>(0.0f, 0.0f);
+	}
+}
+
+float getAttributeRating(artwork_attribute aa, float actual_rating)
+{
+	pair<float, float> minmax = getAttributeMinMax(aa);
+	float delta = actual_rating - minmax.first;
+	float range = minmax.second - minmax.first;
+	float rating = (delta / range);
+	return rating;
+}
+
+bool attributeIsPrimary(artwork_attribute aa)
+{
+	switch (aa)
+	{
+	case ENTRY_FEE_REDUCTION_VISITORS:
+	case XP_FROM_SET_WORKS_INCREASE_VISITORS:
+	case XP_FROM_WORKS_INCREASE_VISITORS:
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS:
+	case XP_DURATION_FOR_WORKS_DECREASE_VISITORS:
+	case NPC_AUCTIONEER_BOOST:
+	case NPC_DEALER_BOOST:
+	case NPC_COLLECTOR_BOOST:
+	case NPC_DONOR_BOOST:
+	case NPC_BENEFACTOR_BOOST:
+	case NPC_ENTHUSIAST_BOOST:
+	case NPC_DESIGNER_BOOST:
+	case NPC_FORGER_BOOST:
+	case NPC_ART_EXPERT_BOOST:
+	case NPC_HISTORIAN_BOOST:
+	case NPC_PRESERVATIONIST_BOOST:
+	case NPC_MARKET_EXPERT_BOOST: return true;
+	default: return false;
+	}
+}
+
+bool attributeIsSecondary(artwork_attribute aa)
+{
+	switch (aa)
+	{
+	case ENTRY_FEE_REDUCTION_MEMBERS:
+	case XP_FROM_SET_WORKS_INCREASE_MEMBERS:
+	case XP_FROM_WORKS_INCREASE_MEMBERS:
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS:
+	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS:
+	case XP_GAIN_PER_VISITOR_INTERACTION:
+	case MONEY_GAIN_PER_VISITOR_INTERACTION: return true;
+	default: return false;
+	}
 }
 
 

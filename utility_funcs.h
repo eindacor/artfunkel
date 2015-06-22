@@ -9,6 +9,12 @@ bignum lookupValue(rarity work_rarity, bignum work_value_scale);
 void printDate(date d);
 genre genreFromString(string s);
 rarity rarityFromString(string s);
+
+string getDateString(const date &d, bool include_day);
+string stringFromRarity(rarity r);
+string stringFromAttribute(artwork_attribute aa);
+string stringFromGenre(genre g);
+
 //this function takes a vector of instances and modifies their model matrices for proper display
 //void offsetArtworks(vector<pair<int, shared_ptr<artwork> > > &art_vec, float space_between = 2.0f, float eye_level = 1.65f, float starting_z = 0.0f, bool x_only = false);
 vector<shared_ptr<artwork> >::iterator sortArtVec(vector<shared_ptr<artwork> > &art_vec, sort_option sort, 
@@ -49,5 +55,11 @@ void fullBrightness(const shared_ptr<ogl_context> &context, const shared_ptr<ogl
 void loadTextures(shared_ptr<texture_handler> &textures);
 void readConfigFile(string &data_path, string &username);
 bool fileExists(string filename);
+
+pair<float, float> getAttributeMinMax(artwork_attribute aa);
+float getAttributeRating(artwork_attribute aa, float actual_rating);
+bool attributeIsPrimary(artwork_attribute aa);
+bool attributeIsSecondary(artwork_attribute aa);
+bool attributeIsDefault(artwork_attribute aa);
 
 #endif

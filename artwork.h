@@ -73,56 +73,27 @@ public:
 	work_attributes(){};
 	~work_attributes(){};
 
-	//sets new xp and xp duration at random
-	void rollBaseVisitorXP();
-	void rollBaseVisitorXPDuration();
+	//map<artwork_attribute, float> getFloatAttributes() const { return float_attributes; }
+	//map<artwork_attribute, bignum> getBignumAttributes() const { return bignum_attributes; }
+	map<artwork_attribute, float> getAttributes() const { return attributes; }
 
-	//rolls current primary attribute to be a new primary attribute
-	void rollPrimary(primary_attribute pa = NULL_PRIMARY_ATTRIBUTE);
-	//rolls current primary attribute to have a new value
-	void rollPrimaryValue(primary_attribute pa, npc_type nt = NULL_NPC_TYPE);
-
+	//adds a new attribute not already present
+	void addNewNonDefaultAttribute(bool primary);
 	//replaces stored attribute aa with a new attribute and new value
 	void rollNewAttribute(artwork_attribute aa);
 	//rolls a new value for stored attribute aa
-	void rollNewValue(artwork_attribute aa);
+	float rollNewFloatValue(artwork_attribute aa);
+	//bignum rollNewBignumValue(artwork_attribute aa);
 
-	//these methods return the number of times a particular attribute or attribute value have been rolled
-	int getRollBaseVisitorXPCount() const { return roll_base_visitor_xp_count; }
-	int getRollBaseVisitorXPDurationCount() const { return roll_base_visitor_xp_duration_count; }
-	int getRollPrimaryCount(primary_attribute pa) const;
-	int getRollPrimaryValueCount(primary_attribute pa) const;
-	int getRollSecondaryCount(secondary_attribute sa) const;
-	int getRollSecondaryValueCount(secondary_attribute sa) const;
-	int getRollSpawnChanceCount(npc_type nt) const;
+	void work_attributes::printAttributes() const;
+	void work_attributes::setAttributeStrings();
 
 private:
-	bool attributeIsPrimary(artwork_attribute aa);
-	bool attributeIsSecondary(artwork_attribute aa);
-	bool attributeIsDefault(artwork_attribute aa);
+	map<artwork_attribute, float> attributes;
+	//map<artwork_attribute, float> float_attributes;
+	//map<artwork_attribute, bignum> bignum_attributes;
 
-	bignum getRandomPrimaryValue(primary_attribute pa) const;
-	bignum getRandomSecondaryValue(secondary_attribute sa) const;
-	//----------FEATURED (benefit the visitor)
-	//total amount to be earned from this painting, COMMON ROLLS FOR ALL RARITIES
-	bignum base_visitor_xp_earned;
-	//total time to earn xp (shorter the better, gets averaged with all other works), COMMON ROLLS FOR ALL RARITIES
-	bignum base_visitor_xp_earning_duration;
-	//npc_type and int so it can be passed to jep::catRoll and return a particular npc, COMMON ROLLS FOR ALL RARITIES
-	map<npc_type, float> base_npc_spawn_chances;
-	map<npc_type, float> npc_spawn_chance_attribute_boosts;
-	//boost the feature attributes, BETTER ROLLS FOR HIGHER RARITY, <attribute, <times rolled, value> >
-	map<primary_attribute, pair<int, bignum> > primary_attributes;
-
-	//----------NON-FEATURED (benefit the owner)
-	//BETTER ROLLS FOR HIGHER RARITY
-	float base_value_gained_per_second;
-	//boost the non-feature attributes, BETTER ROLLS FOR HIGHER RARITY
-	map<secondary_attribute, bignum> secondary_attributes;
-
-	//this data keeps track of the number of times a particular attribute has been rolled
-	int roll_base_visitor_xp_count = 0;
-	int roll_base_visitor_xp_duration_count = 0;
+	string default_attributes_string, primary_attributes_string, secondary_attributes_string;
 };
 
 class artwork

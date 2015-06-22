@@ -80,6 +80,9 @@ public:
 	//work ID, position, wall index
 	const map< unsigned, pair<vec2, unsigned short> >  getWorkMap() const;
 
+	void calcAttributeTotals();
+	void printAttributeTotals() const;
+
 private:
 	//int is the index of the specific position, mat4 is the position matrix
 	string template_name;
@@ -97,39 +100,21 @@ private:
 	vector< shared_ptr<jep::ogl_data> > environment_mesh_data;
 	//vector<player> players_present;
 
-	map<npc_type, float> npc_spawn_chances;
-
 	//set by owner
 	bignum base_entry_fee;
 	//determined by base_entry_fee and entry_fee_reduction
 	bignum visitor_fee;
 	bignum friend_fee;
-	//determined by painting attributes, factored in when gallery fee is being displayed
-	bignum entry_fee_reduction_visitor;
-	bignum entry_fee_reduction_friend;
+
+	bignum xp_to_earn;
+	bignum xp_earning_duration;
+
+	map<npc_type, float> npc_spawn_chances;
 
 	//this is the fee that actually goes to the owner per second
 	bignum income_per_second;
-	//below are called on when determining how much each painting contributes to income_per_second
-	bignum set_painting_income_increase;
-	bignum painting_income_increase;
 
-	//below are actual amounts of total xp to be earned by the visitor, and how long it takes to earn that amount
-	bignum base_xp_to_earn_visitor;
-	bignum base_xp_earn_duration_visitor;
-	//below are called on when determining how much each painting contributes to xp_to_earn and xp_earn_duration
-	bignum xp_to_earn_visitor_increase;
-	bignum xp_earn_duration_visitor_reduction;
-
-	//work just as above, but limited to friends
-	bignum base_xp_to_earn_friend;
-	bignum base_xp_earn_duration_friend;
-	bignum xp_to_earn_friend_increase;
-	bignum xp_earn_duration_friend_reduction;
-
-	bignum percentage_of_entry_fee_to_owner;
-	bignum money_to_owner_per_visitor_interaction;
-	bignum xp_to_owner_per_visitor_interaction;
+	map<artwork_attribute, float> attribute_totals;
 };
 
 #endif

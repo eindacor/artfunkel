@@ -49,26 +49,162 @@ void artwork_data::loadData(const shared_ptr<ogl_context> &ogl_con, const shared
 
 work_attributes::work_attributes(rarity r)
 {
-	rollBaseVisitorXP();
+	for (int i = 0; (artwork_attribute)i != NULL_ATTRIBUTE; i++)
+	{
+		artwork_attribute att = (artwork_attribute)i;
+
+		if (attributeIsDefault(att))
+		{
+			//if (attributeIsBignum(att))
+				//bignum_attributes[att] = rollNewBignumValue(att);
+
+			//else float_attributes[att] = rollNewFloatValue(att);
+
+			attributes[att] = rollNewFloatValue(att);
+		}
+	}
+
+	int primary_attribute_count, secondary_attribute_count;
+
+	switch (r)
+	{
+	case COMMON: primary_attribute_count = 1; secondary_attribute_count = 0; break;
+	case UNCOMMON: primary_attribute_count = 2; secondary_attribute_count = 0; break;
+	case RARE: primary_attribute_count = 3; secondary_attribute_count = 1; break;
+	case LEGENDARY: primary_attribute_count = 4; secondary_attribute_count = 2; break;
+	case MASTERPIECE: primary_attribute_count = 5; secondary_attribute_count = 3; break;
+	default: primary_attribute_count = 0; secondary_attribute_count = 0; break;
+	}
+
+	for (int i = 0; i < primary_attribute_count; i++)
+		addNewNonDefaultAttribute(true);
+
+	for (int i = 0; i < secondary_attribute_count; i++)
+		addNewNonDefaultAttribute(false);
+
+	printAttributes();
+	setAttributeStrings();
 }
 
 work_attributes::work_attributes(const work_attributes &other)
 {
-	
+	//float_attributes = other.getFloatAttributes();
+	//bignum_attributes = other.getBignumAttributes();
+	attributes = other.getAttributes();
+	setAttributeStrings();
 }
 
-void work_attributes::rollBaseVisitorXP()
+void work_attributes::addNewNonDefaultAttribute(bool primary)
 {
-	roll_base_visitor_xp_count++;
-	base_visitor_xp_earned = jep::randomNumberAddPrecision(bignum(".00001"), bignum(".00002"), 2);
-}
-void work_attributes::rollBaseVisitorXPDuration()
-{
-	roll_base_visitor_xp_duration_count++;
-	base_visitor_xp_earning_duration = jep::randomNumberAddPrecision(bignum("20"), bignum("60"), 2);
+	vector<artwork_attribute> potential_rolls;
+
+	for (int i = 0; (artwork_attribute)i != NULL_ATTRIBUTE; i++)
+	{
+		artwork_attribute att = (artwork_attribute)i;
+
+		//if the primary factor doesn't match
+		if (attributeIsPrimary(att) != primary)
+			continue;
+
+		//default attributes cannot be rolled
+		if (attributeIsDefault(att))
+			continue;
+
+		//if (bignum_attributes.find(att) != bignum_attributes.end())
+			//continue;
+
+		//if (float_attributes.find(att) != float_attributes.end())
+			//continue;
+
+		if (attributes.find(att) != attributes.end())
+			continue;
+
+		potential_rolls.push_back(att);
+	}
+
+	int random_roll = rand() % potential_rolls.size();
+
+	artwork_attribute rolled = potential_rolls.at(random_roll);
+
+	//if (attributeIsBignum(rolled))
+		//bignum_attributes[rolled] = rollNewBignumValue(rolled);
+
+	//else float_attributes[rolled] = rollNewFloatValue(rolled);
+
+	attributes[rolled] = rollNewFloatValue(rolled);
+
+	setAttributeStrings();
 }
 
-bool work_attributes::attributeIsDefault(artwork_attribute aa)
+//replaces stored attribute aa with a new attribute and new value
+void work_attributes::rollNewAttribute(artwork_attribute aa)
+{
+	if (attributeIsDefault(aa))
+		return;
+
+	//first remove attribute from current attributes
+	//if (bignum_attributes.find(aa) != bignum_attributes.end())
+		//bignum_attributes.erase(aa);
+
+	//else if (float_attributes.find(aa) != float_attributes.end())
+		//float_attributes.erase(aa);
+
+	if (attributes.find(aa) != attributes.end())
+		attributes.erase(aa);
+
+	vector<artwork_attribute> potential_rolls;
+
+	for (int i = 0; (artwork_attribute)i != NULL_ATTRIBUTE; i++)
+	{
+		artwork_attribute att = (artwork_attribute)i;
+
+		//if its the same attribute
+		if (att == aa)
+			continue;
+
+		//if the primary factor doesn't match
+		if (attributeIsPrimary(att) != attributeIsPrimary(aa))
+			continue;
+
+		//default attributes cannot be rolled
+		if (attributeIsDefault(att))
+			continue;
+
+		potential_rolls.push_back(att);
+	}
+
+	int random_roll = rand() % potential_rolls.size();
+
+	artwork_attribute rolled = potential_rolls.at(random_roll);
+
+	//if (attributeIsBignum(rolled))
+		//bignum_attributes[rolled] = rollNewBignumValue(rolled);
+
+	//else float_attributes[rolled] = rollNewFloatValue(rolled);
+
+	attributes[rolled] = rollNewFloatValue(rolled);
+
+	setAttributeStrings();
+}
+
+/*
+//rolls a new value for stored attribute aa
+bignum work_attributes::rollNewBignumValue(artwork_attribute aa)
+{
+	pair<bignum, bignum> minmax = getAttributeMinMaxBignum(aa);
+	return jep::randomNumberAddPrecision(minmax.first, minmax.second, 2);
+	setAttributeStrings();
+}
+*/
+
+float work_attributes::rollNewFloatValue(artwork_attribute aa)
+{
+	pair<float, float> minmax = getAttributeMinMax(aa);
+	return jep::floatRoll(minmax.first, minmax.second, 6);
+	setAttributeStrings();
+}
+
+bool attributeIsDefault(artwork_attribute aa)
 {
 	switch (aa)
 	{
@@ -90,44 +226,47 @@ bool work_attributes::attributeIsDefault(artwork_attribute aa)
 	}
 }
 
-bool work_attributes::attributeIsPrimary(artwork_attribute aa)
+void work_attributes::printAttributes() const
 {
-	switch (aa)
-	{
-	case ENTRY_FEE_REDUCTION_VISITORS:					
-	case XP_FROM_SET_WORKS_INCREASE_VISITORS:			
-	case XP_FROM_WORKS_INCREASE_VISITORS:				
-	case XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS:	
-	case XP_DURATION_FOR_WORKS_DECREASE_VISITORS:		
-	case NPC_AUCTIONEER_BOOST:						
-	case NPC_DEALER_BOOST:								
-	case NPC_COLLECTOR_BOOST:						
-	case NPC_DONOR_BOOST:							
-	case NPC_BENEFACTOR_BOOST:						
-	case NPC_ENTHUSIAST_BOOST:						
-	case NPC_DESIGNER_BOOST:						
-	case NPC_FORGER_BOOST:							
-	case NPC_ART_EXPERT_BOOST:						
-	case NPC_HISTORIAN_BOOST:						
-	case NPC_PRESERVATIONIST_BOOST:						
-	case NPC_MARKET_EXPERT_BOOST: return true;
-	default: return false;
-	}
+	cout << "------attributes------" << endl;
+	cout << "\tbase:" << endl;
+	cout << default_attributes_string << endl;
+
+	cout << "\tprimary:" << endl;
+	cout << primary_attributes_string << endl;
+
+	cout << "\tsecondary:" << endl;
+	cout << secondary_attributes_string << endl;
 }
 
-bool work_attributes::attributeIsSecondary(artwork_attribute aa)
+void work_attributes::setAttributeStrings()
 {
-	switch (aa)
+	vector<artwork_attribute> default_attributes;
+	vector<artwork_attribute> primary_attributes;
+	vector<artwork_attribute> secondary_attributes;
+
+	for (const auto &att : attributes)
 	{
-	case ENTRY_FEE_REDUCTION_MEMBERS:
-	case XP_FROM_SET_WORKS_INCREASE_MEMBERS:
-	case XP_FROM_WORKS_INCREASE_MEMBERS:
-	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS:
-	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS:
-	case XP_GAIN_PER_VISITOR_INTERACTION:
-	case MONEY_GAIN_PER_VISITOR_INTERACTION: return true;
-	default: return false;
+		if (attributeIsDefault(att.first))
+			default_attributes.push_back(att.first);
+
+		else if (attributeIsPrimary(att.first))
+			primary_attributes.push_back(att.first);
+
+		else secondary_attributes.push_back(att.first);
 	}
+
+	default_attributes_string = "";
+	for (const auto &att : default_attributes)
+		default_attributes_string += stringFromAttribute(att) + ": " + std::to_string(getAttributeRating(att, attributes.at(att))) + "\n";
+
+	primary_attributes_string = "";
+	for (const auto &att : primary_attributes)
+		primary_attributes_string += stringFromAttribute(att) + ": " + std::to_string(getAttributeRating(att, attributes.at(att))) + "\n";
+
+	secondary_attributes_string = "";
+	for (const auto &att : secondary_attributes)
+		secondary_attributes_string += stringFromAttribute(att) + ": " + std::to_string(getAttributeRating(att, attributes.at(att))) + "\n";
 }
 
 artwork::artwork()

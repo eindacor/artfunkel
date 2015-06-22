@@ -37,6 +37,9 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 
 	current_gallery = current_player->getGallery(0);
 
+	cout << "-----Gallery Attributes-----" << endl;
+	current_gallery->printAttributeTotals();
+
 	//TODO remove inventory copy mechanic. use actual inventory container with active iterators
 	//add copies of the artwork instances to the local vector, so position can be manipulated
 	vector<shared_ptr<artwork> >not_displayed_copy = current_player->getNotDisplayedCopy();

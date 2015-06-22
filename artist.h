@@ -1,6 +1,7 @@
 #ifndef ARTIST_H
 #define ARTIST_H
 #include "header.h"
+#include "utility_funcs.h"
 
 class artist
 {
@@ -16,6 +17,8 @@ public:
 	string getDeathDateString(bool include_day = false) const { return (deceased ? getDateString(death, include_day) : " "); }
 	date getBirthDate() const { return birth; }
 	date getDeathDate() const { return death; }
+
+	void printAttributes();
 
 private:
 	long ID;

@@ -165,8 +165,4 @@ using glm::mat4;
 
 typedef pair<horizontal_justification, vertical_justification> justpair;
 
-string getDateString(const date &d, bool include_day);
-string stringFromRarity(rarity r);
-string stringFromGenre(genre g);
-
 #endif
