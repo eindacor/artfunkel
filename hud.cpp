@@ -161,6 +161,30 @@ void hud_element::drawBackground(const shared_ptr<ogl_context> &context, const s
 		background_image->draw(context, camera, glm::translate(mat4(1.0f), vec3(centerpoint.x, centerpoint.y, 0.0f)), true);
 }
 
+dynamic_hud_array::dynamic_hud_array(string identifier, const shared_ptr<ogl_context> &ogl_con, const vec2 &anchor_point,
+	const justpair &anchor_location, const vec2 &on_screen_dimensions, const justpair interior_justification, vec2 padding)
+	: hud_element(identifier, anchor_point, anchor_location, on_screen_dimensions, ELEMENT_ARRAY)
+{
+	context = ogl_con;
+	justification = interior_justification;
+	array_padding = padding;
+	setSelectable(false);
+	deselect_on_miss = true;
+	select_multiple = false;
+}
+
+dynamic_hud_array::dynamic_hud_array(string identifier, const shared_ptr<ogl_context> &ogl_con, const vec2 &on_screen_dimensions,
+	const justpair interior_justification, vec2 padding)
+	: hud_element(identifier, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), on_screen_dimensions, ELEMENT_ARRAY)
+{
+	context = ogl_con;
+	justification = interior_justification;
+	array_padding = padding;
+	setSelectable(false);
+	deselect_on_miss = true;
+	select_multiple = false;
+}
+
 mat4 artwork_thumbnail::calcScaleMatrix(const shared_ptr<ogl_context> &context) const
 {
 	//x dimensionsthroughout are modified for aspect ratio stretching
