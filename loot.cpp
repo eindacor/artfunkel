@@ -41,8 +41,8 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	gold_rarity_map[RARE] = 150;
 	gold_rarity_map[LEGENDARY] = 1;
 
-	platinum_rarity_map[RARE] = 1500;
-	platinum_rarity_map[LEGENDARY] = 5;
+	platinum_rarity_map[RARE] = 2400;
+	platinum_rarity_map[LEGENDARY] = 10;
 	platinum_rarity_map[MASTERPIECE] = 1;
 
 	/*

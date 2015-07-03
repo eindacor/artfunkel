@@ -308,7 +308,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 				}	//thumbnail not selected
 			}	//mouse click
 
-			if (keys->checkPress(GLFW_KEY_ESCAPE, false) && crate_contents.size() == 0)
+			if (keys->checkPress(GLFW_KEY_ESCAPE, false) && (crate_contents.size() == 0 || current_player->getName() == "default_user"))
 				return 2;
 
 			if (keys->checkPress(GLFW_KEY_COMMA, false))

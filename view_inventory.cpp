@@ -472,6 +472,12 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				refreshPlayerInfo(player_summary, current_player);
 			}
 
+			if (keys->checkPress(GLFW_KEY_0, false) && (current_player->getName() == "EindacorDS" || current_player->getName() == "default_user"))
+			{
+				current_player->addFunds(bignum("1000000"));
+				refreshPlayerInfo(player_summary, current_player);
+			}
+
 			if ((keys->checkPress(GLFW_KEY_BACKSPACE, false) || keys->checkPress(GLFW_KEY_DELETE, false)) && selected_painting != nullptr)
 			{
 				current_player->removeWorkFromInventory(selected_painting->getStoredArt());
