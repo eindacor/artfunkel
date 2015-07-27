@@ -1,6 +1,9 @@
 body {
 	width: 80%;
 	margin: auto;
+	color: #FF6600;
+	font-family: courier;
+	margin-bottom: 100px;
 }
 
 .upload-section {
@@ -10,6 +13,30 @@ body {
 	position: relative;
 }
 
-h2 {
-	
+.upload-section h2 {
+	margin-bottom: 10px;
+}
+
+.upload-section textarea {
+	font-size: 1.5em;
+	margin-top: 0px;
+	width: 400px;
+	height: 30px;
+	resize: none;
+	display: inline-block;
+}
+
+h1 {
+	color: gray;
+}
+
+button, file{
+	border: none;
+	background-color: black;
+	color: white;
+	font-family: inherit;
+	cursor: pointer;
+	width: 200px;
+	height: 40px;
+	font-size: 1.5em;
 }
