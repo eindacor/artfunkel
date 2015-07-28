@@ -1,6 +1,10 @@
 var getArtistID = function(artist_db, artist_name) {
 	if (artist_db.find({"artistName": artist_name}).count() == 0) {
-		alert("Artist not found");
+		var register_artist = confirm("Artist not found. Would you like to register this artist?");
+
+		if (register_artist)
+			Router.go('/registerArtist');
+
 		return "";
 	} 
 

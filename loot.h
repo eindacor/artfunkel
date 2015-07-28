@@ -13,13 +13,13 @@ public:
 	vector<shared_ptr<artwork> > generateArtworks(int count,
 		const map<rarity, unsigned int> & rarity_proportions) const;
 	vector<shared_ptr<artwork> > generateArtworks(int count, float modifier) const;
-	vector<shared_ptr<artwork> > generateArtworks(int count, rarity r) const;
+	vector<shared_ptr<artwork> > generateArtworks(int count, crate_quality cq) const;
 
 	void printGenerated(vector<shared_ptr<artwork> > &drop, const map<rarity, unsigned> &rarity_map) const;
 
 	bignum calcAveragePaintingValue(const map<rarity, unsigned> &rarity_map) const;
 
-	bignum getCrateCost(rarity r, int count) const;
+	bignum getCrateCost(crate_quality cq, int count) const;
 
 	bignum calcPlacementBonus(const bignum &value) const { return value * bignum(".3"); }
 
@@ -33,11 +33,13 @@ private:
 	map<rarity, unsigned> silver_rarity_map;
 	map<rarity, unsigned> gold_rarity_map;
 	map<rarity, unsigned> platinum_rarity_map;
+	map<rarity, unsigned> diamond_rarity_map;
 
 	bignum average_bronze_crate_work_value;
 	bignum average_silver_crate_work_value;
 	bignum average_gold_crate_work_value;
 	bignum average_platinum_crate_work_value;
+	bignum average_diamond_crate_work_value;
 
 	unsigned short crate_size_module = 4;
 };

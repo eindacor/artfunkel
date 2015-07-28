@@ -10,7 +10,7 @@
 
 int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> &keys,
 	shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, 
-	const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures, rarity r, int count)
+	const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures, crate_quality cq, int count)
 {
 	current_player->updateBank();
 	cout << "opening crate" << endl;
@@ -21,9 +21,12 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 	//TODO revise so function doesn't rely on so many containers created/copied per run
 	//add copies of the artwork instances to the local vector, so position can be manipulated
-	vector<shared_ptr<artwork> > crate_contents = lg->generateArtworks(count, r);
-	current_player->deductPayment(lg->getCrateCost(r, count));
-	cout << "charged: $" << lg->getCrateCost(r, count).getNumberString(true, false, 0) << endl;
+	vector<shared_ptr<artwork> > crate_contents = lg->generateArtworks(count, cq);
+	if (!current_player->isAdmin())
+	{
+		current_player->deductPayment(lg->getCrateCost(cq, count));
+		cout << "charged: $" << lg->getCrateCost(cq, count).getNumberString(true, false, 0) << endl;
+	}
 
 	shared_ptr<dynamic_hud_array> player_summary = generatePlayerInfo(context, text, current_player);
 
@@ -308,7 +311,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 				}	//thumbnail not selected
 			}	//mouse click
 
-			if (keys->checkPress(GLFW_KEY_ESCAPE, false) && (crate_contents.size() == 0 || current_player->getName() == "default_user"))
+			if (keys->checkPress(GLFW_KEY_ESCAPE, false) && (crate_contents.size() == 0 || current_player->isAdmin()))
 				return 2;
 
 			if (keys->checkPress(GLFW_KEY_COMMA, false))

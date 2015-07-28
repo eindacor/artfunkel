@@ -37,13 +37,15 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	silver_rarity_map[UNCOMMON] = 38;
 	silver_rarity_map[RARE] = 2;
 
-	gold_rarity_map[UNCOMMON] = 450;							
-	gold_rarity_map[RARE] = 150;
+	gold_rarity_map[UNCOMMON] = 600;							
+	gold_rarity_map[RARE] = 200;
 	gold_rarity_map[LEGENDARY] = 1;
 
-	platinum_rarity_map[RARE] = 2400;
-	platinum_rarity_map[LEGENDARY] = 10;
+	platinum_rarity_map[RARE] = 9600;
+	platinum_rarity_map[LEGENDARY] = 20;
 	platinum_rarity_map[MASTERPIECE] = 1;
+
+	diamond_rarity_map[LEGENDARY] = 1;
 
 	/*
 	bool rare_in_bronze_found = false;
@@ -133,6 +135,7 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	average_silver_crate_work_value = calcAveragePaintingValue(silver_rarity_map);
 	average_gold_crate_work_value = calcAveragePaintingValue(gold_rarity_map);
 	average_platinum_crate_work_value = calcAveragePaintingValue(platinum_rarity_map);
+	average_diamond_crate_work_value = calcAveragePaintingValue(diamond_rarity_map);
 }
 
 bignum loot_generator::calcAveragePaintingValue(const map<rarity, unsigned> &rarity_map) const
@@ -157,7 +160,7 @@ bignum loot_generator::calcAveragePaintingValue(const map<rarity, unsigned> &rar
 	return map_total;
 }
 
-bignum loot_generator::getCrateCost(rarity r, int count) const
+bignum loot_generator::getCrateCost(crate_quality cq, int count) const
 {
 	bignum quantity_discount(1);
 	
@@ -169,23 +172,27 @@ bignum loot_generator::getCrateCost(rarity r, int count) const
 	//potential value is determined by average rarity cost, and placement bonus
 	bignum potential_value;
 
-	switch (r)
+	switch (cq)
 	{
-	case COMMON: 
+	case BRONZE: 
 		potential_value = average_bronze_crate_work_value + calcPlacementBonus(average_bronze_crate_work_value);
 		result = quantity_discount * potential_value * bignum(count) *  bignum("1.2345");
 		break;
-	case UNCOMMON: 
+	case SILVER: 
 		potential_value = average_silver_crate_work_value + calcPlacementBonus(average_silver_crate_work_value);
 		result = quantity_discount * potential_value * bignum(count) *  bignum("1.6049");
 		break;
-	case RARE:
+	case GOLD:
 		potential_value = average_gold_crate_work_value + calcPlacementBonus(average_gold_crate_work_value);
 		result = quantity_discount * potential_value * bignum(count) *  bignum("1.975");
 		break;
-	case LEGENDARY:
+	case PLATINUM:
 		potential_value = average_platinum_crate_work_value + calcPlacementBonus(average_platinum_crate_work_value);
 		result = quantity_discount * potential_value * bignum(count) *  bignum("2.345");
+		break;
+	case DIAMOND:
+		potential_value = average_diamond_crate_work_value + calcPlacementBonus(average_diamond_crate_work_value);
+		result = quantity_discount * potential_value * bignum(count) *  bignum("100");
 		break;
 	default: break;
 	}
@@ -241,16 +248,18 @@ vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, float m
 	return loot_vec;
 }
 
-vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, rarity r) const
+vector<shared_ptr<artwork> > loot_generator::generateArtworks(int count, crate_quality cq) const
 {
 	map<rarity, unsigned int> rarity_proportions;
 
-	switch (r)
+	switch (cq)
 	{
-	case COMMON: rarity_proportions = bronze_rarity_map; break;
-	case UNCOMMON: rarity_proportions = silver_rarity_map; break;
-	case RARE: rarity_proportions = gold_rarity_map; break;
-	case LEGENDARY: rarity_proportions = platinum_rarity_map; break;
+	case BRONZE: rarity_proportions = bronze_rarity_map; break;
+	case SILVER: rarity_proportions = silver_rarity_map; break;
+	case GOLD: rarity_proportions = gold_rarity_map; break;
+	case PLATINUM: rarity_proportions = platinum_rarity_map; break;
+	case DIAMOND: rarity_proportions = diamond_rarity_map; break;
+	default: rarity_proportions = bronze_rarity_map; break;
 	}
 
 	vector<shared_ptr<artwork> > loot_vec;

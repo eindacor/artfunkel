@@ -62,4 +62,7 @@ bool attributeIsPrimary(artwork_attribute aa);
 bool attributeIsSecondary(artwork_attribute aa);
 bool attributeIsDefault(artwork_attribute aa);
 
+vec4 getRarityColor(rarity r);
+vec4 getCrateColor(crate_quality cq);
+
 #endif

@@ -1017,4 +1017,30 @@ bool attributeIsSecondary(artwork_attribute aa)
 	}
 }
 
+vec4 getRarityColor(rarity r)
+{
+	switch (r)
+	{
+	case COMMON: return V4C_GREEN;
+	case UNCOMMON: return V4C_BLUE;
+	case RARE: return V4C_YELLOW;
+	case LEGENDARY: return V4C_ORANGE;
+	case MASTERPIECE: return V4C_CYAN;
+	defualt: return V4C_BLACK;
+	}
+}
+
+vec4 getCrateColor(crate_quality cq)
+{
+	switch (cq)
+	{
+	case BRONZE: return V4C_BRONZE;
+	case SILVER: return V4C_SILVER;
+	case GOLD: return V4C_GOLD;
+	case PLATINUM: return V4C_PLATINUM;
+	case DIAMOND: return V4C_DIAMOND;
+	default: return V4C_BLACK;
+	}
+}
+
 

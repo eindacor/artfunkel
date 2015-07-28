@@ -9,8 +9,8 @@
 #include "hud_common.h"
 
 //returns pair to add to crate map
-pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text,
-	const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, rarity r, int count, shared_ptr<dynamic_hud_array> &crates)
+pair<string, pair<crate_quality, int> > addCrateButton(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text,
+	const shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, crate_quality cq, int count, shared_ptr<dynamic_hud_array> &crates)
 {
 	string crate_size;
 	if (count / 4 > 2)
@@ -21,55 +21,46 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 
 	else crate_size = "Small";
 
-	string crate_quality;
+	string quality_string;
 
-	switch (r)
+	switch (cq)
 	{
-	case COMMON: crate_quality = "Bronze"; break;
-	case UNCOMMON: crate_quality = "Silver"; break;
-	case RARE: crate_quality = "Gold"; break;
-	case LEGENDARY: crate_quality = "Platinum"; break;
+	case BRONZE: quality_string = "Bronze"; break;
+	case SILVER: quality_string = "Silver"; break;
+	case GOLD: quality_string = "Gold"; break;
+	case PLATINUM: quality_string = "Platinum"; break;
+	case DIAMOND: quality_string = "Diamond"; break;
 	}
 
-	string button_id = crate_size + " " + crate_quality + " Crate";
+	string button_id = crate_size + " " + quality_string + " Crate";
 
 	//overall container of title and value elements
 	pair <horizontal_justification, vertical_justification> button_just(H_LEFT, V_MIDDLE);
-	shared_ptr<dynamic_hud_array> button(new dynamic_hud_array(button_id, context, vec2(0.0f), justpair(H_CENTER, V_MIDDLE), vec2(0.5f, .14f), button_just, vec2(0.05f, 0.0f)));
+	shared_ptr<dynamic_hud_array> button(new dynamic_hud_array(button_id, context, vec2(0.0f), justpair(H_CENTER, V_MIDDLE), vec2(0.5f, .25f), button_just, vec2(0.05f, 0.0f)));
 
-	float crate_title_text_height(0.042f);
-	vec4 crate_title_color(0.8f, 0.8f, 0.8f, 1.0f);
-	vec2 crate_title_element_dimensions(0.46f, 0.052f);
+	float crate_title_text_height(0.05f);
+	vec2 crate_title_element_dimensions(0.45f, 0.08f);
 	pair <horizontal_justification, vertical_justification> option_title_just(H_LEFT, V_MIDDLE);
 	bool crate_title_italics = false;
-	vec2 crate_title_element_padding(0.025f, 0.0f);
+	vec2 crate_title_element_padding(0.01f, 0.0f);
 	vec2 crate_title_spacing_scale(0.8f, 1.0f);
 
 	shared_ptr<text_area> crate_title_button(new text_area(button_id, button_id,
 		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), crate_title_element_dimensions, crate_title_text_height, option_title_just,
-		crate_title_italics, crate_title_color, "text", "text_color", crate_title_element_padding, crate_title_spacing_scale));
+		crate_title_italics, getCrateColor(cq), "text", "text_color", crate_title_element_padding, crate_title_spacing_scale));
 
-	switch (r)
-	{
-	case COMMON: crate_title_button->setColor(vec4(0.9f, 0.6f, 0.35f, 1.0f)); break;
-	case UNCOMMON: crate_title_button->setColor(vec4(0.7f, 0.7f, 0.7f, 1.0f)); break;
-	case RARE: crate_title_button->setColor(vec4(0.9f, 0.85f, 0.27f, 1.0f)); break;
-	case LEGENDARY: crate_title_button->setColor(vec4(0.9f, 0.9f, 0.9f, 1.0f)); break;
-	}
-
-	float crate_value_text_height(0.04f);
-	vec4 crate_value_color(0.8f, 0.8f, 0.8f, 1.0f);
-	vec2 crate_value_element_dimensions(0.46f, 0.045f);
+	float crate_value_text_height(0.03f);
+	vec2 crate_value_element_dimensions(0.45f, 0.08f);
 	pair <horizontal_justification, vertical_justification> crate_value_just(H_LEFT, V_MIDDLE);
 	bool crate_value_italics = false;
-	vec2 crate_value_element_padding(0.025f, 0.0f);
+	vec2 crate_value_element_padding(0.01f, 0.0f);
 	vec2 crate_value_spacing_scale(0.8f, 1.0f);
 
-	shared_ptr<text_area> crate_value_button(new text_area(button_id, "$" + lg->getCrateCost(r, count).getNumberString(true, false, 0),
+	shared_ptr<text_area> crate_value_button(new text_area(button_id, "$" + lg->getCrateCost(cq, count).getNumberString(true, false, 0),
 		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), crate_value_element_dimensions, crate_value_text_height, crate_value_just,
-		crate_value_italics, crate_value_color, "text", "text_color", crate_value_element_padding, crate_value_spacing_scale));
+		crate_value_italics, V4C_GRAY, "text", "text_color", crate_value_element_padding, crate_value_spacing_scale));
 
-	if (current_player->getBankBalance() < lg->getCrateCost(r, count))
+	if (current_player->getBankBalance() < lg->getCrateCost(cq, count) && !current_player->isAdmin())
 	{
 		button->setSelectable(false);
 		crate_title_button->setSelectable(false);
@@ -82,34 +73,37 @@ pair<string, pair<rarity, int> > addCrateButton(const shared_ptr<ogl_context> &c
 	button->addElement(crate_value_button);
 	crates->addElement(button);
 
-	return pair<string, pair<rarity, int> >(button_id, pair<rarity, int>(r, count));
+	return pair<string, pair<crate_quality, int> >(button_id, pair<crate_quality, int>(cq, count));
 }
 
 int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_ptr<key_handler> &keys,
 	shared_ptr<player> &current_player, const shared_ptr<loot_generator> &lg, const shared_ptr<text_handler> &text, shared_ptr<texture_handler> &textures)
 {
-	shared_ptr<dynamic_hud_array> crate_menu(new dynamic_hud_array("description", context, vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.5f, 1.75f),
-		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
+	justpair anchorpoint(H_LEFT, V_TOP);
+	justpair internal_justification(H_LEFT, V_TOP);
+	shared_ptr<dynamic_hud_array> crate_menu(new dynamic_hud_array("description", context, vec2(-1.0f, 1.0f), anchorpoint, vec2(2.0f, 1.75f),
+		internal_justification, vec2(0.0f, 0.0f)));
 
 	crate_menu->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
 	crate_menu->setDeselectOnMiss(true);
 
 	shared_ptr<dynamic_hud_array> player_summary = generatePlayerInfo(context, text, current_player);
 
-	map<string, pair<rarity, int> >crate_map;
+	map<string, pair<crate_quality, int> >crate_map;
 
-	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, lg->getCrateSizeModule(), crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, lg->getCrateSizeModule() * 2, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, COMMON, lg->getCrateSizeModule() * 3, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON, lg->getCrateSizeModule(), crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON, lg->getCrateSizeModule() * 2, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, UNCOMMON, lg->getCrateSizeModule() * 3, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, lg->getCrateSizeModule(), crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, lg->getCrateSizeModule() * 2, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, RARE, lg->getCrateSizeModule() * 3, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, lg->getCrateSizeModule(), crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, lg->getCrateSizeModule() * 2, crate_menu));
-	crate_map.insert(addCrateButton(context, text, current_player, lg, LEGENDARY, lg->getCrateSizeModule() * 3, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, BRONZE, lg->getCrateSizeModule(), crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, BRONZE, lg->getCrateSizeModule() * 2, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, BRONZE, lg->getCrateSizeModule() * 3, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, SILVER, lg->getCrateSizeModule(), crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, SILVER, lg->getCrateSizeModule() * 2, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, SILVER, lg->getCrateSizeModule() * 3, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, GOLD, lg->getCrateSizeModule(), crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, GOLD, lg->getCrateSizeModule() * 2, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, GOLD, lg->getCrateSizeModule() * 3, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, PLATINUM, lg->getCrateSizeModule(), crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, PLATINUM, lg->getCrateSizeModule() * 2, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, PLATINUM, lg->getCrateSizeModule() * 3, crate_menu));
+	crate_map.insert(addCrateButton(context, text, current_player, lg, DIAMOND, 1, crate_menu));
 
 	shared_ptr<ogl_camera> camera(new ogl_camera(keys, context, vec3(0.0f, 0.0f, 0.0f), vec3(0.0f, 0.0f, 0.0f), 45.0f));
 
@@ -151,9 +145,9 @@ int visitStore(string data_path, const shared_ptr<ogl_context> &context, shared_
 			{
 				if (selected_element != nullptr)
 				{
-					pair<rarity, int> crate_selected = crate_map.at(selected_element->getIdentifier());
+					pair<crate_quality, int> crate_selected = crate_map.at(selected_element->getIdentifier());
 
-					if (lg->getCrateCost(crate_selected.first, crate_selected.second) <= current_player->getBankBalance())
+					if (lg->getCrateCost(crate_selected.first, crate_selected.second) <= current_player->getBankBalance() || current_player->isAdmin())
 					{
 						openCrate(data_path, context, keys, current_player, lg, text, textures,
 							crate_selected.first, crate_selected.second);

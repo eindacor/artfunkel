@@ -66,6 +66,8 @@ public:
 	map<string, string> getAvailableWallFinishes() const { return available_wall_finishes; }
 	void addAvailableWallFinish(string finish_name, string finish_filename) { available_wall_finishes[finish_name] = finish_filename; }
 
+	bool isAdmin() const { return name == "default_user"; }
+
 private:
 	string name;
 	//key corresponds to painting ID

@@ -7,6 +7,7 @@ enum genre {
 	POST_MODERNISM, POINTISM, SKETCH, POP_ART, HISTORIC, LANDSCAPE, 
 	FOLK_ART, FAUVISM, CUBISM, PHOTOGRAPH, UNKNOWN_GENRE
 };
+enum crate_quality { BRONZE, SILVER, GOLD, PLATINUM, DIAMOND, UNKNOWN_QUALITY };
 enum rarity { COMMON, UNCOMMON, RARE, LEGENDARY, MASTERPIECE, UNKNOWN_RARITY };
 enum sort_option { ARTIST_NAME, GENRE, STYLE, MEDIUM, DATE, BASE_VALUE, VALUE, TITLE, AREA, HEIGHT, WIDTH, RARITY, PAINTING_ID, IN_GALLERY, NO_SORT };
 enum hud_element_type { ELEMENT_ARRAY, THUMBNAIL, FINISH_THUMBNAIL, FURNITURE_THUMBNAIL, TEXT_AREA, TEXT_FIELD, BUTTON_TOGGLE, BUTTON_PRESS, NO_TYPE };
@@ -162,6 +163,24 @@ using glm::vec4;
 using glm::vec3;
 using glm::vec2;
 using glm::mat4;
+
+#define V4C_WHITE vec4(1.0f, 1.0f, 1.0f, 1.0f)
+#define V4C_BLACK vec4(0.0f, 0.0f, 0.0f, 1.0f)
+#define V4C_GREEN vec4(0.0f, 1.0f, 0.0f, 1.0f)
+#define V4C_BLUE vec4(0.0f, 0.0f, 1.0f, 1.0f)
+#define V4C_RED vec4(1.0f, 0.0f, 0.0f, 1.0f)
+#define V4C_BLUE vec4(0.0f, 0.0f, 1.0f, 1.0f)
+#define V4C_YELLOW vec4(1.0f, 1.0f, 0.0f, 1.0f)
+#define V4C_MAGENTA vec4(1.0f, 0.0f, 1.0f, 1.0f)
+#define V4C_CYAN vec4(0.0f, 1.0f, 1.0f, 1.0f)
+#define V4C_ORANGE vec4(1.0f, 0.7f, 0.0f, 1.0f)
+#define V4C_PINK vec4(1.0f, 0.45f, 0.7f, 1.0f)
+#define V4C_GRAY vec4(0.7f, 0.7f, 0.7f, 1.0f)
+#define V4C_BRONZE vec4(0.9f, 0.6f, 0.35f, 1.0f)
+#define V4C_SILVER vec4(0.7f, 0.7f, 0.7f, 1.0f)
+#define V4C_GOLD vec4(0.9f, 0.85f, 0.27f, 1.0f)
+#define V4C_PLATINUM vec4(0.9f, 0.9f, 0.9f, 1.0f)
+#define V4C_DIAMOND vec4(0.5f, 1.0f, 1.0f, 1.0f)
 
 typedef pair<horizontal_justification, vertical_justification> justpair;
 

@@ -26,7 +26,6 @@ void refreshThumbnails(const shared_ptr<ogl_context> &context, const shared_ptr<
 void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text, shared_ptr<dynamic_hud_array> &container, float scale_modifier)
 {
 	float title_text_height(0.045f * scale_modifier);
-	vec4 title_color(1.0f, 1.0f, 1.0f, 1.0f);
 	vec2 title_element_dimensions(container->getAllowableWidth(), 0.1f * scale_modifier);
 	pair <horizontal_justification, vertical_justification> title_just(H_LEFT, V_MIDDLE);
 	bool title_italics = true;
@@ -34,7 +33,7 @@ void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<
 	vec2 title_spacing_scale(0.8f, 1.1f);
 
 	shared_ptr<text_area> title_text(new text_area("title_text", "not yet set",
-		context, text, title_element_dimensions, title_text_height, title_just, title_italics, title_color,
+		context, text, title_element_dimensions, title_text_height, title_just, title_italics, V4C_WHITE,
 		"text", "text_color", title_element_padding, title_spacing_scale));
 
 	float rarity_text_height(0.03f * scale_modifier);
@@ -50,7 +49,6 @@ void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<
 		"text", "text_color", rarity_element_padding, rarity_spacing_scale));
 
 	float artist_text_height(0.03f * scale_modifier);
-	vec4 artist_color(0.7f, 0.7f, 0.7f, 1.0f);
 	vec2 artist_element_dimensions(container->getAllowableWidth(), 0.032f * scale_modifier);
 	pair <horizontal_justification, vertical_justification> artist_just(H_LEFT, V_MIDDLE);
 	bool artist_italics = false;
@@ -58,11 +56,10 @@ void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<
 	vec2 artist_spacing_scale(0.8f, 1.0f);
 
 	shared_ptr<text_area> artist_text(new text_area("artist_text", "not yet set",
-		context, text, artist_element_dimensions, artist_text_height, artist_just, artist_italics, artist_color,
+		context, text, artist_element_dimensions, artist_text_height, artist_just, artist_italics, V4C_GRAY,
 		"text", "text_color", artist_element_padding, artist_spacing_scale));
 
 	float value_text_height(0.03f * scale_modifier);
-	vec4 value_color(0.7f, 0.7f, 0.7f, 1.0f);
 	vec2 value_element_dimensions(container->getAllowableWidth(), 0.032f * scale_modifier);
 	pair <horizontal_justification, vertical_justification> value_just(H_LEFT, V_MIDDLE);
 	bool value_italics = false;
@@ -70,7 +67,7 @@ void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<
 	vec2 value_spacing_scale(0.8f, 1.0f);
 
 	shared_ptr<text_area> value_text(new text_area("value_text", "not yet set",
-		context, text, value_element_dimensions, value_text_height, value_just, value_italics, value_color,
+		context, text, value_element_dimensions, value_text_height, value_just, value_italics, V4C_GRAY,
 		"text", "text_color", value_element_padding, value_spacing_scale));
 
 	container->addElement(title_text);
@@ -97,14 +94,7 @@ void setWorkInfoDescription(shared_ptr<dynamic_hud_array> &work_description, con
 	shared_ptr<text_area> rarity_text = boost::dynamic_pointer_cast<text_area>(rarity_element);
 	rarity_text->setText(stringFromRarity(work->getData()->getRarity()));
 
-	switch (work->getData()->getRarity())
-	{
-	case COMMON: rarity_text->setColor(vec4(0.6f, 0.9f, 0.6f, 1.0f)); break;
-	case UNCOMMON: rarity_text->setColor(vec4(0.6f, 0.6f, 0.9f, 1.0f)); break;
-	case RARE: rarity_text->setColor(vec4(0.9f, 0.9f, 0.6f, 1.0f)); break;
-	case LEGENDARY: rarity_text->setColor(vec4(1.0f, 0.75f, 0.6f, 1.0f)); break;
-	case MASTERPIECE: rarity_text->setColor(vec4(0.6f, 0.9f, 0.9f, 1.0f)); break;
-	}
+	rarity_text->setColor(getRarityColor(work->getData()->getRarity()));
 }
 
 shared_ptr<dynamic_hud_array> generatePlayerInfo(const shared_ptr<ogl_context> &context, const shared_ptr<text_handler> &text, const shared_ptr<player> &current_player)
@@ -115,7 +105,6 @@ shared_ptr<dynamic_hud_array> generatePlayerInfo(const shared_ptr<ogl_context> &
 	player_summary->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.7f));
 
 	float username_text_height(0.045f);
-	vec4 username_color(1.0f, 1.0f, 1.0f, 1.0f);
 	vec2 username_element_dimensions(0.47f, 0.09f);
 	justpair username_just(H_LEFT, V_MIDDLE);
 	bool username_italics = true;
@@ -123,11 +112,11 @@ shared_ptr<dynamic_hud_array> generatePlayerInfo(const shared_ptr<ogl_context> &
 	vec2 username_spacing_scale(0.8f, 1.1f);
 
 	shared_ptr<text_area> username_text(new text_area("username_text", current_player->getName(),
-		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), username_element_dimensions, username_text_height, username_just, username_italics, username_color,
+		context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE), username_element_dimensions, 
+		username_text_height, username_just, username_italics, V4C_WHITE,
 		"text", "text_color", username_element_padding, username_spacing_scale));
 
 	float collection_text_height(0.03f);
-	vec4 collection_color(0.7f, 0.7f, 0.7f, 1.0f);
 	vec2 collection_element_dimensions(0.47f, 0.032f);
 	justpair collection_just(H_LEFT, V_MIDDLE);
 	bool collection_italics = false;
@@ -136,11 +125,10 @@ shared_ptr<dynamic_hud_array> generatePlayerInfo(const shared_ptr<ogl_context> &
 
 	shared_ptr<text_area> collection_text(new text_area("collection_text",
 		"Collection Value: $" + current_player->getCollectionValue().getNumberString(true, false, 2), context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
-		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
+		collection_element_dimensions, collection_text_height, collection_just, collection_italics, V4C_GRAY,
 		"text", "text_color", collection_element_padding, collection_spacing_scale));
 
 	float bank_text_height(0.03f);
-	vec4 bank_color(0.7f, 0.7f, 0.7f, 1.0f);
 	vec2 bank_element_dimensions(0.47f, 0.032f);
 	justpair bank_just(H_LEFT, V_MIDDLE);
 	bool bank_italics = false;
@@ -149,7 +137,7 @@ shared_ptr<dynamic_hud_array> generatePlayerInfo(const shared_ptr<ogl_context> &
 
 	shared_ptr<text_area> bank_text(new text_area("bank_text",
 		"Bank Balance: $" + current_player->getBankBalanceString(true), context, text, vec2(0.0f, 0.0f), justpair(H_CENTER, V_MIDDLE),
-		collection_element_dimensions, collection_text_height, collection_just, collection_italics, collection_color,
+		collection_element_dimensions, collection_text_height, collection_just, collection_italics, V4C_GRAY,
 		"text", "text_color", collection_element_padding, collection_spacing_scale));
 
 	player_summary->addElement(username_text);
