@@ -9,3 +9,9 @@ autopublish
 insecure
 iron:router
 mrt:jquery-ui
+tomi:upload-server
+tomi:upload-jquery
+cfs:gridfs
+cfs:filesystem
+cfs:graphicsmagick
+cfs:standard-packages
