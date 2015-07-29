@@ -88,24 +88,22 @@ var validateArtwork = function(artwork_object) {
 }
 
 var uploadImage = function(artwork_object) {
-	var filename = artwork_object.title.replace(" ", "_");
+	var filename = artwork_object.title.replace(/ /g, "_");
 	var file = $('#image-file')[0].files[0];
 	var fsFile = new FS.File(file);
 
-	images.insert(fsFile, function(err, fileObj) {
+	var inserted_object = images.insert(fsFile, function(err, fileObj) {
 		console.log("file id: " + fileObj._id);
-		fileObj.name(filename + '.bmp');
+		fileObj.name(filename + '.bmp');		
 	});
 
-	return;
+	console.log(inserted_object);
+
+	var image_url = "/private/uploaded_images/images-" + inserted_object._id + "-" + filename + ".bmp";
+	return image_url;
 }
 
 Template.uploadArtwork.rendered = function() {
-	//testGM();
-	//console.log("gm: " + gm.isAvailable);
-	artists = new Mongo.Collection("artists");
-	artworks = new Mongo.Collection("artwork");
-
 	$("#image-file").change(function(){
 	    readURL(this);
 
@@ -130,6 +128,7 @@ Template.uploadArtwork.rendered = function() {
 		var date = $('#date').val();
 		var medium = $('#medium').val();
 		var style = $('#style').val();
+		var image_url = $()
 
 		var artist_id = getArtistID(artists, artist_name);
 
@@ -146,6 +145,7 @@ Template.uploadArtwork.rendered = function() {
 			"width": width,
 			"medium": medium,
 			"style": style,
+			"imageURL": "",
 			"status": "pending"
 		}
 
@@ -154,11 +154,17 @@ Template.uploadArtwork.rendered = function() {
 			alert("\"" + title + "\" has been submitted for approval. Thank you!");
 			console.log(artworks.findOne({"_id": unique_id}));
 
+			var image_url = uploadImage(artwork_object);
+
+			artworks.update({"_id": unique_id}, {$set: {"imageURL": image_url}});
+			console.log("saved path: " + artworks.findOne({"_id": unique_id}).imageURL);
+
 			$('textarea').each( function() {
 				$(this).val("");
-			});
+			});	
 
-			uploadImage(artwork_object);
+			$('#image-preview').attr('src', '#');
+			document.getElementById('image-file').value = "";			
 		}		
 	});
 }

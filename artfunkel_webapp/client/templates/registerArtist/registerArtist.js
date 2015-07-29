@@ -33,9 +33,6 @@ var validateArtist = function(artist_db, artist_object) {
 }
 
 Template.registerArtist.rendered = function() {
-	artists = new Mongo.Collection("artists");
-	artworks = new Mongo.Collection("artwork");
-
 	$('.submit-button').click( function() {
 		var artist_name = $('#artist-name').val();
 		var dob = $('#birth-date').val();
