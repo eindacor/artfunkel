@@ -37,15 +37,19 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	silver_rarity_map[UNCOMMON] = 38;
 	silver_rarity_map[RARE] = 2;
 
+	gold_rarity_map[COMMON] = 200;
 	gold_rarity_map[UNCOMMON] = 600;							
 	gold_rarity_map[RARE] = 200;
 	gold_rarity_map[LEGENDARY] = 1;
 
+	platinum_rarity_map[COMMON] = 800;
+	platinum_rarity_map[UNCOMMON] = 1200;
 	platinum_rarity_map[RARE] = 9600;
 	platinum_rarity_map[LEGENDARY] = 20;
 	platinum_rarity_map[MASTERPIECE] = 1;
 
-	diamond_rarity_map[LEGENDARY] = 1;
+	diamond_rarity_map[LEGENDARY] = 1000000;
+	diamond_rarity_map[MASTERPIECE] = 1;
 
 	/*
 	bool rare_in_bronze_found = false;
