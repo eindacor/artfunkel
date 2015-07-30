@@ -1,2 +1,2 @@
 artists = new Mongo.Collection("artists");
-artworks = new Mongo.Collection("artwork");
+artworks = new Mongo.Collection("artworks");
