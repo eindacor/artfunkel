@@ -7,30 +7,33 @@ body {
 }
 
 .upload-section {
-	margin-top: 20px;
-	margin-bottom: 50px;
-	display: block;
 	position: relative;
+	width: 100%;
+	margin: 0 0 0 0;
+	padding: 0 0 0 0;
+	display: inline-block;
 }
 
-.upload-section h2 {
+h2 {
 	margin-bottom: 10px;
+	font-size: 20px;
 }
 
 .upload-section textarea {
-	font-size: 1.5em;
-	margin-top: 0px;
+	padding-left: 12px;
+	font-size: 18px;
 	width: 400px;
-	height: 30px;
+	height: 24px;
 	resize: none;
 	display: inline-block;
+	vertical-align: middle;
 }
 
 h1 {
 	color: gray;
 }
 
-button, file{
+button {
 	border: none;
 	background-color: black;
 	color: white;
@@ -41,19 +44,68 @@ button, file{
 	font-size: 1.5em;
 }
 
-#preview-window {
+.submit-button {
+	display: block;
+	float: left;
+	clear: both;
+	margin-top: 20px;
+	margin-bottom: 80px;
+}
+
+.field-title {
+	padding: 0 0 0 0;
+	margin-bottom: 0px;
+}
+
+.preview-window {
 	background-color: #DDDDDD;
-	width: 600px;
-	height: 600px;
-	display: table;
+	width: 480px;
+	height: 480px;
 	text-align: center;
 	vertical-align: middle;
 	padding: auto;
 }
 
-#image-preview {
+.image-preview {
 	margin: auto;
-	display: table-cell;
+	display: inline-block;
 	text-align: center;
 	vertical-align: middle;
+}
+
+.helper {
+	display: inline-block;
+    height: 100%;
+    vertical-align: middle;
+}
+
+.upload-area {
+	width: 500px;
+	height: 100%;
+	display: inline-block;
+	float: left;
+}
+
+.data-entry {
+	width: 420px;
+	display: inline-block;
+	float: left;
+}
+
+a {
+	text-decoration: none;
+	opacity: .75;
+	color: #8e8e8e;
+	display: block;
+}
+
+.button-container {
+	display: block;
+	margin-bottom: 20px;
+}
+
+.artwork-entry, .artist-entry {
+	display: block;
+	border: 1px solid gray;
+	padding: 20px 20px 20px 20px;
 }

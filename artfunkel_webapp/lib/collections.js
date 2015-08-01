@@ -3,11 +3,11 @@ resizeImage = function(fileObj, readStream, writeStream) {
 };
 
 images = new FS.Collection("images", {
-	stores: [new FS.Store.FileSystem("images", {path: "../../../../../private/uploaded_images"})]
+	stores: [new FS.Store.FileSystem("images", {path: "../../../../../public/uploaded_images"})]
 });
 
 image_previews = new FS.Collection("image_previews", {
-	stores: [new FS.Store.FileSystem("image_previews", {path: "../../../../../client/image_previews", transformWrite: resizeImage})]
+	stores: [new FS.Store.FileSystem("image_previews", {path: "../../../../../public/image_previews", transformWrite: resizeImage})]
 });
 
 testGM = function() {

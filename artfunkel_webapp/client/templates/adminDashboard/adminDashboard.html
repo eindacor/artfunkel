@@ -1,0 +1,45 @@
+<template name="artworkEntry">
+	<img class="image-preview" src="{{imageURL}}" id="image_{{_id}}" alt="" />
+	<p>Title: {{title}}</p>
+	<p>Date Created: {{dateCreated}}</p>
+	<p>Height: {{height}}</p>
+	<p>Width: {{width}}</p>
+	<p>Medium: {{medium}}</p>
+	<p>Style: {{style}}</p>
+	<p>Image Height (px): {{image_height}}</p>
+	<p>Image Width (px): {{image_width}}</p>
+</template>
+
+<template name="artistEntry">
+	<p>Name: {{artistName}}</p>
+	<p>Date of Birth: {{birthDate}}</p>
+	<p>Date of Death: {{height}}</p>
+	<a class="link" href="{{portfolio}}">Porfolio</a>
+	<a class="link" href="mailto:{{email}}">Email</a>
+</template>
+
+<template name="adminDashboard">
+	{{#each artwork}}
+	<div class="entry">
+		<div class="artwork-entry">
+			{{> artworkEntry this}}
+		</div>
+		<div class="button-container">
+			<button class="accept-button" id="accept_{{_id}}">accept</button>
+			<button class="reject-button" id="reject_{{_id}}">reject</button>
+		</div>
+	</div>
+	{{/each}}
+
+	{{#each artist}}
+	<div class="entry">
+		<div class="artist-entry">
+			{{> artistEntry this}}
+		</div>
+		<div class="button-container">
+			<button class="accept-button" id="accept_{{_id}}">accept</button>
+			<button class="reject-button" id="reject_{{_id}}">reject</button>
+		</div>
+	</div>
+	{{/each}}
+</template>

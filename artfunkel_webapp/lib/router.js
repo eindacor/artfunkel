@@ -10,6 +10,6 @@ Router.route( '/registerArtist', {
 	name : 'registerArtist'
 });
 
-Router.route( '/admin', {
-	name : 'admin'
+Router.route( '/adminDashboard', {
+	name : 'adminDashboard'
 });
