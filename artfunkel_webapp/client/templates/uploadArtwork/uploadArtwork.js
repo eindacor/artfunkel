@@ -101,25 +101,11 @@ var uploadImage = function(artwork_object) {
 }
 
 Template.uploadArtwork.rendered = function() {
-	//testGM();
-	//console.log("gm: " + gm.isAvailable);
 	artists = new Mongo.Collection("artists");
 	artworks = new Mongo.Collection("artwork");
 
 	$("#image-file").change(function(){
 	    readURL(this);
-
-	 //    var file = $('#image-file')[0].files[0];
-	 //    var fsFile = new FS.File(file);
-
-		// image_previews.insert(fsFile, function(err, fileObj) {
-		// 	var preview_id = fileObj._id;
-		// 	fileObj.name('preview.bmp');
-		// 	console.log("src before switch: " + $('#image-preview').attr('src'));	
-		// 	var preview_url = "/../client/image_previews/image_previews-" + preview_id + "-preview.bmp";
-		// 	$('#image-preview').attr('src', preview_url);
-		// 	console.log("src after switch: " + $('#image-preview').attr('src'));	
-		// });	
 	});
 
 	$('.submit-button').click( function() {
