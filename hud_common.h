@@ -32,7 +32,7 @@ void generateHorizontalButtons(const shared_ptr<ogl_context> &context, const sha
 	for (const auto &button : text_and_id_container)
 	{
 		shared_ptr<text_area> button_element(new text_area(button.second, button.first, context, text,
-			vec2(button_width, button_height), button_height * 0.8f,
+			vec2(button_width, button_height), button_height * 0.75f,
 			justpair(H_CENTER, V_MIDDLE), false, vec4(1.0f), "text", "text_color", vec2(0.0f, 0.0f), vec2(0.8f, 1.0f)));
 
 		container->addElement(button_element);

@@ -70,10 +70,29 @@ void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<
 		context, text, value_element_dimensions, value_text_height, value_just, value_italics, V4C_GRAY,
 		"text", "text_color", value_element_padding, value_spacing_scale));
 
+	shared_ptr<text_area> default_attributes(new text_area("default_attributes_text", "not yet set",
+		context, text, vec2(container->getAllowableWidth() / 2, 0.4f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY,
+		"text", "text_color", value_element_padding, value_spacing_scale));
+
+	shared_ptr<dynamic_hud_array> primary_secondary_container(new dynamic_hud_array("primary_secondary_container", context, vec2(-1.0f, 0.0f),
+		justpair(H_LEFT, V_TOP), vec2(container->getAllowableWidth() / 2, 0.4f * scale_modifier), justpair(H_LEFT, V_TOP)));
+
+	shared_ptr<text_area> primary_attributes(new text_area("primary_attributes_text", "not yet set",
+		context, text, vec2(container->getAllowableWidth() / 2, 0.2f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY,
+		"text", "text_color", value_element_padding, value_spacing_scale));
+
+	shared_ptr<text_area> secondary_attributes(new text_area("secondary_attributes_text", "not yet set",
+		context, text, vec2(container->getAllowableWidth() / 2, 0.2f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY,
+		"text", "text_color", value_element_padding, value_spacing_scale));
+
 	container->addElement(title_text);
 	container->addElement(rarity_text);
 	container->addElement(artist_text);
 	container->addElement(value_text);
+	container->addElement(default_attributes);
+	container->addElement(primary_secondary_container);
+	primary_secondary_container->addElement(primary_attributes);
+	primary_secondary_container->addElement(secondary_attributes);
 }
 
 void setWorkInfoDescription(shared_ptr<dynamic_hud_array> &work_description, const shared_ptr<artwork> &work)
@@ -93,6 +112,15 @@ void setWorkInfoDescription(shared_ptr<dynamic_hud_array> &work_description, con
 	shared_ptr<hud_element> rarity_element = work_description->getElementWithinByID("rarity_text");
 	shared_ptr<text_area> rarity_text = boost::dynamic_pointer_cast<text_area>(rarity_element);
 	rarity_text->setText(stringFromRarity(work->getData()->getRarity()));
+
+	shared_ptr<text_area> base_attribute_text = boost::dynamic_pointer_cast<text_area>(work_description->getElementWithinByID("default_attributes_text"));
+	base_attribute_text->setText("\nBase Stats: \n" + work->getWorkAttributes().getBaseAttributesString());
+
+	shared_ptr<text_area> primary_attribute_text = boost::dynamic_pointer_cast<text_area>(work_description->getElementWithinByID("primary_attributes_text"));
+	primary_attribute_text->setText("\nPrimary Stats: \n" + work->getWorkAttributes().getPrimaryAttributesString());
+
+	shared_ptr<text_area> secondary_attribute_text = boost::dynamic_pointer_cast<text_area>(work_description->getElementWithinByID("secondary_attributes_text"));
+	secondary_attribute_text->setText("\nSecondary Stats: \n" + work->getWorkAttributes().getSecondaryAttributesString());
 
 	rarity_text->setColor(getRarityColor(work->getData()->getRarity()));
 }

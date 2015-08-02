@@ -200,7 +200,7 @@ bignum work_attributes::rollNewBignumValue(artwork_attribute aa)
 float work_attributes::rollNewFloatValue(artwork_attribute aa)
 {
 	pair<float, float> minmax = getAttributeMinMax(aa);
-	return jep::floatRoll(minmax.first, minmax.second, 6);
+	return jep::floatRoll(minmax.first, minmax.second, 4);
 	setAttributeStrings();
 }
 
@@ -258,15 +258,30 @@ void work_attributes::setAttributeStrings()
 
 	default_attributes_string = "";
 	for (const auto &att : default_attributes)
-		default_attributes_string += stringFromAttribute(att) + ": " + std::to_string(getAttributeRating(att, attributes.at(att))) + "\n";
+	{
+		bignum att_num(std::to_string(getAttributeRating(att, attributes.at(att))));
+		att_num.roundToIndex(ONES_PLACE - 2);
+		att_num.leftShift(2);
+		default_attributes_string += stringFromAttribute(att) + ": " + att_num.getNumberString(false, false, 0) + "\n";
+	}
 
 	primary_attributes_string = "";
 	for (const auto &att : primary_attributes)
-		primary_attributes_string += stringFromAttribute(att) + ": " + std::to_string(getAttributeRating(att, attributes.at(att))) + "\n";
+	{
+		bignum att_num(std::to_string(getAttributeRating(att, attributes.at(att))));
+		att_num.roundToIndex(ONES_PLACE - 2);
+		att_num.leftShift(2);
+		primary_attributes_string += stringFromAttribute(att) + ": " + att_num.getNumberString(false, false, 0) + "\n";
+	}
 
 	secondary_attributes_string = "";
 	for (const auto &att : secondary_attributes)
-		secondary_attributes_string += stringFromAttribute(att) + ": " + std::to_string(getAttributeRating(att, attributes.at(att))) + "\n";
+	{
+		bignum att_num(std::to_string(getAttributeRating(att, attributes.at(att))));
+		att_num.roundToIndex(ONES_PLACE - 2);
+		att_num.leftShift(2);
+		secondary_attributes_string += stringFromAttribute(att) + ": " + att_num.getNumberString(false, false, 0) + "\n";
+	}
 }
 
 artwork::artwork()

@@ -87,6 +87,9 @@ public:
 
 	void work_attributes::printAttributes() const;
 	void work_attributes::setAttributeStrings();
+	string getBaseAttributesString() const{ return default_attributes_string; }
+	string getPrimaryAttributesString() const { return primary_attributes_string; }
+	string getSecondaryAttributesString() const { return secondary_attributes_string; }
 
 private:
 	map<artwork_attribute, float> attributes;

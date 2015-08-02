@@ -158,18 +158,18 @@ string stringFromAttribute(artwork_attribute aa)
 	case BASE_XP_EARNED: return "Quality";
 	case BASE_XP_DURATION: return "Accessibility";
 
-	case NPC_AUCTIONEER_BASE: return "Auctioneer rating";
-	case NPC_DEALER_BASE: return "Art Dealer rating";
-	case NPC_COLLECTOR_BASE: return "Art Collector rating";
-	case NPC_DONOR_BASE: return "Art Donor rating";
-	case NPC_BENEFACTOR_BASE: return "Benefactor rating";
-	case NPC_ENTHUSIAST_BASE: return "Enthusiast rating";
-	case NPC_DESIGNER_BASE: return "Designer rating";
-	case NPC_FORGER_BASE: return "Forger rating";
-	case NPC_ART_EXPERT_BASE: return "Art Expert rating";
-	case NPC_HISTORIAN_BASE: return "Art Historian rating";
-	case NPC_PRESERVATIONIST_BASE: return "Preservationist rating";
-	case NPC_MARKET_EXPERT_BASE: return "Market Expert rating";
+	case NPC_AUCTIONEER_BASE: return "Auctioneer";
+	case NPC_DEALER_BASE: return "Art Dealer";
+	case NPC_COLLECTOR_BASE: return "Art Collector";
+	case NPC_DONOR_BASE: return "Art Donor";
+	case NPC_BENEFACTOR_BASE: return "Benefactor";
+	case NPC_ENTHUSIAST_BASE: return "Enthusiast";
+	case NPC_DESIGNER_BASE: return "Designer";
+	case NPC_FORGER_BASE: return "Forger";
+	case NPC_ART_EXPERT_BASE: return "Art Expert";
+	case NPC_HISTORIAN_BASE: return "Art Historian";
+	case NPC_PRESERVATIONIST_BASE: return "Preservationist";
+	case NPC_MARKET_EXPERT_BASE: return "Market Expert";
 
 	case ENTRY_FEE_REDUCTION_VISITORS: return "Visitor discount";
 	case XP_FROM_SET_WORKS_INCREASE_VISITORS: return "Set bonus (visitors)";
@@ -934,7 +934,7 @@ pair<float, float> getAttributeMinMax(artwork_attribute aa)
 	case NPC_ART_EXPERT_BASE:
 	case NPC_HISTORIAN_BASE:
 	case NPC_PRESERVATIONIST_BASE:
-	case NPC_MARKET_EXPERT_BASE: return pair<float, float>(0.0002f, 0.001f);
+	case NPC_MARKET_EXPERT_BASE: return pair<float, float>(0.0f, 1.0f);
 
 	case NPC_AUCTIONEER_BOOST:
 	case NPC_DEALER_BOOST:
@@ -947,22 +947,22 @@ pair<float, float> getAttributeMinMax(artwork_attribute aa)
 	case NPC_ART_EXPERT_BOOST:
 	case NPC_HISTORIAN_BOOST:
 	case NPC_PRESERVATIONIST_BOOST:
-	case NPC_MARKET_EXPERT_BOOST: return pair<float, float>(0.001f, 0.002f);
+	case NPC_MARKET_EXPERT_BOOST: return pair<float, float>(0.0f, 1.0f);
 
-	case BASE_XP_EARNED: return pair<float, float>(10.0f, 20.0f);
-	case BASE_XP_DURATION: return pair<float, float>(30.0f, 60.0f);
-	case ENTRY_FEE_REDUCTION_VISITORS: return pair<float, float>(0.002f, 0.008f);
-	case XP_FROM_SET_WORKS_INCREASE_VISITORS: return pair<float, float>(0.006f, 0.012f);
-	case XP_FROM_WORKS_INCREASE_VISITORS: return pair<float, float>(0.002f, 0.008f);
-	case XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS: return pair<float, float>(0.006f, 0.012f);
-	case XP_DURATION_FOR_WORKS_DECREASE_VISITORS: return pair<float, float>(0.002f, 0.008f);
-	case ENTRY_FEE_REDUCTION_MEMBERS: return pair<float, float>(0.006f, 0.012f);
-	case XP_FROM_SET_WORKS_INCREASE_MEMBERS: return pair<float, float>(0.008f, 0.016f);
-	case XP_FROM_WORKS_INCREASE_MEMBERS: return pair<float, float>(0.006f, 0.012f);
-	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS: return pair<float, float>(0.008f, 0.016f);
-	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS: return pair<float, float>(0.006f, 0.012f);
-	case XP_GAIN_PER_VISITOR_INTERACTION: return pair<float, float>(2.0f, 8.0f);
-	case MONEY_GAIN_PER_VISITOR_INTERACTION: return pair<float, float>(2.0f, 8.0f);
+	case BASE_XP_EARNED:
+	case BASE_XP_DURATION:
+	case ENTRY_FEE_REDUCTION_VISITORS:
+	case XP_FROM_SET_WORKS_INCREASE_VISITORS:
+	case XP_FROM_WORKS_INCREASE_VISITORS:
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS:
+	case XP_DURATION_FOR_WORKS_DECREASE_VISITORS:
+	case ENTRY_FEE_REDUCTION_MEMBERS:
+	case XP_FROM_SET_WORKS_INCREASE_MEMBERS:
+	case XP_FROM_WORKS_INCREASE_MEMBERS:
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS:
+	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS:
+	case XP_GAIN_PER_VISITOR_INTERACTION:
+	case MONEY_GAIN_PER_VISITOR_INTERACTION: return pair<float, float>(0.0f, 1.0f);
 
 	default: return pair<float, float>(0.0f, 0.0f);
 	}

@@ -149,7 +149,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 					else
 					{
 						alert_string = "Your inventory has reached the limit";
-						alert_text->setColor(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+						alert_text->setColor(V4C_RED);
 						alert_text->setText(alert_string);
 						alert_text->setVisibility(true);
 					}
@@ -220,11 +220,11 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 					generateHorizontalButtons(context, text, action_buttons, button_map);
 					
 					if (current_player->inventoryIsFull() || current_player->alreadyOwned(selected_element->getStoredArt()))
-						action_buttons->getElementWithinByID("add_to_inventory")->setBackgroundColor(vec4(0.18f, 0.18f, 0.2f, 1.0f));
+						action_buttons->getElementWithinByID("add_to_inventory")->setBackgroundColor(V4C_BLUE_DARK);
 
-					else action_buttons->getElementWithinByID("add_to_inventory")->setBackgroundColor(vec4(0.0f, 0.0f, 0.6f, 1.0f));
+					else action_buttons->getElementWithinByID("add_to_inventory")->setBackgroundColor(V4C_GRAY);
 
-					action_buttons->getElementWithinByID("sell_painting")->setBackgroundColor(vec4(0.0f, 0.6f, 0.0f, 1.0f));
+					action_buttons->getElementWithinByID("sell_painting")->setBackgroundColor(V4C_GREEN_DARK);
 
 					alert_text->setVisibility(false);
 				}
@@ -243,7 +243,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 							current_player->addFunds(current_selection->getValue());
 
 							string alert_string = current_selection->getData()->getTitle() + " has been sold for $" + current_selection->getValue().getNumberString(true, false, 2);
-							alert_text->setColor(vec4(0.0f, 1.0f, 0.0f, 1.0f));
+							alert_text->setColor(V4C_GREEN);
 							alert_text->setText(alert_string);
 							alert_text->setVisibility(true);
 
@@ -270,7 +270,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 							if (current_player->alreadyOwned(current_selection))
 							{
 								alert_string = current_selection->getData()->getTitle() + " is already in your inventory";
-								alert_text->setColor(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+								alert_text->setColor(V4C_RED);
 								alert_text->setText(alert_string);
 								alert_text->setVisibility(true);
 							}
@@ -278,7 +278,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 							else if (current_player->inventoryIsFull())
 							{
 								alert_string = "your inventory is full";
-								alert_text->setColor(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+								alert_text->setColor(V4C_RED);
 								alert_text->setText(alert_string);
 								alert_text->setVisibility(true);
 							}
@@ -288,7 +288,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 								current_player->addWorkToInventory(current_selection);
 								
 								alert_string = (current_selection)->getData()->getTitle() + " has been added to your inventory";
-								alert_text->setColor(vec4(0.0f, 1.0f, 0.0f, 1.0f));
+								alert_text->setColor(V4C_GREEN);
 								alert_text->setText(alert_string);
 								alert_text->setVisibility(true);
 

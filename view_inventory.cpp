@@ -110,14 +110,13 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	//identify positions for text
 	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(-1.0f, -.75f),
-		justpair(H_LEFT, V_BOTTOM), vec2(0.8f, 0.5f), justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
+		justpair(H_LEFT, V_BOTTOM), vec2(0.8f, 0.65f), justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
 
 	work_info->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
 	setWorkInfoFields(context, text, work_info);
 
-	shared_ptr<dynamic_hud_array> action_buttons(new dynamic_hud_array("action_buttons", context, vec2(-1.0f, 0.0f),
-		justpair(H_LEFT, V_TOP), vec2(0.8f, 0.25f), justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
-	action_buttons->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
+	shared_ptr<dynamic_hud_array> action_buttons(new dynamic_hud_array("action_buttons", context, vec2(-1.0f, 0.05f),
+		justpair(H_LEFT, V_TOP), vec2(0.8f, 0.15f), justpair(H_LEFT, V_MIDDLE), vec2(.1f, .04f)));
 	map<string, string> button_map;
 	button_map["sell painting"] = "sell_painting";
 	
@@ -185,14 +184,14 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				if (selected_element != nullptr && selected_element->getType() == THUMBNAIL)
 				{				
 					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("selected", selected_element->getStoredArt(), context,
-						vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.8f, 1.0f), 0.1f));
+						vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.8f, 0.95f), 0.02f));
 					
 					setWorkInfoDescription(work_info, selected_painting->getStoredArt());
 
 					if (!current_player->isOnDisplay(selected_painting->getStoredArt()))
 					{
 						generateHorizontalButtons(context, text, action_buttons, button_map);
-						action_buttons->getElementWithinByID("sell_painting")->setBackgroundColor(vec4(0.0f, 0.6f, 0.0f, 1.0f));
+						action_buttons->getElementWithinByID("sell_painting")->setBackgroundColor(V4C_GREEN_DARK);
 					}
 
 					else action_buttons->clearElements();
@@ -220,16 +219,16 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						target_element = page_buttons->getElementWithinByID("previous_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isFirstPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						target_element = page_buttons->getElementWithinByID("next_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isLastPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						selected_painting = nullptr;
 						action_buttons->clearElements();
@@ -251,16 +250,16 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						target_element = page_buttons->getElementWithinByID("previous_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isFirstPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						target_element = page_buttons->getElementWithinByID("next_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isLastPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 						selected_painting = nullptr;
 						action_buttons->clearElements();
 					}
@@ -281,16 +280,16 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						target_element = page_buttons->getElementWithinByID("previous_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isFirstPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						target_element = page_buttons->getElementWithinByID("next_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isLastPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						selected_painting = nullptr;
 						action_buttons->clearElements();
@@ -312,16 +311,16 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						target_element = page_buttons->getElementWithinByID("previous_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isFirstPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						target_element = page_buttons->getElementWithinByID("next_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isLastPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						selected_painting = nullptr;
 						action_buttons->clearElements();
@@ -343,16 +342,16 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						target_element = page_buttons->getElementWithinByID("previous_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isFirstPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						target_element = page_buttons->getElementWithinByID("next_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isLastPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						selected_painting = nullptr;
 						action_buttons->clearElements();
@@ -380,16 +379,16 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						target_element = page_buttons->getElementWithinByID("previous_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isFirstPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY_LIGHT);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						target_element = page_buttons->getElementWithinByID("next_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isLastPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						selected_painting = nullptr;
 						action_buttons->clearElements();
@@ -413,9 +412,9 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						target_element = page_buttons->getElementWithinByID("previous_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isFirstPage())
-							target_button->setColor(vec4(0.5f, 0.5f, 0.5f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						target_element = page_buttons->getElementWithinByID("next_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
@@ -436,16 +435,16 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 						target_element = page_buttons->getElementWithinByID("previous_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isFirstPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 
 						target_element = page_buttons->getElementWithinByID("next_page");
 						target_button = boost::dynamic_pointer_cast<text_area>(target_element);
 						if (artwork_thumbnails->isLastPage())
-							target_button->setColor(vec4(0.6f, 0.6f, 0.6f, 1.0f));
+							target_button->setColor(V4C_GRAY);
 
-						else target_button->setColor(vec4(1.0f, 1.0f, 1.0f, 1.0f));
+						else target_button->setColor(V4C_WHITE);
 					}
 				}
 			}
