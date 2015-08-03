@@ -126,6 +126,10 @@ void savePlayer(const string &data_path, const string player_name, const shared_
 
 	unsigned short inventory_size
 		unsigned work_id
+		bool featured
+		unsigned attribute count
+			artwork_attribute attribute
+			float attribute value
 
 	unsigned short num_galleries
 		int gallery_index
@@ -167,8 +171,19 @@ void savePlayer(const string &data_path, const string player_name, const shared_
 		unsigned id = (unsigned)work.first;
 		writeToFile(save_file, id);
 
-		bool profited = work.second->getProfited();
-		writeToFile(save_file, profited);
+		bool featured = work.second->getFeatured();
+		writeToFile(save_file, featured);
+
+		map<artwork_attribute, float> attributes = work.second->getWorkAttributes().getAttributes();
+
+		unsigned att_count = attributes.size();
+		writeToFile(save_file, att_count);
+
+		for (const auto &att : attributes) 
+		{
+			writeToFile(save_file, att.first);
+			writeToFile(save_file, att.second);
+		}
 	}
 
 	map<int, shared_ptr<gallery> > galleries = (current_player->getGalleries());
@@ -223,6 +238,10 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 
 	unsigned short inventory_size
 		unsigned work_id = getFromFile<unsigned>(load_file);
+		bool featured
+			unsigned attribute count
+			artwork_attribute attribute
+			flloat attribute value
 
 	unsigned short num_galleries
 		int gallery_index
@@ -279,9 +298,21 @@ shared_ptr<player> loadPlayer(const string &data_path, string player_name, const
 			shared_ptr<artwork_data> work_data = database->getArtwork(work_id);
 			shared_ptr<artwork> work(new artwork(work_data, false, 1.0f));
 
-			bool profited = getFromFile<bool>(load_file);
-			work->setProfitedTEMP(profited);
+			bool featured = getFromFile<bool>(load_file);
+			work->setFeatured(featured);
 
+			map<artwork_attribute, float> attribute_map;
+
+			unsigned att_count = getFromFile<unsigned>(load_file);
+
+			for (int n = 0; n < att_count; n++)
+			{
+				artwork_attribute att = getFromFile<artwork_attribute>(load_file);
+				attribute_map[att] = getFromFile<float>(load_file);
+			}
+			
+			work_attributes attributes(attribute_map);
+			work->setWorkAttributes(attributes);
 			generated_player->addWorkToInventory(work);
 		}
 
@@ -369,24 +400,27 @@ shared_ptr<player> loadAndUpdate(const string &data_path, string player_name, co
 	time_t last_balance_check
 
 	unsigned short inventory_size
-		unsigned work_id
+	unsigned work_id = getFromFile<unsigned>(load_file);
 
 	unsigned short num_galleries
-		int gallery_index
-		string gallery_template_name
-		string gallery_name
+	int gallery_index
+	string gallery_template_name
+	string gallery_name
+	unsigned num_walls
+	unsigned wall index
+	string texture name
 
-		unsigned short paintings_in_gallery
-			unsigned work_id
-			float position_x
-			float position_y
-			unsigned short wall_index
+	unsigned short paintings_in_gallery
+	unsigned work_id
+	float position_x
+	float position_y
+	unsigned short wall_index
 	*/
 
-	//plaster.bmp
+	string file_path = data_path + "\\gamesave_data\\" + player_name + "_old.sav";
 
 	cout << "LOADING PLAYER" << endl;
-	string file_path = data_path + "\\gamesave_data\\" + player_name + "_old.sav";
+	file_path = data_path + "\\gamesave_data\\" + player_name + ".sav";
 
 	if (fileExists(file_path))
 	{
@@ -437,6 +471,19 @@ shared_ptr<player> loadAndUpdate(const string &data_path, string player_name, co
 				generated_player->getName(),
 				gallery_name
 				));
+
+			//unsigned short num_walls
+			//unsigned short wall index
+			//string texture name
+
+			unsigned short num_walls = getFromFile<unsigned short>(load_file);
+
+			for (int j = 0; j < num_walls; j++)
+			{
+				unsigned short wall_index = getFromFile<unsigned short>(load_file);
+				string texture_filename = getStringFromFile(load_file);
+				loaded_gallery->getWall(wall_index)->setTexture(texture_filename, textures);
+			}
 
 			unsigned short paintings_in_gallery = getFromFile<unsigned short>(load_file);
 

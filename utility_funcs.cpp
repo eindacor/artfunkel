@@ -1022,7 +1022,7 @@ vec4 getRarityColor(rarity r)
 	switch (r)
 	{
 	case COMMON: return V4C_GREEN;
-	case UNCOMMON: return V4C_BLUE;
+	case UNCOMMON: return V4C_BLUE_LIGHT;
 	case RARE: return V4C_YELLOW;
 	case LEGENDARY: return V4C_ORANGE;
 	case MASTERPIECE: return V4C_CYAN;

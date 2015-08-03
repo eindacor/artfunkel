@@ -82,7 +82,7 @@ work_attributes::work_attributes(rarity r)
 	for (int i = 0; i < secondary_attribute_count; i++)
 		addNewNonDefaultAttribute(false);
 
-	printAttributes();
+	//printAttributes();
 	setAttributeStrings();
 }
 

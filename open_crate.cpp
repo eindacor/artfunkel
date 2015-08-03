@@ -117,7 +117,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 				if (already_owned)
 				{
 					alert_string = current_selection->getData()->getTitle() + " is already in your inventory";
-					alert_text->setColor(vec4(1.0f, 0.0f, 0.0f, 1.0f));
+					alert_text->setColor(V4C_RED);
 					alert_text->setText(alert_string);
 					alert_text->setVisibility(true);
 				}
@@ -127,7 +127,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 					if (current_player->addWorkToInventory(current_selection))
 					{
 						alert_string = (current_selection)->getData()->getTitle() + " has been added to your inventory";
-						alert_text->setColor(vec4(0.0f, 1.0f, 0.0f, 1.0f));
+						alert_text->setColor(V4C_GREEN);
 						alert_text->setText(alert_string);
 						alert_text->setVisibility(true);
 
@@ -171,7 +171,7 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 						string alert_string = current_selection->getData()->getTitle() + " has been sold for $" + current_selection->getValue().getNumberString(true, false, 2);
 
-						alert_text->setColor(vec4(0.0f, 1.0f, 0.0f, 1.0f));
+						alert_text->setColor(V4C_GREEN);
 						alert_text->setText(alert_string);
 						alert_text->setVisibility(true);
 
@@ -220,9 +220,9 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 					generateHorizontalButtons(context, text, action_buttons, button_map);
 					
 					if (current_player->inventoryIsFull() || current_player->alreadyOwned(selected_element->getStoredArt()))
-						action_buttons->getElementWithinByID("add_to_inventory")->setBackgroundColor(V4C_BLUE_DARK);
+						action_buttons->getElementWithinByID("add_to_inventory")->setBackgroundColor(V4C_GRAY);
 
-					else action_buttons->getElementWithinByID("add_to_inventory")->setBackgroundColor(V4C_GRAY);
+					else action_buttons->getElementWithinByID("add_to_inventory")->setBackgroundColor(V4C_BLUE);
 
 					action_buttons->getElementWithinByID("sell_painting")->setBackgroundColor(V4C_GREEN_DARK);
 

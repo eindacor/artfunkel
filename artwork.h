@@ -70,12 +70,12 @@ class work_attributes
 public:
 	work_attributes(rarity r);
 	work_attributes(const work_attributes &other);
+	work_attributes(map<artwork_attribute, float> attribute_set) { attributes = attribute_set; setAttributeStrings(); }
 	work_attributes(){};
 	~work_attributes(){};
 
 	//map<artwork_attribute, float> getFloatAttributes() const { return float_attributes; }
 	//map<artwork_attribute, bignum> getBignumAttributes() const { return bignum_attributes; }
-	map<artwork_attribute, float> getAttributes() const { return attributes; }
 
 	//adds a new attribute not already present
 	void addNewNonDefaultAttribute(bool primary);
@@ -85,6 +85,7 @@ public:
 	float rollNewFloatValue(artwork_attribute aa);
 	//bignum rollNewBignumValue(artwork_attribute aa);
 
+	map<artwork_attribute, float> getAttributes() const { return attributes; }
 	void work_attributes::printAttributes() const;
 	void work_attributes::setAttributeStrings();
 	string getBaseAttributesString() const{ return default_attributes_string; }
@@ -139,8 +140,11 @@ public:
 
 	void setProfitedTEMP(bool b) { profited = b; }
 	bool getProfited() const { return profited; }
+	bool getFeatured() const { return featured; }
+	void setFeatured(bool b) { featured = b; }
 	work_attributes getWorkAttributes() const { return attributes; }
 	work_attributes editWorkAttributes() { return attributes; }
+	void setWorkAttributes(work_attributes wa) { attributes = wa; }
 
 private:
 	bignum value;
@@ -149,7 +153,7 @@ private:
 	vec4 centerpoint;
 	mat4 model_matrix;
 
-	bool profited;
+	bool profited, featured;
 
 	vec3 overall_dimensions;
 	//vector below stores faces to check for click selection;
