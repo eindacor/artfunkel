@@ -31,7 +31,6 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 
 	bronze_rarity_map[COMMON] = 60;
 	bronze_rarity_map[UNCOMMON] = 12;
-	//bronze_rarity_map[RARE] = 0;
 	
 	silver_rarity_map[COMMON] = 24;
 	silver_rarity_map[UNCOMMON] = 38;
@@ -51,39 +50,26 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	diamond_rarity_map[LEGENDARY] = 1000000;
 	diamond_rarity_map[MASTERPIECE] = 1;
 
-	
-	bool rare_in_bronze_found = false;
 	bool rare_in_silver_found = false;
 	bool legendary_in_gold_found = false;
 	bool legendary_in_platinum_found = false;
 	bool masterpiece_in_platinum_found = false;
 	
-	jep::avg_container rare_in_bronze_rolls, rare_in_silver_rolls, legendary_in_gold_rolls, 
+	jep::avg_container rare_in_silver_rolls, legendary_in_gold_rolls, 
 		legendary_in_platinum_rolls, masterpiece_in_platinum_rolls;
 
 	for (int count = 0; count < 1000; count++)
 	{
 		for (int i = 0; i < 10000; i++)
 		{
-			if (rare_in_bronze_found && rare_in_silver_found && legendary_in_gold_found &&
+			if (rare_in_silver_found && legendary_in_gold_found &&
 				legendary_in_platinum_found && masterpiece_in_platinum_found)
 			{
-				rare_in_bronze_found = false;
 				rare_in_silver_found = false;
 				legendary_in_gold_found = false;
 				legendary_in_platinum_found = false;
 				masterpiece_in_platinum_found = false;
 				break;
-			}
-
-			if (!rare_in_bronze_found)
-			{
-				rarity rarity_rolled = jep::catRoll(bronze_rarity_map);
-				if (rarity_rolled == RARE)
-				{
-					rare_in_bronze_found = true;
-					rare_in_bronze_rolls.addValue(i);
-				}
 			}
 
 			if (!rare_in_silver_found)
@@ -128,13 +114,11 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 		}
 	}
 	
-	cout << "average rolls for rare in bronze: " << rare_in_bronze_rolls.getAverage() << endl;
 	cout << "average rolls for rare in silver: " << rare_in_silver_rolls.getAverage() << endl;
 	cout << "average rolls for legendary in gold: " << legendary_in_gold_rolls.getAverage() << endl;
 	cout << "average rolls for legendary in platinum: " << legendary_in_platinum_rolls.getAverage() << endl;
 	cout << "average rolls for masterpiece in platinum: " << masterpiece_in_platinum_rolls.getAverage() << endl;
 	
-
 	average_bronze_crate_work_value = calcAveragePaintingValue(bronze_rarity_map);
 	average_silver_crate_work_value = calcAveragePaintingValue(silver_rarity_map);
 	average_gold_crate_work_value = calcAveragePaintingValue(gold_rarity_map);
