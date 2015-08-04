@@ -37,21 +37,21 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	silver_rarity_map[UNCOMMON] = 38;
 	silver_rarity_map[RARE] = 2;
 
-	gold_rarity_map[COMMON] = 200;
-	gold_rarity_map[UNCOMMON] = 600;							
-	gold_rarity_map[RARE] = 200;
+	gold_rarity_map[COMMON] = 400;
+	gold_rarity_map[UNCOMMON] = 900;							
+	gold_rarity_map[RARE] = 400;
 	gold_rarity_map[LEGENDARY] = 1;
 
-	platinum_rarity_map[COMMON] = 800;
-	platinum_rarity_map[UNCOMMON] = 1200;
-	platinum_rarity_map[RARE] = 9600;
-	platinum_rarity_map[LEGENDARY] = 20;
+	platinum_rarity_map[COMMON] = 2000;
+	platinum_rarity_map[UNCOMMON] = 4000;
+	platinum_rarity_map[RARE] = 12000;
+	platinum_rarity_map[LEGENDARY] = 50;
 	platinum_rarity_map[MASTERPIECE] = 1;
 
 	diamond_rarity_map[LEGENDARY] = 1000000;
 	diamond_rarity_map[MASTERPIECE] = 1;
 
-	/*
+	
 	bool rare_in_bronze_found = false;
 	bool rare_in_silver_found = false;
 	bool legendary_in_gold_found = false;
@@ -61,7 +61,7 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	jep::avg_container rare_in_bronze_rolls, rare_in_silver_rolls, legendary_in_gold_rolls, 
 		legendary_in_platinum_rolls, masterpiece_in_platinum_rolls;
 
-	for (int count = 0; count < 100; count++)
+	for (int count = 0; count < 1000; count++)
 	{
 		for (int i = 0; i < 10000; i++)
 		{
@@ -133,7 +133,7 @@ loot_generator::loot_generator(shared_ptr<art_db> database)
 	cout << "average rolls for legendary in gold: " << legendary_in_gold_rolls.getAverage() << endl;
 	cout << "average rolls for legendary in platinum: " << legendary_in_platinum_rolls.getAverage() << endl;
 	cout << "average rolls for masterpiece in platinum: " << masterpiece_in_platinum_rolls.getAverage() << endl;
-	*/
+	
 
 	average_bronze_crate_work_value = calcAveragePaintingValue(bronze_rarity_map);
 	average_silver_crate_work_value = calcAveragePaintingValue(silver_rarity_map);

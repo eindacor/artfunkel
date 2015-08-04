@@ -156,7 +156,8 @@ string stringFromAttribute(artwork_attribute aa)
 	switch (aa)
 	{
 	case BASE_XP_EARNED: return "Quality";
-	case BASE_XP_DURATION: return "Accessibility";
+	case BASE_XP_DURATION: return "XP Speed";
+	case BASE_MONEY_EARNED: return "Earnings per hour";
 
 	case NPC_AUCTIONEER_BASE: return "Auctioneer";
 	case NPC_DEALER_BASE: return "Art Dealer";
@@ -172,10 +173,10 @@ string stringFromAttribute(artwork_attribute aa)
 	case NPC_MARKET_EXPERT_BASE: return "Market Expert";
 
 	case ENTRY_FEE_REDUCTION_VISITORS: return "Visitor discount";
-	case XP_FROM_SET_WORKS_INCREASE_VISITORS: return "Set bonus (visitors)";
-	case XP_FROM_WORKS_INCREASE_VISITORS: return "Gallery bonus (visitors)";
-	case XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS: return "Set accessibility bonus (visitors)";
-	case XP_DURATION_FOR_WORKS_DECREASE_VISITORS: return "Gallery accessibility bonus (visitors)";
+	case XP_FROM_SET_WORKS_INCREASE_VISITORS: return "Set XP bonus (visitors)";
+	case XP_FROM_WORKS_INCREASE_VISITORS: return "Gallery XP bonus (visitors)";
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_VISITORS: return "XP Speed bonus (visitors)";
+	case XP_DURATION_FOR_WORKS_DECREASE_VISITORS: return "Gallery XP Speed bonus (visitors)";
 
 	case NPC_AUCTIONEER_BOOST: return "Auctioneer boost";
 	case NPC_DEALER_BOOST: return "Art Dealer boost";
@@ -191,13 +192,14 @@ string stringFromAttribute(artwork_attribute aa)
 	case NPC_MARKET_EXPERT_BOOST: return "Market Expert boost";
 
 	case ENTRY_FEE_REDUCTION_MEMBERS: return "Member discount";
-	case XP_FROM_SET_WORKS_INCREASE_MEMBERS: return "Set bonus (members)";
-	case XP_FROM_WORKS_INCREASE_MEMBERS: return "Gallery bonus (members)";
-	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS: return "Set accessibility bonus (members)";
-	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS: return "Gallery accessibility bonus (members)";
+	case XP_FROM_SET_WORKS_INCREASE_MEMBERS: return "Set XP bonus (members)";
+	case XP_FROM_WORKS_INCREASE_MEMBERS: return "Gallery XP bonus (members)";
+	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS: return "Set XP Speed bonus (members)";
+	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS: return "Gallery XP Speed bonus (members)";
 
 	case XP_GAIN_PER_VISITOR_INTERACTION: return "Owner interaction bonus";
 	case MONEY_GAIN_PER_VISITOR_INTERACTION: return "Owner interaction profit";
+	case BONUS_MONEY_EARNED: return "Bonus money earned";
 
 	default: return "undefined attribute";
 	}
@@ -951,6 +953,7 @@ pair<float, float> getAttributeMinMax(artwork_attribute aa)
 
 	case BASE_XP_EARNED:
 	case BASE_XP_DURATION:
+	case BASE_MONEY_EARNED:
 	case ENTRY_FEE_REDUCTION_VISITORS:
 	case XP_FROM_SET_WORKS_INCREASE_VISITORS:
 	case XP_FROM_WORKS_INCREASE_VISITORS:
@@ -962,7 +965,8 @@ pair<float, float> getAttributeMinMax(artwork_attribute aa)
 	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS:
 	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS:
 	case XP_GAIN_PER_VISITOR_INTERACTION:
-	case MONEY_GAIN_PER_VISITOR_INTERACTION: return pair<float, float>(0.0f, 1.0f);
+	case MONEY_GAIN_PER_VISITOR_INTERACTION: 
+	case BONUS_MONEY_EARNED: return pair<float, float>(0.0f, 1.0f);
 
 	default: return pair<float, float>(0.0f, 0.0f);
 	}
@@ -1012,7 +1016,8 @@ bool attributeIsSecondary(artwork_attribute aa)
 	case XP_DURATION_FOR_SET_WORKS_DECREASE_MEMBERS:
 	case XP_DURATION_FOR_WORKS_DECREASE_MEMBERS:
 	case XP_GAIN_PER_VISITOR_INTERACTION:
-	case MONEY_GAIN_PER_VISITOR_INTERACTION: return true;
+	case MONEY_GAIN_PER_VISITOR_INTERACTION:
+	case BONUS_MONEY_EARNED:  return true;
 	default: return false;
 	}
 }

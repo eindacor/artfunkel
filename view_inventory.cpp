@@ -110,12 +110,12 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 
 	//identify positions for text
 	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(-1.0f, -.75f),
-		justpair(H_LEFT, V_BOTTOM), vec2(0.8f, 0.65f), justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
+		justpair(H_LEFT, V_BOTTOM), vec2(0.8f, 0.8f), justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.04f)));
 
 	work_info->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
 	setWorkInfoFields(context, text, work_info);
 
-	shared_ptr<dynamic_hud_array> action_buttons(new dynamic_hud_array("action_buttons", context, vec2(-1.0f, 0.05f),
+	shared_ptr<dynamic_hud_array> action_buttons(new dynamic_hud_array("action_buttons", context, vec2(-1.0f, 0.2f),
 		justpair(H_LEFT, V_TOP), vec2(0.8f, 0.15f), justpair(H_LEFT, V_MIDDLE), vec2(.1f, .04f)));
 	map<string, string> button_map;
 	button_map["sell painting"] = "sell_painting";
@@ -184,7 +184,7 @@ int viewInventory(string data_path, const shared_ptr<ogl_context> &context,
 				if (selected_element != nullptr && selected_element->getType() == THUMBNAIL)
 				{				
 					selected_painting = shared_ptr<artwork_thumbnail>(new artwork_thumbnail("selected", selected_element->getStoredArt(), context,
-						vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.8f, 0.95f), 0.02f));
+						vec2(-1.0f, 1.0f), justpair(H_LEFT, V_TOP), vec2(0.8f, 0.8f), 0.02f));
 					
 					setWorkInfoDescription(work_info, selected_painting->getStoredArt());
 

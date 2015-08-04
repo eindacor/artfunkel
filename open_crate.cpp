@@ -41,10 +41,10 @@ int openCrate(string data_path, const shared_ptr<ogl_context> &context, shared_p
 
 	/////////////////////UPDATED HUD
 	//identify positions for text
-	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(1.0f, 1.0f), justpair(H_RIGHT, V_TOP), vec2(0.8f, 0.9f),
-		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
+	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(1.0f, 1.0f), justpair(H_RIGHT, V_TOP),
+		vec2(0.8f, 0.9f), justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.1f)));
 	work_info->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
-	setWorkInfoFields(context, text, work_info, 1.2f);
+	setWorkInfoFields(context, text, work_info);
 
 	shared_ptr<dynamic_hud_array> alert_info(new dynamic_hud_array("alerts", context, vec2(1.0f, 0.1f), justpair(H_RIGHT, V_TOP), vec2(0.8f, 0.3f),
 		justpair(H_LEFT, V_TOP), vec2(0.02f, 0.1f)));

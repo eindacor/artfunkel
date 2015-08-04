@@ -210,6 +210,7 @@ bool attributeIsDefault(artwork_attribute aa)
 	{
 	case BASE_XP_EARNED:									
 	case BASE_XP_DURATION:
+	case BASE_MONEY_EARNED:
 	case NPC_AUCTIONEER_BASE:
 	case NPC_DEALER_BASE:										
 	case NPC_COLLECTOR_BASE:

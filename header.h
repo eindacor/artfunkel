@@ -46,6 +46,7 @@ enum secondary_attribute {
 enum artwork_attribute {
 	BASE_XP_EARNED,									//bignum, default
 	BASE_XP_DURATION,								//bignum, default
+	BASE_MONEY_EARNED,								//bignum, default
 
 	NPC_AUCTIONEER_BASE,							//float, default
 	NPC_DEALER_BASE,								//float, default								
@@ -86,6 +87,7 @@ enum artwork_attribute {
 	XP_DURATION_FOR_WORKS_DECREASE_MEMBERS,			//bignum, secondary
 	XP_GAIN_PER_VISITOR_INTERACTION,				//bignum, secondary
 	MONEY_GAIN_PER_VISITOR_INTERACTION,				//bignum, secondary
+	BONUS_MONEY_EARNED,								//bignum, secondary
 
 	NULL_ATTRIBUTE
 };
