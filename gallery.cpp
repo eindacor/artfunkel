@@ -218,6 +218,7 @@ gallery::gallery(const shared_ptr<ogl_context> &context, shared_ptr<texture_hand
 {
 	template_name = template_name_string;
 	owner = owner_name;
+	max_artwork_count = 64;
 
 	string display_model_path = model_path + template_name_string + "_display.obj";
 	string filler_model_path = model_path + template_name_string + "_filler.obj";
@@ -428,6 +429,16 @@ const map< unsigned, pair<vec2, unsigned short> > gallery::getWorkMap() const
 	}
 
 	return all_works;
+}
+
+int gallery::getArtworkCount() const
+{
+	int count = 0;
+	for (const auto &wall : display_walls)
+		count += wall.second->getWallContents().size();
+
+	cout << "gellery count: " << count << endl;
+	return count;
 }
 
 void gallery::calcAttributeTotals()

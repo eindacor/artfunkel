@@ -76,6 +76,8 @@ public:
 	const map <unsigned short, shared_ptr<display_wall> > getWalls() const { return display_walls; }
 	shared_ptr<display_wall> getWall(int index);
 	bignum getGalleryValue() const { return gallery_value; }
+	int getArtworkCount() const;
+	short getMaxArtworkCount() const { return max_artwork_count; }
 
 	//work ID, position, wall index
 	const map< unsigned, pair<vec2, unsigned short> >  getWorkMap() const;
@@ -88,7 +90,7 @@ private:
 	string template_name;
 	string owner;
 	string gallery_name;
-	int max_paintings;
+	short max_artwork_count;
 	map <int, mat4> work_positions;
 	map <unsigned short, shared_ptr<display_wall> > display_walls;
 	float width;

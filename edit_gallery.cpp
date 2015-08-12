@@ -36,6 +36,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 	}
 
 	current_gallery = current_player->getGallery(0);
+	current_gallery->getArtworkCount();
 
 	cout << "-----Gallery Attributes-----" << endl;
 	current_gallery->printAttributeTotals();
@@ -67,8 +68,8 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 		finish_thumbnails->addElement(finish_thumb);
 	}
 
-	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(1.0f, 1.0f), justpair(H_RIGHT, V_TOP), vec2(0.8f, 0.25f),
-		pair<horizontal_justification, vertical_justification>(H_LEFT, V_MIDDLE), vec2(0.02f, 0.0f)));
+	shared_ptr<dynamic_hud_array> work_info(new dynamic_hud_array("description", context, vec2(1.0f, 1.0f), justpair(H_RIGHT, V_TOP), vec2(0.8f, 0.8f),
+		justpair(H_LEFT, V_MIDDLE), vec2(0.02f, 0.4f)));
 	work_info->setBackgroundColor(vec4(0.0f, 0.0f, 0.0f, 0.5f));
 	setWorkInfoFields(context, text, work_info);
 
@@ -202,7 +203,7 @@ int editGallery(string data_path, const shared_ptr<ogl_context> &context, shared
 						{
 							vec2 point_clicked = wall_selected.second->getCursorPositionWallspace();
 
-							if (wall_selected.second->validPlacement(painting_to_place, point_clicked))
+							if (current_gallery->getArtworkCount() < current_gallery->getMaxArtworkCount() && wall_selected.second->validPlacement(painting_to_place, point_clicked))
 							{
 								current_player->updateBank();
 

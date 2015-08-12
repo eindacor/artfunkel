@@ -56,7 +56,7 @@ void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<
 	vec2 artist_spacing_scale(0.8f, 1.0f);
 
 	shared_ptr<text_area> artist_text(new text_area("artist_text", "not yet set",
-		context, text, artist_element_dimensions, artist_text_height, artist_just, artist_italics, V4C_GRAY,
+		context, text, artist_element_dimensions, artist_text_height, artist_just, artist_italics, V4C_GRAY_LIGHT,
 		"text", "text_color", artist_element_padding, artist_spacing_scale));
 
 	float value_text_height(0.03f * scale_modifier);
@@ -67,22 +67,22 @@ void setWorkInfoFields(const shared_ptr<ogl_context> &context, const shared_ptr<
 	vec2 value_spacing_scale(0.8f, 1.0f);
 
 	shared_ptr<text_area> value_text(new text_area("value_text", "not yet set",
-		context, text, value_element_dimensions, value_text_height, value_just, value_italics, V4C_GRAY,
+		context, text, value_element_dimensions, value_text_height, value_just, value_italics, V4C_GRAY_LIGHT,
 		"text", "text_color", value_element_padding, value_spacing_scale));
 
 	shared_ptr<text_area> default_attributes(new text_area("default_attributes_text", "not yet set",
-		context, text, vec2(container->getAllowableWidth() / 2, 0.6f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY,
+		context, text, vec2(container->getAllowableWidth() / 2, 0.6f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY_LIGHT,
 		"text", "text_color", value_element_padding, value_spacing_scale));
 
 	shared_ptr<dynamic_hud_array> primary_secondary_container(new dynamic_hud_array("primary_secondary_container", context, vec2(-1.0f, 0.0f),
 		justpair(H_LEFT, V_TOP), vec2(container->getAllowableWidth() / 2, 0.6f * scale_modifier), justpair(H_LEFT, V_TOP)));
 
 	shared_ptr<text_area> primary_attributes(new text_area("primary_attributes_text", "not yet set",
-		context, text, vec2(container->getAllowableWidth() / 2, 0.3f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY,
+		context, text, vec2(container->getAllowableWidth() / 2, 0.3f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY_LIGHT,
 		"text", "text_color", value_element_padding, value_spacing_scale));
 
 	shared_ptr<text_area> secondary_attributes(new text_area("secondary_attributes_text", "not yet set",
-		context, text, vec2(container->getAllowableWidth() / 2, 0.3f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY,
+		context, text, vec2(container->getAllowableWidth() / 2, 0.3f * scale_modifier), value_text_height, justpair(H_LEFT, V_TOP), value_italics, V4C_GRAY_LIGHT,
 		"text", "text_color", value_element_padding, value_spacing_scale));
 
 	container->addElement(title_text);
